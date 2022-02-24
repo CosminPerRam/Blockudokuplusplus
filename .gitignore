@@ -1,0 +1,6 @@
+/.vs/*
+
+/Debug/*
+/Release/*
+
+/libraries/SFML-2.5.1/*
