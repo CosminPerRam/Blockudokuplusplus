@@ -9,9 +9,26 @@
 
 #include <iostream>
 
+const sf::Vector2f Block::getStructureSize() {
+	return this->structureSize;
+}
+
+const std::vector<std::vector<int>>& Block::getStructure() {
+	return this->structure;
+}
+
+void Block::setScale(float scale) {
+	this->scale = scale;
+}
+
+void Block::setPosition(const sf::Vector2f& position) {
+	this->position = position;
+}
+
 void Block::draw(sf::RenderWindow& window) {
 	sf::RectangleShape cell;
 	cell.setSize({ CELL_SPACING, CELL_SPACING });
+	cell.setScale({ this->scale , this->scale });
 	cell.setFillColor(COLOR_BLUE);
 
 	sf::VertexArray borders(sf::Lines, 4 * 2);
@@ -19,25 +36,25 @@ void Block::draw(sf::RenderWindow& window) {
 	for (float l = 0; l < structure.size(); l++) {
 		for (float c = 0; c < structure[l].size(); c++) {
 			if (structure[l][c] == 1) {
-				sf::Vector2f cellPosition = { position.x + CELL_SPACING * l, position.y + CELL_SPACING * c };
+				sf::Vector2f cellPosition = { position.x + CELL_SPACING * l * scale, position.y + CELL_SPACING * c * scale };
 				cell.setPosition(cellPosition);
 
 				window.draw(cell);
 
 				for (unsigned i = 0; i < 2; i++) {
 					float rowY = CELL_SPACING * i;
-					borders[i * 2].position = { cellPosition.x, cellPosition.y + rowY };
+					borders[i * 2].position = { cellPosition.x, cellPosition.y + rowY * scale };
 					borders[i * 2].color = COLOR_BLACK;
-					borders[i * 2 + 1].position = { cellPosition.x + CELL_SPACING, cellPosition.y + rowY };
+					borders[i * 2 + 1].position = { cellPosition.x + CELL_SPACING * scale, cellPosition.y + rowY * scale };
 					borders[i * 2 + 1].color = COLOR_BLACK;
 				}
 				
 				unsigned borderPositionOffset = 4;
 				for (unsigned i = 0; i < 2; i++) {
 					float rowX = CELL_SPACING * i;
-					borders[borderPositionOffset + i * 2].position = { cellPosition.x + rowX, cellPosition.y };
+					borders[borderPositionOffset + i * 2].position = { cellPosition.x + rowX * scale, cellPosition.y };
 					borders[borderPositionOffset + i * 2].color = COLOR_BLACK;
-					borders[borderPositionOffset + i * 2 + 1].position = { cellPosition.x + rowX, cellPosition.y + CELL_SPACING };
+					borders[borderPositionOffset + i * 2 + 1].position = { cellPosition.x + rowX * scale, cellPosition.y + CELL_SPACING * scale };
 					borders[borderPositionOffset + i * 2 + 1].color = COLOR_BLACK;
 				}
 

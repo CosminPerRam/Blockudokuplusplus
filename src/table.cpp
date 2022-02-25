@@ -1,6 +1,8 @@
 
 #include "table.h"
 
+#include <SFML/Graphics/RectangleShape.hpp>
+
 #include "colors.h"
 #include "spacing.h"
 
@@ -92,31 +94,5 @@ void Table::draw(sf::RenderWindow& window)
 
     window.draw(majorGrid);
 
-    aBlock.draw(window);
-
     //DRAW GRID END
 }
-
-/*
-sf::VertexArray grid(sf::Lines, 4 * (TABLE_SIZE + 1)); //without borders, it would be: 2 * (TABLE_SIZE * 2 - 2)
-
-    for (unsigned i = 0; i < TABLE_SIZE + 1; i++) {
-        float rowY = CELL_SPACING * i;
-        grid[i * 2].position = { startPosition.y, rowY + startPosition.y };
-        grid[i * 2].color = COLOR_BLACK;
-        grid[i * 2 + 1].position = {lineLength + startPosition.y, rowY + startPosition.y };
-        grid[i * 2 + 1].color = COLOR_BLACK;
-    }
-
-    unsigned gridPositionOffset = (TABLE_SIZE + 1) * 2;
-    for (unsigned i = 0; i < TABLE_SIZE + 1; i++) {
-        float rowX = CELL_SPACING * i;
-        grid[gridPositionOffset + i * 2].position = { rowX + startPosition.x, startPosition.x };
-        grid[gridPositionOffset + i * 2].color = COLOR_BLACK;
-        grid[gridPositionOffset + i * 2 + 1].position = { rowX + startPosition.x, lineLength + startPosition.x };
-        grid[gridPositionOffset + i * 2 + 1].color = COLOR_BLACK;
-    }
-
-    window.draw(grid);
-
-*/

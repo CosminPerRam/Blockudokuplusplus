@@ -89,6 +89,7 @@
       <PreprocessorDefinitions>SFML_STATIC;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)\libraries\SFML-2.5.1\include\;$(SolutionDir)\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -106,6 +107,7 @@
       <PreprocessorDefinitions>SFML_STATIC;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)\libraries\SFML-2.5.1\include\;$(SolutionDir)\include\</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -148,6 +150,7 @@
     <ClCompile Include="src\block.cpp" />
     <ClCompile Include="src\game.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\pickupBoard.cpp" />
     <ClCompile Include="src\table.cpp" />
     <ClCompile Include="src\utilities.cpp" />
   </ItemGroup>
@@ -159,6 +162,8 @@
     <ClInclude Include="include\block.h" />
     <ClInclude Include="include\colors.h" />
     <ClInclude Include="include\game.h" />
+    <ClInclude Include="include\impl.h" />
+    <ClInclude Include="include\pickupBoard.h" />
     <ClInclude Include="include\spacing.h" />
     <ClInclude Include="include\table.h" />
     <ClInclude Include="include\utilities.h" />

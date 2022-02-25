@@ -5,6 +5,7 @@
 
 void Game::draw(sf::RenderWindow& window) {
     theTable.draw(window);
+    pickupBoard.draw(window);
 }
 
 void Game::pollEvent(sf::Event &theEvent) {
@@ -12,7 +13,7 @@ void Game::pollEvent(sf::Event &theEvent) {
 }
 
 void Game::start() {
-    sf::RenderWindow window(sf::VideoMode(340, 600), "Blockudoku");
+    sf::RenderWindow window(sf::VideoMode(340, 470), "Blockudoku");
 
     window.setVerticalSyncEnabled(true);
 
