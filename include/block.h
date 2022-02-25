@@ -9,6 +9,8 @@ class Block
 private:
 	std::vector<std::vector<int>> structure;
 
+	sf::Vector2f position = { 10, 10 };
+
 public:
 	Block(std::vector<std::vector<int>>& structure) {
 		this->structure = structure;
@@ -17,5 +19,4 @@ public:
 	void draw(sf::RenderWindow& window);
 };
 
-static std::vector<std::vector<int>> getRandomStructure();
-static Block getRandomBlock();
+Block getRandomBlock();

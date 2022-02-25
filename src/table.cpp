@@ -4,6 +4,18 @@
 #include "colors.h"
 #include "spacing.h"
 
+bool Table::applyBlock(Block& theBlock)
+{
+
+    return false;
+}
+
+bool Table::previewBlock(Block& theHoldingBlock)
+{
+
+    return false;
+}
+
 void Table::draw(sf::RenderWindow& window)
 {
     sf::Vector2f startPosition = { TABLE_START_POSITION_X, TABLE_START_POSITION_Y };

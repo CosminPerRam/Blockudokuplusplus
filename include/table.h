@@ -11,9 +11,11 @@ private:
 
 	cell cellTable[9][9] = { empty };
 
+	Block aBlock = getRandomBlock();
+
 public:
 	void draw(sf::RenderWindow& window);
 
-	void applyBlock();
-
+	bool applyBlock(Block& theBlock);
+	bool previewBlock(Block& theHoldingBlock);
 };

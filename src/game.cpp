@@ -14,6 +14,8 @@ void Game::pollEvent(sf::Event &theEvent) {
 void Game::start() {
     sf::RenderWindow window(sf::VideoMode(340, 600), "Blockudoku");
 
+    window.setVerticalSyncEnabled(true);
+
     while (window.isOpen())
     {
         sf::Event event;
