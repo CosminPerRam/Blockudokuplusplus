@@ -4,8 +4,6 @@
 
 #include "block.h"
 
-#define TABLE_SIZE 9
-
 class Table
 {
 private:

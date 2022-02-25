@@ -2,18 +2,18 @@
 #include "table.h"
 
 #include "colors.h"
+#include "spacing.h"
 
 void Table::draw(sf::RenderWindow& window)
 {
-    sf::Vector2f startPosition = { 25, 25 };
-    float spacing = 32;
-    float lineLength = spacing * TABLE_SIZE;
+    sf::Vector2f startPosition = { TABLE_START_POSITION_X, TABLE_START_POSITION_Y };
+    float lineLength = CELL_SPACING * TABLE_SIZE;
 
     for (unsigned l = 0; l < 9; l++) {
         for (unsigned c = 0; c < 9; c++) {
             sf::RectangleShape cell;
-            cell.setSize({ spacing, spacing });
-            cell.setPosition({ startPosition.x + spacing * l, startPosition.y + spacing * c });
+            cell.setSize({ CELL_SPACING, CELL_SPACING });
+            cell.setPosition({ startPosition.x + CELL_SPACING * l, startPosition.y + CELL_SPACING * c });
             switch (cellTable[l][c]) {
             case cell::empty:
             {
@@ -38,26 +38,73 @@ void Table::draw(sf::RenderWindow& window)
 
     //DRAW CELLS END
 
-    sf::VertexArray grid(sf::Lines, 4 * (TABLE_SIZE + 1)); //without borders, it would be: 2 * (TABLE_SIZE * 2 - 2)
+    sf::VertexArray minorGrid(sf::Lines, 2 * (TABLE_SIZE * 2 - 2));
 
-	for (unsigned i = 0; i < TABLE_SIZE + 1; i++) {
-        float rowY = spacing * i;
-        grid[i * 2].position = { startPosition.y, rowY + startPosition.y };
-        grid[i * 2].color = { 0, 0, 0 };
-        grid[i * 2 + 1].position = {lineLength + startPosition.y, rowY + startPosition.y };
-        grid[i * 2 + 1].color = { 0, 0, 0 };
+    for (unsigned i = 0; i < TABLE_SIZE - 1; i++) {
+        float rowY = CELL_SPACING * (i + 1);
+        minorGrid[i * 2].position = { startPosition.y, rowY + startPosition.y };
+        minorGrid[i * 2].color = COLOR_LIGHT_BLUE;
+        minorGrid[i * 2 + 1].position = { lineLength + startPosition.y, rowY + startPosition.y };
+        minorGrid[i * 2 + 1].color = COLOR_LIGHT_BLUE;
     }
 
-    unsigned gridPositionOffset = (TABLE_SIZE + 1) * 2;
-	for (unsigned i = 0; i < TABLE_SIZE + 1; i++) {
-        float rowX = spacing * i;
-        grid[gridPositionOffset + i * 2].position = { rowX + startPosition.x, startPosition.x };
-        grid[gridPositionOffset + i * 2].color = { 0, 0, 0 };
-        grid[gridPositionOffset + i * 2 + 1].position = { rowX + startPosition.x, lineLength + startPosition.x };
-        grid[gridPositionOffset + i * 2 + 1].color = { 0, 0, 0 };
-	}
+    unsigned gridPositionOffset = (TABLE_SIZE - 1) * 2;
+    for (unsigned i = 0; i < TABLE_SIZE - 1; i++) {
+        float rowX = CELL_SPACING * (i + 1);
+        minorGrid[gridPositionOffset + i * 2].position = { rowX + startPosition.x, startPosition.x };
+        minorGrid[gridPositionOffset + i * 2].color = COLOR_LIGHT_BLUE;
+        minorGrid[gridPositionOffset + i * 2 + 1].position = { rowX + startPosition.x, lineLength + startPosition.x };
+        minorGrid[gridPositionOffset + i * 2 + 1].color = COLOR_LIGHT_BLUE;
+    }
 
-    window.draw(grid);
+    window.draw(minorGrid);
+
+    sf::VertexArray majorGrid(sf::Lines, 4 * 2 * 2);
+
+    for (unsigned i = 0; i < 4; i++) {
+        float rowY = (CELL_SPACING * 3) * i;
+        majorGrid[i * 2].position = { startPosition.y, rowY + startPosition.y };
+        majorGrid[i * 2].color = COLOR_BLACK;
+        majorGrid[i * 2 + 1].position = { lineLength + startPosition.y, rowY + startPosition.y };
+        majorGrid[i * 2 + 1].color = COLOR_BLACK;
+    }
+
+    gridPositionOffset = 4 * 2;
+    for (unsigned i = 0; i < 4; i++) {
+        float rowX = (CELL_SPACING * 3) * i;
+        majorGrid[gridPositionOffset + i * 2].position = { rowX + startPosition.x, startPosition.x };
+        majorGrid[gridPositionOffset + i * 2].color = COLOR_BLACK;
+        majorGrid[gridPositionOffset + i * 2 + 1].position = { rowX + startPosition.x, lineLength + startPosition.x };
+        majorGrid[gridPositionOffset + i * 2 + 1].color = COLOR_BLACK;
+    }
+
+    window.draw(majorGrid);
+
+    aBlock.draw(window);
 
     //DRAW GRID END
 }
+
+/*
+sf::VertexArray grid(sf::Lines, 4 * (TABLE_SIZE + 1)); //without borders, it would be: 2 * (TABLE_SIZE * 2 - 2)
+
+    for (unsigned i = 0; i < TABLE_SIZE + 1; i++) {
+        float rowY = CELL_SPACING * i;
+        grid[i * 2].position = { startPosition.y, rowY + startPosition.y };
+        grid[i * 2].color = COLOR_BLACK;
+        grid[i * 2 + 1].position = {lineLength + startPosition.y, rowY + startPosition.y };
+        grid[i * 2 + 1].color = COLOR_BLACK;
+    }
+
+    unsigned gridPositionOffset = (TABLE_SIZE + 1) * 2;
+    for (unsigned i = 0; i < TABLE_SIZE + 1; i++) {
+        float rowX = CELL_SPACING * i;
+        grid[gridPositionOffset + i * 2].position = { rowX + startPosition.x, startPosition.x };
+        grid[gridPositionOffset + i * 2].color = COLOR_BLACK;
+        grid[gridPositionOffset + i * 2 + 1].position = { rowX + startPosition.x, lineLength + startPosition.x };
+        grid[gridPositionOffset + i * 2 + 1].color = COLOR_BLACK;
+    }
+
+    window.draw(grid);
+
+*/
