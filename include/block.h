@@ -32,8 +32,6 @@ public:
 	const std::vector<std::vector<int>>& getStructure();
 	const sf::Vector2f getStructureSize();
 
-	const sf::FloatRect getGlobalBounds();
-
 	const float getScale();
 
 	void draw(sf::RenderWindow& window);

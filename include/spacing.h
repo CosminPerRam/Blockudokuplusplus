@@ -1,7 +1,7 @@
 #pragma once
 
 #define CELL_SPACING 32
-#define SMALL_CELL_SPACING  2 / 3 * CELL_SPACING
+#define SMALL_CELL_SPACING 2 / 3 * CELL_SPACING
 
 #define TABLE_SIZE 9
 #define TABLE_START_POSITION_X 25

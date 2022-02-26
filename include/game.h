@@ -9,7 +9,7 @@ class Game
 {
 private:
 	Table theTable;
-	PickupBoard pickupBoard;
+	PickupBoard pickupBoard = (theTable);
 
 private:
 	void draw(sf::RenderWindow& window);

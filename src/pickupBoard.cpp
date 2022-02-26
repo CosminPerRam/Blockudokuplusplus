@@ -8,6 +8,16 @@
 #include <SFML/Window/Mouse.hpp>
 #include <SFML/Graphics.hpp>
 
+PickupBoard::PickupBoard(Table& theTable) : theTable(theTable) 
+{
+    for (int i = 0; i < 3; i++)
+    {
+        pickupableBlocks[i] = new Block(getRandomBlock());
+
+        pickupableAreas[i] = { PICKUP_START_POSITION_Y + BoardHeight * i, PICKUP_START_POSITION_X, BoardHeight, BoardHeight };
+    }
+}
+
 bool PickupBoard::anyBlocksLeft() {
 	for (unsigned i = 0; i < 3; i++) {
 		if (pickupableBlocks[i] != nullptr)
@@ -15,6 +25,11 @@ bool PickupBoard::anyBlocksLeft() {
 	}
 
 	return false;
+}
+
+bool PickupBoard::canBlockBePlaced(Block& theBlock) {
+
+    return false;
 }
 
 void PickupBoard::draw(sf::RenderWindow& window)
@@ -42,7 +57,7 @@ void PickupBoard::draw(sf::RenderWindow& window)
 
     for (float i = 0; i < 3; i++) {
         if (pickupableBlocks[i] != nullptr) {
-            if (pickedUp == i) {
+            if (pickedUpIndex == i) {
                 pickupableBlocks[i]->setScale(0.9);
                 pickupableBlocks[i]->setPosition(pickedUpPosition);
             }
@@ -71,9 +86,12 @@ void PickupBoard::pollEvent(sf::RenderWindow& window, sf::Event& theEvent)
 {
     sf::Vector2f mousePosition = window.mapPixelToCoords(sf::Mouse::getPosition(window));
 
-    if (pickedUp != -1) {
+    if (pickedUpIndex != -1) {
         pickedUpPosition = mousePosition;
-        std::cout << mousePosition.x << " " << mousePosition.y << std::endl;
+        std::cout << mousePosition.x << " " << mousePosition.y << ": ";
+
+        pickedUpPreviewCoords = theTable.previewBlock(*pickupableBlocks[pickedUpIndex], mousePosition);
+        std::cout << pickedUpPreviewCoords.x << " " << pickedUpPreviewCoords.y << std::endl;
     }
     else {
         if (theEvent.type == sf::Event::MouseButtonPressed && theEvent.mouseButton.button == sf::Mouse::Left) {
@@ -81,14 +99,25 @@ void PickupBoard::pollEvent(sf::RenderWindow& window, sf::Event& theEvent)
                 if (pickupableAreas[i].contains({ (int)mousePosition.x, (int)mousePosition.y }))
                 {
                     pickedUpPosition = mousePosition; //if this werent to be here, the first frame would be rendered on the last position remembered
-                    pickedUp = i;
+                    pickedUpIndex = i;
                 }
             }
         }
     }
     
     if (theEvent.type == sf::Event::MouseButtonReleased && theEvent.mouseButton.button == sf::Mouse::Left) {
-        if (pickedUp != -1)
-            pickedUp = -1;
+        if (pickedUpIndex != -1)
+        {
+            if (pickedUpPreviewCoords.x != -1 || pickedUpPreviewCoords.y != -1) {
+                theTable.applyBlock(*pickupableBlocks[pickedUpIndex], pickedUpPreviewCoords);
+
+                delete pickupableBlocks[pickedUpIndex];
+                pickupableBlocks[pickedUpIndex] = nullptr;
+
+                pickedUpPreviewCoords = { -1, -1 };
+            }
+
+            pickedUpIndex = -1;
+        }
     }
 }
