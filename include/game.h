@@ -13,7 +13,7 @@ private:
 
 private:
 	void draw(sf::RenderWindow& window);
-	void pollEvent(sf::Event& theEvent);
+	void pollEvent(sf::RenderWindow& window, sf::Event& theEvent);
 
 public:
 	void start();

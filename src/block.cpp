@@ -17,6 +17,10 @@ const std::vector<std::vector<int>>& Block::getStructure() {
 	return this->structure;
 }
 
+const float Block::getScale() {
+	return this->scale;
+}
+
 void Block::setScale(float scale) {
 	this->scale = scale;
 }

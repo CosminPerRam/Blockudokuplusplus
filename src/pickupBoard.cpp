@@ -1,10 +1,12 @@
 
 #include "pickupBoard.h"
 
-#include "spacing.h"
 #include "colors.h"
 
 #include <SFML/Graphics/VertexArray.hpp>
+#include <SFML/Window/Event.hpp>
+#include <SFML/Window/Mouse.hpp>
+#include <SFML/Graphics.hpp>
 
 bool PickupBoard::anyBlocksLeft() {
 	for (unsigned i = 0; i < 3; i++) {
@@ -17,10 +19,6 @@ bool PickupBoard::anyBlocksLeft() {
 
 void PickupBoard::draw(sf::RenderWindow& window)
 {
-	sf::Vector2f startPosition = { PICKUP_START_POSITION_X, PICKUP_START_POSITION_Y };
-
-	unsigned BoardLength = CELL_SPACING * 9, BoardHeight = CELL_SPACING * 3;
-
     sf::VertexArray borders(sf::Lines, 2 * 2 + 4 * 2);
 
     for (unsigned i = 0; i < 2; i++) {
@@ -45,18 +43,52 @@ void PickupBoard::draw(sf::RenderWindow& window)
     for (float i = 0; i < 3; i++) {
         if (pickupableBlocks[i] != nullptr) {
             if (pickedUp == i) {
-
+                pickupableBlocks[i]->setScale(0.9);
+                pickupableBlocks[i]->setPosition(pickedUpPosition);
             }
             else {
-                pickupableBlocks[i]->setScale(0.8);
-                pickupableBlocks[i]->setPosition({ PICKUP_START_POSITION_Y + BoardHeight * i, PICKUP_START_POSITION_X });
-                pickupableBlocks[i]->draw(window);
+                pickupableBlocks[i]->setScale(0.85 + (3 - std::max(pickupableBlocks[i]->getStructureSize().x, pickupableBlocks[i]->getStructureSize().y)) * 0.15);
+                pickupableBlocks[i]->setPosition({ PICKUP_START_POSITION_Y + BoardHeight * i,
+                    PICKUP_START_POSITION_X});
+            }
+
+            pickupableBlocks[i]->draw(window);
+        }
+    }
+
+    /*
+    for (unsigned i = 0; i < 3; i++) {
+        sf::RectangleShape s;
+        s.setPosition({(float)pickupableAreas[i].left, (float)pickupableAreas[i].top});
+        s.setSize({ (float)pickupableAreas[i].width, (float)pickupableAreas[i].height});
+        s.setFillColor({255,0,0,100});
+
+        window.draw(s);
+    }*/
+}
+
+void PickupBoard::pollEvent(sf::RenderWindow& window, sf::Event& theEvent)
+{
+    sf::Vector2f mousePosition = window.mapPixelToCoords(sf::Mouse::getPosition(window));
+
+    if (pickedUp != -1) {
+        pickedUpPosition = mousePosition;
+        std::cout << mousePosition.x << " " << mousePosition.y << std::endl;
+    }
+    else {
+        if (theEvent.type == sf::Event::MouseButtonPressed && theEvent.mouseButton.button == sf::Mouse::Left) {
+            for (unsigned i = 0; i < 3; i++) {
+                if (pickupableAreas[i].contains({ (int)mousePosition.x, (int)mousePosition.y }))
+                {
+                    pickedUpPosition = mousePosition; //if this werent to be here, the first frame would be rendered on the last position remembered
+                    pickedUp = i;
+                }
             }
         }
     }
-}
-
-void PickupBoard::pollEvent(sf::Event& theEvent)
-{
-
+    
+    if (theEvent.type == sf::Event::MouseButtonReleased && theEvent.mouseButton.button == sf::Mouse::Left) {
+        if (pickedUp != -1)
+            pickedUp = -1;
+    }
 }

@@ -11,5 +11,5 @@ public:
 class Eventer
 {
 public:
-	virtual void pollEvent(sf::Event& theEvent) = 0;
+	virtual void pollEvent(sf::RenderWindow& window, sf::Event& theEvent) = 0;
 };

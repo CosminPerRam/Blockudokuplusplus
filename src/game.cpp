@@ -8,8 +8,8 @@ void Game::draw(sf::RenderWindow& window) {
     pickupBoard.draw(window);
 }
 
-void Game::pollEvent(sf::Event &theEvent) {
-
+void Game::pollEvent(sf::RenderWindow& window, sf::Event &theEvent) {
+    pickupBoard.pollEvent(window, theEvent);
 }
 
 void Game::start() {
@@ -25,7 +25,7 @@ void Game::start() {
             if (event.type == sf::Event::Closed)
                 window.close();
 
-            this->pollEvent(event);
+            this->pollEvent(window, event);
         }
 
         window.clear(sf::Color(255, 255, 255));
