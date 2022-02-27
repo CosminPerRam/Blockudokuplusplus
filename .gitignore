@@ -3,4 +3,5 @@
 /Debug/*
 /Release/*
 
-/libraries/SFML-2.5.1/*
+/libraries/*
+*.txt

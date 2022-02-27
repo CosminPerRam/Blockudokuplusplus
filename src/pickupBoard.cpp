@@ -38,7 +38,7 @@ bool PickupBoard::canAnyBlocksBePlaced() {
             pickupableBlocks[i]->setOpacity(255);
         }
         else
-            pickupableBlocks[i]->setOpacity(160);
+            pickupableBlocks[i]->setOpacity(128);
     }
 
     return canAnyBePlaced;

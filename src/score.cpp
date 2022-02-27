@@ -3,6 +3,7 @@
 
 #include "spacing.h"
 #include "colors.h"
+#include "utilities.h"
 
 Score::Score() {
 	theFont.loadFromFile("resources/font.ttf");
@@ -27,7 +28,7 @@ void Score::draw(sf::RenderWindow& window) {
 	}
 	else {
 		std::string endGameStatsString = "Game lost, stats: \n Score: " + std::to_string(score) +
-			"\n Local best: " +
+			"\n Local best: " + std::to_string(localBest) +
 			"\n Network best: " +
 			"\n Blocks used: " + std::to_string(placed) +
 			"\n Squares: " + std::to_string(completionSquares) +
@@ -49,6 +50,12 @@ void Score::draw(sf::RenderWindow& window) {
 void Score::setGameLost() {
 	gameLost = true;
 	timePlayed = theClock.getElapsedTime().asSeconds();
+
+	auto stream = files::getFileContents("resources/userData.txt");
+	stream >> localBest;
+
+	if (score > localBest)
+		files::writeToFile(std::to_string(score), "resources/userData.txt");
 }
 
 bool Score::getGameState() {

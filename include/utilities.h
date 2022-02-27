@@ -1,5 +1,7 @@
 #pragma once
 
+#include <sstream>
+
 namespace trueRandom
 {
 	int getNumberInBetween(unsigned a, unsigned b);
@@ -7,5 +9,7 @@ namespace trueRandom
 
 namespace files
 {
+	std::stringstream getFileContents(const std::string& fileName);
 
+	void writeToFile(const std::string& text, const std::string& fileName, bool overwrite = true);
 }
