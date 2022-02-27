@@ -1,10 +1,10 @@
 
-#include <SFML/Window/Event.hpp>
-#include <SFML/Graphics/RenderWindow.hpp>
-
 #include "table.h"
 #include "pickupBoard.h"
 #include "score.h"
+
+#include <SFML/Window/Event.hpp>
+#include <SFML/Graphics/RenderWindow.hpp>
 
 class Game
 {
@@ -18,5 +18,7 @@ private:
 	void pollEvent(sf::RenderWindow& window, sf::Event& theEvent);
 
 public:
+	Game();
+
 	void start();
 };

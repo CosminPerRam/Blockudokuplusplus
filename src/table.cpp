@@ -1,11 +1,11 @@
 
 #include "table.h"
+#include "colors.h"
+#include "spacing.h"
+#include "audio.h"
 
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/Rect.hpp>
-
-#include "colors.h"
-#include "spacing.h"
 
 Table::Table(Score& theScore) : theScore(theScore)
 {
@@ -28,7 +28,7 @@ sf::Vector2i Table::mousePositionToCellPosition(const sf::Vector2f& mousePositio
     return { -1, -1 };
 }
 
-void Table::verifyCompletetion() {
+bool Table::checkCompletetion() {
     std::vector<sf::Vector2u> completedBoxes;
     std::vector<unsigned> completedHorizontalLines;
     std::vector<unsigned> completedVerticalLines;
@@ -102,6 +102,14 @@ void Table::verifyCompletetion() {
 
         theScore.addCompletionLine();
     }
+
+    if (!completedBoxes.empty() || !completedVerticalLines.empty() || !completedHorizontalLines.empty())
+    {
+        Audio::play(Audio::effect::Completetion);
+        return true;
+    }
+
+    return false;
 }
 
 void Table::applyBlock(Block& theBlock, const sf::Vector2i& tableCellCoords)
@@ -117,7 +125,8 @@ void Table::applyBlock(Block& theBlock, const sf::Vector2i& tableCellCoords)
         }
     }
 
-    verifyCompletetion();
+    if (!checkCompletetion())
+        Audio::play(Audio::effect::GoodPlacement);
 }
 
 sf::Vector2i Table::previewBlock(Block& theHoldingBlock, const sf::Vector2f& mousePosition)
@@ -265,55 +274,3 @@ void Table::draw(sf::RenderWindow& window)
 
     //DRAW GRID END
 }
-
-/*
-//blocks
-    for (unsigned i = 0; i < 3; i++) {
-        for (unsigned j = 0; j < 3; j++) {
-            bool isBlockFull = true;
-            for (unsigned m = 0; m < 3; m++) {
-                for (unsigned n = 0; n < 3; n++) {
-                    if (cellTable[i * 3 + m][j * 3 + n] == cell::empty)
-                        isBlockFull = false;
-                }
-            }
-
-            if (isBlockFull) {
-                for (unsigned m = 0; m < 3; m++) {
-                    for (unsigned n = 0; n < 3; n++)
-                        cellTable[i * 3 + m][j * 3 + n] = cell::empty;
-                }
-
-                theScore.addCompletionSquare();
-            }
-        }
-    }
-
-    //lines
-    for (unsigned i = 0; i < 9; i++) {
-        for (unsigned j = 0; j < 9; j++) {
-            bool isVerticalLineFull = true, isHorizontalLineFull = true;
-            for (unsigned m = 0; m < 9; m++) {
-                if (cellTable[i][m] == cell::empty)
-                    isHorizontalLineFull = false;
-
-                if (cellTable[m][j] == cell::empty)
-                    isVerticalLineFull = false;
-            }
-
-            if (isVerticalLineFull) {
-                for (unsigned m = 0; m < 9; m++)
-                    cellTable[m][j] = cell::empty;
-
-                theScore.addCompletionLine();
-            }
-
-            if (isHorizontalLineFull) {
-                for (unsigned m = 0; m < 9; m++)
-                    cellTable[i][m] = cell::empty;
-
-                theScore.addCompletionLine();
-            }
-        }
-    }
-*/

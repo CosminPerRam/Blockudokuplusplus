@@ -1,8 +1,8 @@
 #pragma once
 
-#include <vector>
-
 #include "impl.h"
+
+#include <vector>
 
 class Block : Drawable
 {

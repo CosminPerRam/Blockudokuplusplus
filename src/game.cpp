@@ -1,9 +1,13 @@
 
 #include "game.h"
-
 #include "spacing.h"
+#include "audio.h"
 
 #include <SFML/Graphics/RenderWindow.hpp>
+
+Game::Game() {
+    Audio::initialize();
+}
 
 void Game::draw(sf::RenderWindow& window) {
     theScore.draw(window);

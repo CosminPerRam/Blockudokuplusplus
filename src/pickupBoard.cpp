@@ -1,7 +1,7 @@
 
 #include "pickupBoard.h"
-
 #include "colors.h"
+#include "audio.h"
 
 #include <SFML/Graphics/VertexArray.hpp>
 #include <SFML/Window/Event.hpp>
@@ -128,6 +128,8 @@ void PickupBoard::pollEvent(sf::RenderWindow& window, sf::Event& theEvent)
 
                 pickedUpPreviewCoords = { -1, -1 };
             }
+            else
+                Audio::play(Audio::effect::BadPlacement);
 
             pickedUpIndex = -1;
         }

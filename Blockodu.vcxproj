@@ -58,12 +58,14 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)\libraries\SFML-2.5.1\include\;$(SolutionDir)\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <LanguageStandard>stdcpp14</LanguageStandard>
+      <LanguageStandard_C>Default</LanguageStandard_C>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)\libraries\SFML-2.5.1\lib\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>winmm.lib;sfml-system-s-d.lib;opengl32.lib;gdi32.lib;sfml-window-s-d.lib;freetype.lib;sfml-graphics-s-d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>winmm.lib;sfml-system-s-d.lib;ws2_32.lib;sfml-network-s-d.lib;openal32.lib;flac.lib;vorbisenc.lib;vorbisfile.lib;vorbis.lib;ogg.lib;sfml-audio-s-d.lib;opengl32.lib;gdi32.lib;sfml-window-s-d.lib;freetype.lib;sfml-graphics-s-d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -78,6 +80,8 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <FloatingPointModel>Fast</FloatingPointModel>
+      <LanguageStandard>stdcpp14</LanguageStandard>
+      <LanguageStandard_C>Default</LanguageStandard_C>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -89,6 +93,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="include\audio.cpp" />
     <ClCompile Include="src\block.cpp" />
     <ClCompile Include="src\game.cpp" />
     <ClCompile Include="src\main.cpp" />
@@ -108,6 +113,7 @@
     <ClInclude Include="include\impl.h" />
     <ClInclude Include="include\pickupBoard.h" />
     <ClInclude Include="include\score.h" />
+    <ClInclude Include="include\audio.h" />
     <ClInclude Include="include\spacing.h" />
     <ClInclude Include="include\table.h" />
     <ClInclude Include="include\utilities.h" />

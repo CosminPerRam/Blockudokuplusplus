@@ -1,11 +1,10 @@
 
 #include "block.h"
-
-#include <SFML/Graphics/RectangleShape.hpp>
-
 #include "spacing.h"
 #include "colors.h"
 #include "utilities.h"
+
+#include <SFML/Graphics/RectangleShape.hpp>
 
 const sf::Vector2u Block::getStructureSize() {
 	return this->structureSize;

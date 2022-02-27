@@ -1,6 +1,5 @@
 
 #include "score.h"
-
 #include "spacing.h"
 #include "colors.h"
 #include "utilities.h"
