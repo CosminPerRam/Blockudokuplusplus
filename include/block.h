@@ -8,7 +8,7 @@ class Block : Drawable
 {
 private:
 	const std::vector<std::vector<int>>& structure;
-	sf::Vector2f structureSize;
+	sf::Vector2u structureSize;
 
 	sf::Vector2f position = { 10, 10 };
 	float scale = 1;
@@ -17,7 +17,7 @@ private:
 public:
 	Block(std::vector<std::vector<int>>& structure) : structure(structure)
 	{
-		float h = structure.size(), w = 1;
+		unsigned h = structure.size(), w = 1;
 
 		for (unsigned i = 0; i < structure.size(); i++) {
 			if (structure[i].size() > w)
@@ -27,13 +27,13 @@ public:
 		structureSize = { h, w };
 	}
 	
-	void setScale(float scale);
+	void setScale(const float& scale);
 	void setPosition(const sf::Vector2f& position);
 
-	void setOpacity(unsigned opacity);
+	void setOpacity(const unsigned& opacity);
 
 	const std::vector<std::vector<int>>& getStructure();
-	const sf::Vector2f getStructureSize();
+	const sf::Vector2u getStructureSize();
 
 	const float getScale();
 

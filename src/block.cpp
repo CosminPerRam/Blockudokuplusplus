@@ -7,9 +7,7 @@
 #include "colors.h"
 #include "utilities.h"
 
-#include <iostream>
-
-const sf::Vector2f Block::getStructureSize() {
+const sf::Vector2u Block::getStructureSize() {
 	return this->structureSize;
 }
 
@@ -21,7 +19,7 @@ const float Block::getScale() {
 	return this->scale;
 }
 
-void Block::setScale(float scale) {
+void Block::setScale(const float& scale) {
 	this->scale = scale;
 }
 
@@ -29,7 +27,7 @@ void Block::setPosition(const sf::Vector2f& position) {
 	this->position = position;
 }
 
-void Block::setOpacity(unsigned opacity) {
+void Block::setOpacity(const unsigned& opacity) {
 	this->opacity = opacity;
 }
 

@@ -1,6 +1,8 @@
 
 #include "game.h"
 
+#include "spacing.h"
+
 #include <SFML/Graphics/RenderWindow.hpp>
 
 void Game::draw(sf::RenderWindow& window) {
@@ -13,11 +15,12 @@ void Game::draw(sf::RenderWindow& window) {
 }
 
 void Game::pollEvent(sf::RenderWindow& window, sf::Event &theEvent) {
-    pickupBoard.pollEvent(window, theEvent);
+    if(!theScore.getGameState())
+        pickupBoard.pollEvent(window, theEvent);
 }
 
 void Game::start() {
-    sf::RenderWindow window(sf::VideoMode(340, 470), "Blockudoku");
+    sf::RenderWindow window(sf::VideoMode(WINDOW_HEIGHT, WINDOW_WIDTH), "Blockudoku");
 
     window.setVerticalSyncEnabled(true);
 

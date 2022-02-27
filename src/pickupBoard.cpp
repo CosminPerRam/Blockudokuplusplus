@@ -6,7 +6,6 @@
 #include <SFML/Graphics/VertexArray.hpp>
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/Mouse.hpp>
-#include <SFML/Graphics.hpp>
 
 PickupBoard::PickupBoard(Table& theTable, Score& theScore) : theTable(theTable), theScore(theScore)
 {
@@ -71,15 +70,15 @@ void PickupBoard::draw(sf::RenderWindow& window)
 
     window.draw(borders);
 
-    for (float i = 0; i < 3; i++) {
+    for (unsigned i = 0; i < 3; i++) {
         if (pickupableBlocks[i] != nullptr) {
             if (pickedUpIndex == i) {
-                pickupableBlocks[i]->setScale(0.9);
+                pickupableBlocks[i]->setScale(0.9f);
                 pickupableBlocks[i]->setPosition(pickedUpPosition);
             }
             else {
-                pickupableBlocks[i]->setScale(0.85 + (3 - std::max(pickupableBlocks[i]->getStructureSize().x, pickupableBlocks[i]->getStructureSize().y)) * 0.15);
-                pickupableBlocks[i]->setPosition({ PICKUP_START_POSITION_Y + BoardHeight * i,
+                pickupableBlocks[i]->setScale(0.85 + (3 - (int)std::max(pickupableBlocks[i]->getStructureSize().x, pickupableBlocks[i]->getStructureSize().y)) * 0.15);
+                pickupableBlocks[i]->setPosition({ PICKUP_START_POSITION_Y + BoardHeight * i * 1.f,
                     PICKUP_START_POSITION_X});
             }
 

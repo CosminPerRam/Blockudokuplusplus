@@ -10,7 +10,6 @@
 #include <SFML/Graphics/Rect.hpp>
 
 #include <array>
-#include <iostream>
 
 class PickupBoard : Drawable, Eventer
 {
