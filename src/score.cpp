@@ -12,17 +12,29 @@ Score::Score() {
 }
 
 void Score::draw(sf::RenderWindow& window) {
-	theText.setPosition({ SCORE_START_POSITION_X, SCORE_START_POSITION_Y });
-	theText.setString("Score: " + std::to_string(score) + "\tPlaced: " + std::to_string(placed));
-	theText.setCharacterSize(18);
+	if (!gameLost) {
+		theText.setPosition({ SCORE_START_POSITION_X, SCORE_START_POSITION_Y });
+		theText.setString("Score: " + std::to_string(score) + "\tPlaced: " + std::to_string(placed));
+		theText.setCharacterSize(18);
 
-	window.draw(theText);
+		window.draw(theText);
 
-	theText.setPosition({ SCORE_START_POSITION2_X, SCORE_START_POSITION2_Y });
-	theText.setString("Squares: " + std::to_string(completionSquares) + "\tLines: " + std::to_string(completionLines));
-	theText.setCharacterSize(18);
+		theText.setPosition({ SCORE_START_POSITION2_X, SCORE_START_POSITION2_Y });
+		theText.setString("Squares: " + std::to_string(completionSquares) + "\tLines: " + std::to_string(completionLines));
+		theText.setCharacterSize(18);
 
-	window.draw(theText);
+		window.draw(theText);
+	}
+	else {
+		theText.setPosition({ SCORE_START_POSITION_X, SCORE_START_POSITION_Y });
+		theText.setString("Game lost, score: " + std::to_string(score) + 
+						"\nPlaced: " + std::to_string(placed) +
+						"\nSquares: " + std::to_string(completionSquares) +
+						"\nLines: " + std::to_string(completionLines));
+		theText.setCharacterSize(18);
+
+		window.draw(theText);
+	}
 }
 
 void Score::setGameLost() {

@@ -151,6 +151,30 @@ sf::Vector2i Table::previewBlock(Block& theHoldingBlock, const sf::Vector2f& mou
     return cellCoords;
 }
 
+bool Table::canBlockBePlaced(Block& theBlock)
+{
+    auto blockStructure = theBlock.getStructure();
+    auto blockStructureSize = theBlock.getStructureSize();
+
+    for (unsigned pX = 0; pX < (9 - blockStructureSize.x) + 1; pX++) {
+        for (unsigned pY = 0; pY < (9 - blockStructureSize.y) + 1; pY++) {
+            bool canBePlaced = true;
+
+            for (unsigned bX = 0; bX < blockStructureSize.x; bX++) {
+                for (unsigned bY = 0; bY < blockStructureSize.y; bY++) {
+                    if (cellTable[pX + bX][pY + bY] == cell::occupied && blockStructure[bX][bY] == cell::occupied)
+                        canBePlaced = false;
+                }
+            }
+
+            if (canBePlaced)
+                return true;
+        }
+    }
+
+    return false;
+}
+
 void Table::draw(sf::RenderWindow& window)
 {
     sf::Vector2f startPosition = { TABLE_START_POSITION_X, TABLE_START_POSITION_Y };

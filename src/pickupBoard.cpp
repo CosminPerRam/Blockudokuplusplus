@@ -10,13 +10,13 @@
 
 PickupBoard::PickupBoard(Table& theTable, Score& theScore) : theTable(theTable), theScore(theScore)
 {
-    for (int i = 0; i < 3; i++)
-        pickupableAreas[i] = { PICKUP_START_POSITION_Y + BoardHeight * i, PICKUP_START_POSITION_X, BoardHeight, BoardHeight };
-
     generateBlocks();
 }
 
 void PickupBoard::generateBlocks() {
+    for (int i = 0; i < 3; i++)
+        pickupableAreas[i] = { PICKUP_START_POSITION_Y + BoardHeight * i, PICKUP_START_POSITION_X, BoardHeight, BoardHeight };
+
     for (int i = 0; i < 3; i++)
         pickupableBlocks[i] = new Block(getRandomBlock());
 }
@@ -30,9 +30,22 @@ bool PickupBoard::anyBlocksLeft() {
 	return false;
 }
 
-bool PickupBoard::canBlocksBePlaced() {
+bool PickupBoard::canAnyBlocksBePlaced() {
+    bool canAnyBePlaced = false;
 
-    return false;
+    for (unsigned i = 0; i < 3; i++) {
+        if (pickupableBlocks[i] == nullptr)
+            continue;
+
+        if (theTable.canBlockBePlaced(*pickupableBlocks[i])) {
+            canAnyBePlaced = true;
+            pickupableBlocks[i]->setOpacity(255);
+        }
+        else
+            pickupableBlocks[i]->setOpacity(160);
+    }
+
+    return canAnyBePlaced;
 }
 
 void PickupBoard::draw(sf::RenderWindow& window)
@@ -118,6 +131,9 @@ void PickupBoard::pollEvent(sf::RenderWindow& window, sf::Event& theEvent)
 
                 if (!anyBlocksLeft())
                     generateBlocks();
+
+                if (!canAnyBlocksBePlaced())
+                    theScore.setGameLost();
 
                 pickedUpPreviewCoords = { -1, -1 };
             }

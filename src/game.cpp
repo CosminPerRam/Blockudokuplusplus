@@ -4,9 +4,12 @@
 #include <SFML/Graphics/RenderWindow.hpp>
 
 void Game::draw(sf::RenderWindow& window) {
-    theTable.draw(window);
-    pickupBoard.draw(window);
     theScore.draw(window);
+
+    if (!theScore.getGameState()) {
+        theTable.draw(window);
+        pickupBoard.draw(window);
+    }
 }
 
 void Game::pollEvent(sf::RenderWindow& window, sf::Event &theEvent) {

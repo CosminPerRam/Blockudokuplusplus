@@ -29,11 +29,16 @@ void Block::setPosition(const sf::Vector2f& position) {
 	this->position = position;
 }
 
+void Block::setOpacity(unsigned opacity) {
+	this->opacity = opacity;
+}
+
 void Block::draw(sf::RenderWindow& window) {
 	sf::RectangleShape cell;
 	cell.setSize({ CELL_SPACING, CELL_SPACING });
 	cell.setScale({ this->scale , this->scale });
 	cell.setFillColor(COLOR_BLUE);
+	cell.setFillColor({ cell.getFillColor().r, cell.getFillColor().g, cell.getFillColor().b, opacity });
 
 	sf::VertexArray borders(sf::Lines, 4 * 2);
 

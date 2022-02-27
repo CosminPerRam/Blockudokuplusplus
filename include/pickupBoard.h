@@ -31,7 +31,7 @@ private:
 	void generateBlocks();
 
 	bool anyBlocksLeft();
-	bool canBlocksBePlaced();
+	bool canAnyBlocksBePlaced();
 
 public:
 	PickupBoard(Table& theTable, Score& theScore);
