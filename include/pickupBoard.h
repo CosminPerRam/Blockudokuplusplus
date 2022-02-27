@@ -4,6 +4,7 @@
 #include "block.h"
 #include "spacing.h"
 #include "table.h"
+#include "score.h"
 
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Graphics/Rect.hpp>
@@ -25,13 +26,15 @@ private:
 	const int BoardLength = CELL_SPACING * 9, BoardHeight = CELL_SPACING * 3;
 
 	Table& theTable;
+	Score& theScore;
+
+	void generateBlocks();
 
 	bool anyBlocksLeft();
-
-	bool canBlockBePlaced(Block& theBlock);
+	bool canBlocksBePlaced();
 
 public:
-	PickupBoard(Table& theTable);
+	PickupBoard(Table& theTable, Score& theScore);
 
 	void draw(sf::RenderWindow& window);
 	void pollEvent(sf::RenderWindow& window, sf::Event& theEvent);

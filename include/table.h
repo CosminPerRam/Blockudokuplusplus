@@ -2,21 +2,27 @@
 
 #include "impl.h"
 #include "block.h"
+#include "score.h"
 
 class Table : Drawable
 {
-private:
-	enum cell { empty = 0, occupied, preview};
+public:
+	enum cell { empty = 0, occupied, preview };
 
+private:
 	cell cellTable[9][9] = { empty };
+
+	Score& theScore;
 
 	sf::Vector2i previewApplyCoords;
 
 	sf::Vector2i mousePositionToCellPosition(const sf::Vector2f& mousePosition);
 
-	bool verifyCompletetion();
+	void verifyCompletetion();
 
 public:
+	Table(Score& theScore);
+
 	void draw(sf::RenderWindow& window);
 
 	void applyBlock(Block& theBlock, const sf::Vector2i& tableCellCoords);

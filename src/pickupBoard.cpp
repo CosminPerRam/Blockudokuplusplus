@@ -8,14 +8,17 @@
 #include <SFML/Window/Mouse.hpp>
 #include <SFML/Graphics.hpp>
 
-PickupBoard::PickupBoard(Table& theTable) : theTable(theTable) 
+PickupBoard::PickupBoard(Table& theTable, Score& theScore) : theTable(theTable), theScore(theScore)
 {
     for (int i = 0; i < 3; i++)
-    {
-        pickupableBlocks[i] = new Block(getRandomBlock());
-
         pickupableAreas[i] = { PICKUP_START_POSITION_Y + BoardHeight * i, PICKUP_START_POSITION_X, BoardHeight, BoardHeight };
-    }
+
+    generateBlocks();
+}
+
+void PickupBoard::generateBlocks() {
+    for (int i = 0; i < 3; i++)
+        pickupableBlocks[i] = new Block(getRandomBlock());
 }
 
 bool PickupBoard::anyBlocksLeft() {
@@ -27,7 +30,7 @@ bool PickupBoard::anyBlocksLeft() {
 	return false;
 }
 
-bool PickupBoard::canBlockBePlaced(Block& theBlock) {
+bool PickupBoard::canBlocksBePlaced() {
 
     return false;
 }
@@ -93,7 +96,7 @@ void PickupBoard::pollEvent(sf::RenderWindow& window, sf::Event& theEvent)
     else {
         if (theEvent.type == sf::Event::MouseButtonPressed && theEvent.mouseButton.button == sf::Mouse::Left) {
             for (unsigned i = 0; i < 3; i++) {
-                if (pickupableAreas[i].contains({ (int)mousePosition.x, (int)mousePosition.y }))
+                if (pickupableAreas[i].contains({ (int)mousePosition.x, (int)mousePosition.y }) && pickupableBlocks[i] != nullptr)
                 {
                     pickedUpPosition = mousePosition; //if this werent to be here, the first frame would be rendered on the last position remembered
                     pickedUpIndex = i;
@@ -108,8 +111,13 @@ void PickupBoard::pollEvent(sf::RenderWindow& window, sf::Event& theEvent)
             if (pickedUpPreviewCoords.x != -1 || pickedUpPreviewCoords.y != -1) {
                 theTable.applyBlock(*pickupableBlocks[pickedUpIndex], pickedUpPreviewCoords);
 
+                theScore.addPiecePlaced();
+
                 delete pickupableBlocks[pickedUpIndex];
                 pickupableBlocks[pickedUpIndex] = nullptr;
+
+                if (!anyBlocksLeft())
+                    generateBlocks();
 
                 pickedUpPreviewCoords = { -1, -1 };
             }

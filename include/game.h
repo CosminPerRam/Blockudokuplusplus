@@ -4,12 +4,14 @@
 
 #include "table.h"
 #include "pickupBoard.h"
+#include "score.h"
 
 class Game
 {
 private:
-	Table theTable;
-	PickupBoard pickupBoard = (theTable);
+	Score theScore;
+	Table theTable = (theScore);
+	PickupBoard pickupBoard = PickupBoard(theTable, theScore);
 
 private:
 	void draw(sf::RenderWindow& window);

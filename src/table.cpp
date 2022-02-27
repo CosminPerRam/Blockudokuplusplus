@@ -7,6 +7,11 @@
 #include "colors.h"
 #include "spacing.h"
 
+Table::Table(Score& theScore) : theScore(theScore)
+{
+
+}
+
 sf::Vector2i Table::mousePositionToCellPosition(const sf::Vector2f& mousePosition)
 {
     sf::Vector2f startPosition = { TABLE_START_POSITION_X, TABLE_START_POSITION_Y };
@@ -23,9 +28,69 @@ sf::Vector2i Table::mousePositionToCellPosition(const sf::Vector2f& mousePositio
     return { -1, -1 };
 }
 
-bool Table::verifyCompletetion() {
+void Table::verifyCompletetion() {
+    std::vector<sf::Vector2u> completedBoxes;
+    std::vector<unsigned> completedHorizontalLines;
+    std::vector<unsigned> completedVerticalLines;
 
-    return false;
+    //blocks
+    for (unsigned i = 0; i < 3; i++) {
+        for (unsigned j = 0; j < 3; j++) {
+            bool isBlockFull = true;
+            for (unsigned m = 0; m < 3; m++) {
+                for (unsigned n = 0; n < 3; n++) {
+                    if (cellTable[i * 3 + m][j * 3 + n] == cell::empty)
+                        isBlockFull = false;
+                }
+            }
+
+            if (isBlockFull)
+                completedBoxes.emplace_back(sf::Vector2u{i, j});
+        }
+    }
+    
+    //lines
+    for (unsigned i = 0; i < 9; i++) {
+        for (unsigned j = 0; j < 9; j++) {
+            bool isVerticalLineFull = true, isHorizontalLineFull = true;
+            for (unsigned m = 0; m < 9; m++) {
+                if (cellTable[i][m] == cell::empty)
+                    isHorizontalLineFull = false;
+
+                if (cellTable[m][j] == cell::empty)
+                    isVerticalLineFull = false;
+            }
+
+            if (isVerticalLineFull)
+                completedVerticalLines.emplace_back(j);
+
+            if (isHorizontalLineFull)
+                completedHorizontalLines.emplace_back(i);
+        }
+    }
+
+    for (auto& box : completedBoxes) {
+        for (unsigned m = 0; m < 3; m++) {
+            for (unsigned n = 0; n < 3; n++)
+                cellTable[box.x * 3 + m][box.y * 3 + n] = cell::empty;
+        }
+
+        theScore.addCompletionSquare();
+    }
+
+    for (unsigned j : completedVerticalLines) {
+        for (unsigned m = 0; m < 9; m++)
+            cellTable[m][j] = cell::empty;
+
+        theScore.addCompletionLine();
+    }
+
+    for (unsigned i : completedHorizontalLines) {
+        for (unsigned m = 0; m < 9; m++)
+            cellTable[i][m] = cell::empty;
+
+        theScore.addCompletionLine();
+    }
 }
 
 void Table::applyBlock(Block& theBlock, const sf::Vector2i& tableCellCoords)
@@ -40,6 +105,8 @@ void Table::applyBlock(Block& theBlock, const sf::Vector2i& tableCellCoords)
                 cellTable[tableCellCoords.x + x][tableCellCoords.y + y] = cell::occupied;
         }
     }
+
+    verifyCompletetion();
 }
 
 sf::Vector2i Table::previewBlock(Block& theHoldingBlock, const sf::Vector2f& mousePosition)
@@ -67,27 +134,17 @@ sf::Vector2i Table::previewBlock(Block& theHoldingBlock, const sf::Vector2f& mou
 
     auto blockStructure = theHoldingBlock.getStructure();
 
-    bool placeable = true;
     for (unsigned x = 0; x < blockStructureSize.x; x++) {
         for (unsigned y = 0; y < blockStructureSize.y; y++) {
-            if (blockStructure[x][y] == cell::occupied) {
-                if (cellTable[cellCoords.x + x][cellCoords.y + y] == cell::occupied) {
-                    placeable = false;
-                    break;
-                }
-            }
+            if (cellTable[cellCoords.x + x][cellCoords.y + y] == cell::occupied && blockStructure[x][y] == cell::occupied)
+                return { -1, -1 };
         }
-
-        if (!placeable)
-            break;
     }
 
-    if (placeable) {
-        for (unsigned x = 0; x < blockStructureSize.x; x++) {
-            for (unsigned y = 0; y < blockStructureSize.y; y++) {
-                if (blockStructure[x][y] == cell::occupied && cellTable[cellCoords.x + x][cellCoords.y + y] != cell::occupied)
-                    cellTable[cellCoords.x + x][cellCoords.y + y] = cell::preview;
-            }
+    for (unsigned x = 0; x < blockStructureSize.x; x++) {
+        for (unsigned y = 0; y < blockStructureSize.y; y++) {
+            if (blockStructure[x][y] == cell::occupied && cellTable[cellCoords.x + x][cellCoords.y + y] != cell::occupied)
+                cellTable[cellCoords.x + x][cellCoords.y + y] = cell::preview;
         }
     }
 
@@ -173,3 +230,55 @@ void Table::draw(sf::RenderWindow& window)
 
     //DRAW GRID END
 }
+
+/*
+//blocks
+    for (unsigned i = 0; i < 3; i++) {
+        for (unsigned j = 0; j < 3; j++) {
+            bool isBlockFull = true;
+            for (unsigned m = 0; m < 3; m++) {
+                for (unsigned n = 0; n < 3; n++) {
+                    if (cellTable[i * 3 + m][j * 3 + n] == cell::empty)
+                        isBlockFull = false;
+                }
+            }
+
+            if (isBlockFull) {
+                for (unsigned m = 0; m < 3; m++) {
+                    for (unsigned n = 0; n < 3; n++)
+                        cellTable[i * 3 + m][j * 3 + n] = cell::empty;
+                }
+
+                theScore.addCompletionSquare();
+            }
+        }
+    }
+
+    //lines
+    for (unsigned i = 0; i < 9; i++) {
+        for (unsigned j = 0; j < 9; j++) {
+            bool isVerticalLineFull = true, isHorizontalLineFull = true;
+            for (unsigned m = 0; m < 9; m++) {
+                if (cellTable[i][m] == cell::empty)
+                    isHorizontalLineFull = false;
+
+                if (cellTable[m][j] == cell::empty)
+                    isVerticalLineFull = false;
+            }
+
+            if (isVerticalLineFull) {
+                for (unsigned m = 0; m < 9; m++)
+                    cellTable[m][j] = cell::empty;
+
+                theScore.addCompletionLine();
+            }
+
+            if (isHorizontalLineFull) {
+                for (unsigned m = 0; m < 9; m++)
+                    cellTable[i][m] = cell::empty;
+
+                theScore.addCompletionLine();
+            }
+        }
+    }
+*/

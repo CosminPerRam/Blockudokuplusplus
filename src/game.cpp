@@ -6,6 +6,7 @@
 void Game::draw(sf::RenderWindow& window) {
     theTable.draw(window);
     pickupBoard.draw(window);
+    theScore.draw(window);
 }
 
 void Game::pollEvent(sf::RenderWindow& window, sf::Event &theEvent) {

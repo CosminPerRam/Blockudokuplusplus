@@ -151,6 +151,7 @@
     <ClCompile Include="src\game.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\pickupBoard.cpp" />
+    <ClCompile Include="src\score.cpp" />
     <ClCompile Include="src\table.cpp" />
     <ClCompile Include="src\utilities.cpp" />
   </ItemGroup>
@@ -164,6 +165,7 @@
     <ClInclude Include="include\game.h" />
     <ClInclude Include="include\impl.h" />
     <ClInclude Include="include\pickupBoard.h" />
+    <ClInclude Include="include\score.h" />
     <ClInclude Include="include\spacing.h" />
     <ClInclude Include="include\table.h" />
     <ClInclude Include="include\utilities.h" />
