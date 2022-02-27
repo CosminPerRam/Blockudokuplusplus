@@ -7,8 +7,6 @@
 #include "colors.h"
 #include "spacing.h"
 
-#include <iostream>
-
 Table::Table(Score& theScore) : theScore(theScore)
 {
 
@@ -83,7 +81,6 @@ void Table::verifyCompletetion() {
 
     //completed stuff
     for (auto& box : completedBoxes) {
-        std::cout << box.x << " " << box.y << std::endl;
         for (unsigned m = 0; m < 3; m++) {
             for (unsigned n = 0; n < 3; n++)
                 cellTable[box.x * 3 + m][box.y * 3 + n] = cell::empty;
@@ -93,7 +90,6 @@ void Table::verifyCompletetion() {
     }
 
     for (unsigned j : completedVerticalLines) {
-        std::cout << "V: " << j << std::endl;
         for (unsigned m = 0; m < 9; m++)
             cellTable[m][j] = cell::empty;
 
@@ -101,7 +97,6 @@ void Table::verifyCompletetion() {
     }
 
     for (unsigned i : completedHorizontalLines) {
-        std::cout << "H: " << i << std::endl;
         for (unsigned m = 0; m < 9; m++)
             cellTable[i][m] = cell::empty;
 
@@ -138,8 +133,6 @@ sf::Vector2i Table::previewBlock(Block& theHoldingBlock, const sf::Vector2f& mou
         }
     }
 
-    previewApplyCoords = cellCoords;
-
     if (cellCoords.x == -1 || cellCoords.y == -1)
         return { -1, -1 }; //first check mouse is in a cell
 
@@ -156,6 +149,8 @@ sf::Vector2i Table::previewBlock(Block& theHoldingBlock, const sf::Vector2f& mou
                 return { -1, -1 };
         }
     }
+
+    previewApplyCoords = cellCoords;
 
     for (unsigned x = 0; x < blockStructureSize.x; x++) {
         for (unsigned y = 0; y < blockStructureSize.y; y++) {

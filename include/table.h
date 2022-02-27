@@ -14,7 +14,7 @@ private:
 
 	Score& theScore;
 
-	sf::Vector2i previewApplyCoords;
+	sf::Vector2i previewApplyCoords = {-1, -1};
 
 	sf::Vector2i mousePositionToCellPosition(const sf::Vector2f& mousePosition);
 
