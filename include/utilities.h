@@ -1,6 +1,6 @@
 #pragma once
 
-namespace random
+namespace trueRandom
 {
 	int getNumberInBetween(unsigned a, unsigned b);
 }

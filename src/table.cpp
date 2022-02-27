@@ -143,12 +143,12 @@ sf::Vector2i Table::previewBlock(Block& theHoldingBlock, const sf::Vector2f& mou
     if (cellCoords.x == -1 || cellCoords.y == -1)
         return { -1, -1 }; //first check mouse is in a cell
 
-    auto blockStructureSize = theHoldingBlock.getStructureSize();
+    sf::Vector2u blockStructureSize = theHoldingBlock.getStructureSize();
 
     if (cellCoords.x + blockStructureSize.x > 9 || cellCoords.y + blockStructureSize.y > 9)
         return { -1, -1 }; //secondly, check if the holding block is not out of bounds from the cell coords
 
-    auto blockStructure = theHoldingBlock.getStructure();
+    const auto& blockStructure = theHoldingBlock.getStructure();
 
     for (unsigned x = 0; x < blockStructureSize.x; x++) {
         for (unsigned y = 0; y < blockStructureSize.y; y++) {
@@ -229,7 +229,7 @@ void Table::draw(sf::RenderWindow& window)
     sf::VertexArray minorGrid(sf::Lines, 2 * (TABLE_SIZE * 2 - 2));
 
     for (unsigned i = 0; i < TABLE_SIZE - 1; i++) {
-        float rowY = CELL_SPACING * (i + 1);
+        float rowY = CELL_SPACING * (i + 1.f);
         minorGrid[i * 2].position = { startPosition.y, rowY + startPosition.y };
         minorGrid[i * 2].color = COLOR_LIGHT_BLUE;
         minorGrid[i * 2 + 1].position = { lineLength + startPosition.y, rowY + startPosition.y };
@@ -238,7 +238,7 @@ void Table::draw(sf::RenderWindow& window)
 
     unsigned gridPositionOffset = (TABLE_SIZE - 1) * 2;
     for (unsigned i = 0; i < TABLE_SIZE - 1; i++) {
-        float rowX = CELL_SPACING * (i + 1);
+        float rowX = CELL_SPACING * (i + 1.f);
         minorGrid[gridPositionOffset + i * 2].position = { rowX + startPosition.x, startPosition.x };
         minorGrid[gridPositionOffset + i * 2].color = COLOR_LIGHT_BLUE;
         minorGrid[gridPositionOffset + i * 2 + 1].position = { rowX + startPosition.x, lineLength + startPosition.x };
@@ -250,7 +250,7 @@ void Table::draw(sf::RenderWindow& window)
     sf::VertexArray majorGrid(sf::Lines, 4 * 2 * 2);
 
     for (unsigned i = 0; i < 4; i++) {
-        float rowY = (CELL_SPACING * 3) * i;
+        float rowY = (CELL_SPACING * 3.f) * i;
         majorGrid[i * 2].position = { startPosition.y, rowY + startPosition.y };
         majorGrid[i * 2].color = COLOR_BLACK;
         majorGrid[i * 2 + 1].position = { lineLength + startPosition.y, rowY + startPosition.y };
@@ -259,7 +259,7 @@ void Table::draw(sf::RenderWindow& window)
 
     gridPositionOffset = 4 * 2;
     for (unsigned i = 0; i < 4; i++) {
-        float rowX = (CELL_SPACING * 3) * i;
+        float rowX = (CELL_SPACING * 3.f) * i;
         majorGrid[gridPositionOffset + i * 2].position = { rowX + startPosition.x, startPosition.x };
         majorGrid[gridPositionOffset + i * 2].color = COLOR_BLACK;
         majorGrid[gridPositionOffset + i * 2 + 1].position = { rowX + startPosition.x, lineLength + startPosition.x };

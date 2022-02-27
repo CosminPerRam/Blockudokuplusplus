@@ -49,7 +49,7 @@ void PickupBoard::draw(sf::RenderWindow& window)
     sf::VertexArray borders(sf::Lines, 2 * 2 + 4 * 2);
 
     for (unsigned i = 0; i < 2; i++) {
-        float rowY = BoardHeight * i;
+        float rowY = BoardHeight * i * 1.f;
         borders[i * 2].position = { startPosition.y, rowY + startPosition.x };
         borders[i * 2].color = COLOR_GRAY;
         borders[i * 2 + 1].position = { BoardLength + startPosition.y, rowY + startPosition.x };
@@ -58,7 +58,7 @@ void PickupBoard::draw(sf::RenderWindow& window)
 
     unsigned gridPositionOffset = 4;
     for (unsigned i = 0; i < 4; i++) {
-        float rowX = BoardHeight * i;
+        float rowX = BoardHeight * i * 1.f;
         borders[gridPositionOffset + i * 2].position = { rowX + startPosition.y, startPosition.x };
         borders[gridPositionOffset + i * 2].color = COLOR_GRAY;
         borders[gridPositionOffset + i * 2 + 1].position = { rowX + startPosition.y, BoardHeight + startPosition.x };
@@ -76,7 +76,7 @@ void PickupBoard::draw(sf::RenderWindow& window)
             else {
                 auto bounds = pickupableBlocks[i]->getLocalBounds();
 
-                pickupableBlocks[i]->setScale(0.85 + (3 - (int)std::max(pickupableBlocks[i]->getStructureSize().x, pickupableBlocks[i]->getStructureSize().y)) * 0.15);
+                pickupableBlocks[i]->setScale(0.85f + (3 - (int)std::max(pickupableBlocks[i]->getStructureSize().x, pickupableBlocks[i]->getStructureSize().y)) * 0.15f);
                 pickupableBlocks[i]->setPosition({ PICKUP_START_POSITION_Y + BoardHeight * i + (BoardHeight - bounds.width) / 2.f,
                     PICKUP_START_POSITION_X + (BoardHeight - bounds.height) / 2.f });
             }

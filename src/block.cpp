@@ -44,8 +44,8 @@ void Block::draw(sf::RenderWindow& window) {
 
 	sf::VertexArray borders(sf::Lines, 4 * 2);
 
-	for (float l = 0; l < structure.size(); l++) {
-		for (float c = 0; c < structure[l].size(); c++) {
+	for (unsigned l = 0; l < structure.size(); l++) {
+		for (unsigned c = 0; c < structure[l].size(); c++) {
 			if (structure[l][c] == 1) {
 				sf::Vector2f cellPosition = { position.x + CELL_SPACING * l * scale, position.y + CELL_SPACING * c * scale };
 				cell.setPosition(cellPosition);
@@ -53,7 +53,7 @@ void Block::draw(sf::RenderWindow& window) {
 				window.draw(cell);
 
 				for (unsigned i = 0; i < 2; i++) {
-					float rowY = CELL_SPACING * i;
+					float rowY = CELL_SPACING * i * 1.f;
 					borders[i * 2].position = { cellPosition.x, cellPosition.y + rowY * scale };
 					borders[i * 2].color = COLOR_BLACK;
 					borders[i * 2 + 1].position = { cellPosition.x + CELL_SPACING * scale, cellPosition.y + rowY * scale };
@@ -62,7 +62,7 @@ void Block::draw(sf::RenderWindow& window) {
 				
 				unsigned borderPositionOffset = 4;
 				for (unsigned i = 0; i < 2; i++) {
-					float rowX = CELL_SPACING * i;
+					float rowX = CELL_SPACING * i * 1.f;
 					borders[borderPositionOffset + i * 2].position = { cellPosition.x + rowX * scale, cellPosition.y };
 					borders[borderPositionOffset + i * 2].color = COLOR_BLACK;
 					borders[borderPositionOffset + i * 2 + 1].position = { cellPosition.x + rowX * scale, cellPosition.y + CELL_SPACING * scale };
@@ -124,5 +124,5 @@ Block getRandomBlock() {
 		{{1, 0}, {1, 1}, {0, 1}}  //up z reverse
 	};
 
-	return Block(structures[random::getNumberInBetween(0, structures.size() - 1)]);
+	return Block(structures[trueRandom::getNumberInBetween(0, structures.size() - 1)]);
 }
