@@ -117,5 +117,5 @@ Block getRandomBlock() {
 		{{1, 0}, {1, 1}, {0, 1}}  //up z reverse
 	};
 
-	return Block(structures[random::getNumberInBetween(0, structures.size())]);
+	return Block(structures[random::getNumberInBetween(0, structures.size() - 1)]);
 }

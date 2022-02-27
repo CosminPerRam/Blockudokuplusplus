@@ -30,14 +30,15 @@ bool Table::verifyCompletetion() {
 
 void Table::applyBlock(Block& theBlock, const sf::Vector2i& tableCellCoords)
 {
-    //wont do any verifications for the tableCellCords or the block compatibility because
-    //this function is SUPPOSED to be used ONLY with the RIGHT stuff.
+    //wont do any verifications for the tableCellCords or the block compatibility
+    //because this function is SUPPOSED to be used ONLY with the RIGHT stuff.
 
     auto structure = theBlock.getStructure();
     for (unsigned x = 0; x < theBlock.getStructureSize().x; x++) {
-        for (unsigned y = 0; y < theBlock.getStructureSize().y; y++)
+        for (unsigned y = 0; y < theBlock.getStructureSize().y; y++) {
             if (structure[x][y] == cell::occupied)
                 cellTable[tableCellCoords.x + x][tableCellCoords.y + y] = cell::occupied;
+        }
     }
 }
 
@@ -50,7 +51,7 @@ sf::Vector2i Table::previewBlock(Block& theHoldingBlock, const sf::Vector2f& mou
     if (previewApplyCoords.x != -1 && previewApplyCoords.y != -1 && previewApplyCoords != cellCoords) {
         for (unsigned x = 0; x < blockStructureSize.x; x++) {
             for (unsigned y = 0; y < blockStructureSize.y; y++) {
-                if (cellTable[previewApplyCoords.x + x][previewApplyCoords.y + y] == cell::preview);
+                if (cellTable[previewApplyCoords.x + x][previewApplyCoords.y + y] == cell::preview)
                     cellTable[previewApplyCoords.x + x][previewApplyCoords.y + y] = cell::empty;
             }
         }
@@ -61,7 +62,7 @@ sf::Vector2i Table::previewBlock(Block& theHoldingBlock, const sf::Vector2f& mou
     if (cellCoords.x == -1 || cellCoords.y == -1)
         return { -1, -1 }; //first check mouse is in a cell
 
-    if (cellCoords.x + blockStructureSize.x > 8 || cellCoords.y + blockStructureSize.y > 8)
+    if (cellCoords.x + blockStructureSize.x > 9 || cellCoords.y + blockStructureSize.y > 9)
         return { -1, -1 }; //secondly, check if the holding block is not out of bounds from the cell coords
 
     auto blockStructure = theHoldingBlock.getStructure();
@@ -101,8 +102,9 @@ void Table::draw(sf::RenderWindow& window)
     for (unsigned l = 0; l < 9; l++) {
         for (unsigned c = 0; c < 9; c++) {
             sf::RectangleShape cell;
-            cell.setSize({ CELL_SPACING, CELL_SPACING });
             cell.setPosition({ startPosition.x + CELL_SPACING * l, startPosition.y + CELL_SPACING * c });
+            cell.setSize({ CELL_SPACING, CELL_SPACING });
+
             switch (cellTable[l][c]) {
             case cell::empty:
             {

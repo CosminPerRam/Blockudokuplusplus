@@ -88,10 +88,7 @@ void PickupBoard::pollEvent(sf::RenderWindow& window, sf::Event& theEvent)
 
     if (pickedUpIndex != -1) {
         pickedUpPosition = mousePosition;
-        std::cout << mousePosition.x << " " << mousePosition.y << ": ";
-
         pickedUpPreviewCoords = theTable.previewBlock(*pickupableBlocks[pickedUpIndex], mousePosition);
-        std::cout << pickedUpPreviewCoords.x << " " << pickedUpPreviewCoords.y << std::endl;
     }
     else {
         if (theEvent.type == sf::Event::MouseButtonPressed && theEvent.mouseButton.button == sf::Mouse::Left) {
