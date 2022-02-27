@@ -7,6 +7,8 @@
 #include "colors.h"
 #include "spacing.h"
 
+#include <iostream>
+
 Table::Table(Score& theScore) : theScore(theScore)
 {
 
@@ -49,27 +51,39 @@ void Table::verifyCompletetion() {
         }
     }
     
-    //lines
+    //vertical lines
     for (unsigned i = 0; i < 9; i++) {
-        for (unsigned j = 0; j < 9; j++) {
-            bool isVerticalLineFull = true, isHorizontalLineFull = true;
-            for (unsigned m = 0; m < 9; m++) {
-                if (cellTable[i][m] == cell::empty)
-                    isHorizontalLineFull = false;
-
-                if (cellTable[m][j] == cell::empty)
-                    isVerticalLineFull = false;
+        bool isVerticalLineFull = true;
+        for (unsigned m = 0; m < 9; m++) {
+            if (cellTable[m][i] == cell::empty)
+            {
+                isVerticalLineFull = false;
+                break;
             }
-
-            if (isVerticalLineFull)
-                completedVerticalLines.emplace_back(j);
-
-            if (isHorizontalLineFull)
-                completedHorizontalLines.emplace_back(i);
         }
+
+        if(isVerticalLineFull)
+            completedVerticalLines.emplace_back(i);
     }
 
+    //horizontal lines
+    for (unsigned j = 0; j < 9; j++) {
+        bool isHorizontalLineFull = true;
+        for (unsigned m = 0; m < 9; m++) {
+            if (cellTable[j][m] == cell::empty)
+            {
+                isHorizontalLineFull = false;
+                break;
+            }
+        }
+
+        if (isHorizontalLineFull)
+            completedHorizontalLines.emplace_back(j);
+    }
+
+    //completed stuff
     for (auto& box : completedBoxes) {
+        std::cout << box.x << " " << box.y << std::endl;
         for (unsigned m = 0; m < 3; m++) {
             for (unsigned n = 0; n < 3; n++)
                 cellTable[box.x * 3 + m][box.y * 3 + n] = cell::empty;
@@ -79,6 +93,7 @@ void Table::verifyCompletetion() {
     }
 
     for (unsigned j : completedVerticalLines) {
+        std::cout << "V: " << j << std::endl;
         for (unsigned m = 0; m < 9; m++)
             cellTable[m][j] = cell::empty;
 
@@ -86,6 +101,7 @@ void Table::verifyCompletetion() {
     }
 
     for (unsigned i : completedHorizontalLines) {
+        std::cout << "H: " << i << std::endl;
         for (unsigned m = 0; m < 9; m++)
             cellTable[i][m] = cell::empty;
 
@@ -113,11 +129,9 @@ sf::Vector2i Table::previewBlock(Block& theHoldingBlock, const sf::Vector2f& mou
 {
     auto cellCoords = mousePositionToCellPosition(mousePosition);
 
-    auto blockStructureSize = theHoldingBlock.getStructureSize();
-
     if (previewApplyCoords.x != -1 && previewApplyCoords.y != -1 && previewApplyCoords != cellCoords) {
-        for (unsigned x = 0; x < blockStructureSize.x; x++) {
-            for (unsigned y = 0; y < blockStructureSize.y; y++) {
+        for (unsigned x = 0; x < theHoldingBlock.getStructureSize().x; x++) {
+            for (unsigned y = 0; y < theHoldingBlock.getStructureSize().y; y++) {
                 if (cellTable[previewApplyCoords.x + x][previewApplyCoords.y + y] == cell::preview)
                     cellTable[previewApplyCoords.x + x][previewApplyCoords.y + y] = cell::empty;
             }
@@ -128,6 +142,8 @@ sf::Vector2i Table::previewBlock(Block& theHoldingBlock, const sf::Vector2f& mou
 
     if (cellCoords.x == -1 || cellCoords.y == -1)
         return { -1, -1 }; //first check mouse is in a cell
+
+    auto blockStructureSize = theHoldingBlock.getStructureSize();
 
     if (cellCoords.x + blockStructureSize.x > 9 || cellCoords.y + blockStructureSize.y > 9)
         return { -1, -1 }; //secondly, check if the holding block is not out of bounds from the cell coords

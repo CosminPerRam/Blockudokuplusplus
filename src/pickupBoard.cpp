@@ -14,9 +14,6 @@ PickupBoard::PickupBoard(Table& theTable, Score& theScore) : theTable(theTable),
 
 void PickupBoard::generateBlocks() {
     for (int i = 0; i < 3; i++)
-        pickupableAreas[i] = { PICKUP_START_POSITION_Y + BoardHeight * i, PICKUP_START_POSITION_X, BoardHeight, BoardHeight };
-
-    for (int i = 0; i < 3; i++)
         pickupableBlocks[i] = new Block(getRandomBlock());
 }
 
@@ -77,41 +74,36 @@ void PickupBoard::draw(sf::RenderWindow& window)
                 pickupableBlocks[i]->setPosition(pickedUpPosition);
             }
             else {
+                auto bounds = pickupableBlocks[i]->getLocalBounds();
+
                 pickupableBlocks[i]->setScale(0.85 + (3 - (int)std::max(pickupableBlocks[i]->getStructureSize().x, pickupableBlocks[i]->getStructureSize().y)) * 0.15);
-                pickupableBlocks[i]->setPosition({ PICKUP_START_POSITION_Y + BoardHeight * i * 1.f,
-                    PICKUP_START_POSITION_X});
+                pickupableBlocks[i]->setPosition({ PICKUP_START_POSITION_Y + BoardHeight * i + (BoardHeight - bounds.width) / 2.f,
+                    PICKUP_START_POSITION_X + (BoardHeight - bounds.height) / 2.f });
             }
 
             pickupableBlocks[i]->draw(window);
         }
     }
-
-    /*
-    for (unsigned i = 0; i < 3; i++) {
-        sf::RectangleShape s;
-        s.setPosition({(float)pickupableAreas[i].left, (float)pickupableAreas[i].top});
-        s.setSize({ (float)pickupableAreas[i].width, (float)pickupableAreas[i].height});
-        s.setFillColor({255,0,0,100});
-
-        window.draw(s);
-    }*/
 }
 
 void PickupBoard::pollEvent(sf::RenderWindow& window, sf::Event& theEvent)
 {
     sf::Vector2f mousePosition = window.mapPixelToCoords(sf::Mouse::getPosition(window));
+    sf::Vector2f mousePositionWithOffset = { mousePosition.x - PICKUP_OFFSET, mousePosition.y - PICKUP_OFFSET };
 
     if (pickedUpIndex != -1) {
-        pickedUpPosition = mousePosition;
+        pickedUpPosition = mousePositionWithOffset;
         pickedUpPreviewCoords = theTable.previewBlock(*pickupableBlocks[pickedUpIndex], mousePosition);
     }
     else {
         if (theEvent.type == sf::Event::MouseButtonPressed && theEvent.mouseButton.button == sf::Mouse::Left) {
-            for (unsigned i = 0; i < 3; i++) {
-                if (pickupableAreas[i].contains({ (int)mousePosition.x, (int)mousePosition.y }) && pickupableBlocks[i] != nullptr)
-                {
-                    pickedUpPosition = mousePosition; //if this werent to be here, the first frame would be rendered on the last position remembered
-                    pickedUpIndex = i;
+            for (unsigned i = 0; i < 3 && pickedUpIndex == -1; i++) {
+                if (pickupableBlocks[i] != nullptr) {
+                    if (pickupableBlocks[i]->getLocalBounds().contains({ mousePosition.x, mousePosition.y }))
+                    {
+                        pickedUpPosition = mousePositionWithOffset; //if this werent to be here, the first frame would be rendered on the last position remembered
+                        pickedUpIndex = i;
+                    }
                 }
             }
         }

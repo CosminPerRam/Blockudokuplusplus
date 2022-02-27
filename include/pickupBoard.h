@@ -15,7 +15,6 @@ class PickupBoard : Drawable, Eventer
 {
 private:
 	std::array<Block*, 3> pickupableBlocks = { nullptr };
-	std::array<sf::IntRect, 3> pickupableAreas;
 
 	int pickedUpIndex = -1;
 	sf::Vector2f pickedUpPosition;

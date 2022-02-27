@@ -19,6 +19,10 @@ const float Block::getScale() {
 	return this->scale;
 }
 
+sf::FloatRect Block::getLocalBounds() {
+	return { position.x, position.y, structureSize.x * CELL_SPACING * scale, structureSize.y * CELL_SPACING * scale };
+}
+
 void Block::setScale(const float& scale) {
 	this->scale = scale;
 }

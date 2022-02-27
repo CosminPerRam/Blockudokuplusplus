@@ -37,6 +37,8 @@ public:
 
 	const float getScale();
 
+	sf::FloatRect getLocalBounds();
+
 	void draw(sf::RenderWindow& window);
 };
 
