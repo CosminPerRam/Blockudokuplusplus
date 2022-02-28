@@ -6,12 +6,17 @@
 #include <SFML/Graphics/Text.hpp>
 #include <SFML/System/Clock.hpp>
 
+#include <iostream>
+
 class Score : Drawable
 {
 private:
 	sf::Font theFont;
 	sf::Text theText;
 	sf::Clock theClock;
+
+	std::vector<unsigned> pieceAddedCount;
+	unsigned mostPopularPieceIndex = 0;
 
 	float timePlayed = 0;
 	bool gameLost = false;
@@ -22,7 +27,7 @@ private:
 	int combo = -1, bestCombo = 0;
 
 public:
-	Score();
+	Score(unsigned piecesCount);
 
 	void draw(sf::RenderWindow& window);
 
@@ -32,7 +37,7 @@ public:
 	void addCompletionSquare();
 	void addCompletionLine();
 
-	void addPiecePlaced();
+	void addPiecePlaced(unsigned index);
 
 	void addToCombo();
 	void resetCombo();

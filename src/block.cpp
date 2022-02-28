@@ -5,13 +5,106 @@
 #include "utilities.h"
 
 #include <SFML/Graphics/RectangleShape.hpp>
+#include <iostream>
+
+std::vector<std::vector<std::vector<int>>>& Block::allStructures() {
+	static std::vector<std::vector<std::vector<int>>> allStructures = {
+		{{1}}, //dot
+		{{1, 1}}, //hline-2
+		{{1, 1, 1}}, //hline-3
+		{{1, 1, 1, 1}}, //hline-4
+		{{1, 1, 1, 1, 1}}, //hline-5
+		{{1}, {1}}, //vline-2
+		{{1}, {1}, {1}}, //vline-3
+		{{1}, {1}, {1}, {1}}, //vline-4
+		{{1}, {1}, {1}, {1}, {1}}, //vline-5
+		{{0, 1}, {1, 0}}, //2-slash
+		{{1, 0}, {0, 1}}, //2-backslash
+		{{1, 0}, {1, 1}}, //small |_
+		{{0, 1}, {1, 1}}, //small _|
+		{{1, 1}, {1, 0}}, //small L clockwise 1
+		{{1, 1}, {0, 1}}, //small L clockwise 2
+		{{1, 1}, {1, 1}}, //square
+		{{0, 0, 1}, {0, 1, 0}, {1, 0, 0}}, //3-slash
+		{{1, 0, 0}, {0, 1, 0}, {0, 0, 1}},  //3-backslash
+		{{1, 0, 0}, {1, 0, 0}, {1, 1, 1}}, //|_ half block
+		{{0, 0, 1}, {0, 0, 1}, {1, 1, 1}}, //_| half block
+		{{1, 1, 1}, {1, 0, 0}, {1, 0, 0}}, //half block clockwise 1
+		{{1, 1, 1}, {0, 0, 1}, {0, 0, 1}}, //half block clockwise 2
+		{{0, 1, 0}, {1, 1, 1}, {0, 1, 0}}, //+
+		{{0, 1, 0}, {1, 1, 1}, {0, 1, 0}}, //|--
+		{{0, 1, 0}, {1, 1, 1}, {0, 1, 0}}, //--|
+		{{1, 1, 1}, {0, 1, 0}, {0, 1, 0}}, //|-- up
+		{{0, 1, 0}, {0, 1, 0}, {1, 1, 1}}, //--| down
+		{{1, 1}, {1, 0}, {1, 1}}, //C
+		{{1, 1}, {0, 1}, {1, 1}}, //C reverse
+		{{1, 1, 1}, {1, 0, 0}}, //horizontal L
+		{{1, 1, 1}, {0, 0, 1}}, //horizontal L reversed
+		{{1, 0, 0}, {1, 1, 1}}, //horizontal L flipped
+		{{0, 0, 1}, {1, 1, 1}}, //horizontal L reversed flipped
+		{{1, 0}, {1, 0}, {1, 1}}, //vertical L
+		{{0, 1}, {0, 1}, {1, 1}}, //vertical L reversed
+		{{1, 1}, {1, 0}, {1, 0}}, //vertical L flipped
+		{{1, 0}, {1, 0}, {1, 1}}, //vertical L reversed flipped
+		{{1, 0}, {1, 1}, {1, 0}}, //|-
+		{{0, 1}, {1, 1}, {0, 1}}, //-|
+		{{0, 1, 0}, {1, 1, 1}}, //-| up
+		{{1, 1, 1}, {0, 1, 0}}, //|- down
+		{{1, 1, 0}, {0, 1, 1}}, //z
+		{{0, 1, 1}, {1, 1, 0}}, //z reverse
+		{{0, 1}, {1, 1}, {1, 0}}, //up z
+		{{1, 0}, {1, 1}, {0, 1}}  //up z reverse
+	};
+
+	return allStructures;
+}
+
+Block::Block()
+	: structure(this->generateStructure(trueRandom::getNumberInBetween(0, allStructures().size() - 1)))
+{
+	std::cout << "Generated: "<< structureIndex << std::endl;
+}
+
+Block::Block(unsigned structureIndex)
+	: structure(this->generateStructure(structureIndex))
+{
+	
+}
+
+const std::vector<std::vector<int>>& Block::generateStructure(unsigned structureIndex) {
+	if (structureIndex > allStructures().size() - 1)
+		throw "Bad structureIndex value."; //redundant because this will never happen in this code
+
+	this->structureIndex = structureIndex;
+	const std::vector<std::vector<int>>& structure = allStructures()[structureIndex];
+
+	unsigned h = structure.size(), w = 1;
+
+	for (unsigned i = 0; i < structure.size(); i++) {
+		if (structure[i].size() > w)
+			w = structure[i].size();
+	}
+
+	structureSize = { h, w };
+	std::cout << h << " " << w << std::endl;
+
+	return structure;
+}
+
+const std::vector<std::vector<int>>& Block::getStructure() {
+	return this->structure;
+}
+
+const unsigned Block::getStructureIndex() {
+	return this->structureIndex;
+}
 
 const sf::Vector2u Block::getStructureSize() {
 	return this->structureSize;
 }
 
-const std::vector<std::vector<int>>& Block::getStructure() {
-	return this->structure;
+unsigned Block::getAllStructuresCount() {
+	return allStructures().size();
 }
 
 const float Block::getScale() {
@@ -72,56 +165,4 @@ void Block::draw(sf::RenderWindow& window) {
 			}
 		}
 	}
-}
-
-Block getRandomBlock() {
-	static std::vector < std::vector<std::vector<int>>> structures = {
-		{{1}}, //dot
-		{{1, 1}}, //hline-2
-		{{1, 1, 1}}, //hline-3
-		{{1, 1, 1, 1}}, //hline-4
-		{{1, 1, 1, 1, 1}}, //hline-5
-		{{1}, {1}}, //vline-2
-		{{1}, {1}, {1}}, //vline-3
-		{{1}, {1}, {1}, {1}}, //vline-4
-		{{1}, {1}, {1}, {1}, {1}}, //vline-5
-		{{0, 1}, {1, 0}}, //2-slash
-		{{1, 0}, {0, 1}}, //2-backslash
-		{{1, 0}, {1, 1}}, //small |_
-		{{0, 1}, {1, 1}}, //small _|
-		{{1, 1}, {1, 0}}, //small L clockwise 1
-		{{1, 1}, {0, 1}}, //small L clockwise 2
-		{{1, 1}, {1, 1}}, //square
-		{{0, 0, 1}, {0, 1, 0}, {1, 0, 0}}, //3-slash
-		{{1, 0, 0}, {0, 1, 0}, {0, 0, 1}},  //3-backslash
-		{{1, 0, 0}, {1, 0, 0}, {1, 1, 1}}, //|_ half block
-		{{0, 0, 1}, {0, 0, 1}, {1, 1, 1}}, //_| half block
-		{{1, 1, 1}, {1, 0, 0}, {1, 0, 0}}, //half block clockwise 1
-		{{1, 1, 1}, {0, 0, 1}, {0, 0, 1}}, //half block clockwise 2
-		{{0, 1, 0}, {1, 1, 1}, {0, 1, 0}}, //+
-		{{0, 1, 0}, {1, 1, 1}, {0, 1, 0}}, //|--
-		{{0, 1, 0}, {1, 1, 1}, {0, 1, 0}}, //--|
-		{{1, 1, 1}, {0, 1, 0}, {0, 1, 0}}, //|-- up
-		{{0, 1, 0}, {0, 1, 0}, {1, 1, 1}}, //--| down
-		{{1, 1}, {1, 0}, {1, 1}}, //C
-		{{1, 1}, {0, 1}, {1, 1}}, //C reverse
-		{{1, 1, 1}, {1, 0, 0}}, //horizontal L
-		{{1, 1, 1}, {0, 0, 1}}, //horizontal L reversed
-		{{1, 0, 0}, {1, 1, 1}}, //horizontal L flipped
-		{{0, 0, 1}, {1, 1, 1}}, //horizontal L reversed flipped
-		{{1, 0}, {1, 0}, {1, 1}}, //vertical L
-		{{0, 1}, {0, 1}, {1, 1}}, //vertical L reversed
-		{{1, 1}, {1, 0}, {1, 0}}, //vertical L flipped
-		{{1, 0}, {1, 0}, {1, 1}}, //vertical L reversed flipped
-		{{1, 0}, {1, 1}, {1, 0}}, //|-
-		{{0, 1}, {1, 1}, {0, 1}}, //-|
-		{{0, 1, 0}, {1, 1, 1}}, //-| up
-		{{1, 1, 1}, {0, 1, 0}}, //|- down
-		{{1, 1, 0}, {0, 1, 1}}, //z
-		{{0, 1, 1}, {1, 1, 0}}, //z reverse
-		{{0, 1}, {1, 1}, {1, 0}}, //up z
-		{{1, 0}, {1, 1}, {0, 1}}  //up z reverse
-	};
-
-	return Block(structures[trueRandom::getNumberInBetween(0, structures.size() - 1)]);
 }

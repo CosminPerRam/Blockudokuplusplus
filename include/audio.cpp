@@ -5,13 +5,31 @@
 #include <SFML/Audio/Sound.hpp>
 
 bool Audio::initialized = false;
-sf::SoundBuffer Audio::goodPlacement, Audio::badPlacement, Audio::completetion;
-sf::Sound Audio::playingSound;
+
+sf::SoundBuffer& Audio::goodPlacement() {
+	static sf::SoundBuffer goodPlacement;
+	return goodPlacement;
+}
+
+sf::SoundBuffer& Audio::badPlacement() {
+	static sf::SoundBuffer badPlacement;
+	return badPlacement;
+}
+
+sf::SoundBuffer& Audio::completetion() {
+	static sf::SoundBuffer completetion;
+	return completetion;
+}
+
+sf::Sound& Audio::playingSound() {
+	static sf::Sound playingSound;
+	return playingSound;
+}
 
 void Audio::initialize() {
-	goodPlacement.loadFromFile("resources/goodPlacement.ogg");
-	badPlacement.loadFromFile("resources/badPlacement.ogg");
-	completetion.loadFromFile("resources/completetion.ogg");
+	goodPlacement().loadFromFile("resources/goodPlacement.ogg");
+	badPlacement().loadFromFile("resources/badPlacement.ogg");
+	completetion().loadFromFile("resources/completetion.ogg");
 
 	initialized = true;
 }
@@ -22,15 +40,15 @@ void Audio::play(effect theEffect) {
 
 	switch (theEffect) {
 	case effect::BadPlacement:
-		playingSound.setBuffer(badPlacement);
+		playingSound().setBuffer(badPlacement());
 		break;
 	case effect::GoodPlacement:
-		playingSound.setBuffer(goodPlacement);
+		playingSound().setBuffer(goodPlacement());
 		break;
 	case effect::Completetion:
-		playingSound.setBuffer(completetion);
+		playingSound().setBuffer(completetion());
 		break;
 	}
 
-	playingSound.play();
+	playingSound().play();
 }

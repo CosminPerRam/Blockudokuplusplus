@@ -3,8 +3,11 @@
 #include "spacing.h"
 #include "colors.h"
 #include "utilities.h"
+#include "block.h"
 
-Score::Score() {
+Score::Score(unsigned piecesCount) {
+	pieceAddedCount.resize(piecesCount, 0);
+
 	theFont.loadFromFile("resources/courierNewFont.ttf");
 
 	theText.setFillColor(COLOR_BLACK);
@@ -43,12 +46,25 @@ void Score::draw(sf::RenderWindow& window) {
 		theText.setString(endGameStatsString);
 
 		window.draw(theText);
+
+		Block mostPopularBlock(mostPopularPieceIndex); //its also the most generated one, shhh
+
+		mostPopularBlock.setScale(0.85f + (3 - (int)std::max(mostPopularBlock.getStructureSize().x, mostPopularBlock.getStructureSize().y)) * 0.15f);
+		mostPopularBlock.setPosition({ SCORE_POPULAR_PIECE_POSITION_Y + mostPopularBlock.getLocalBounds().width / 2.f,
+			SCORE_POPULAR_PIECE_POSITION_X + mostPopularBlock.getLocalBounds().height / 2.f });
+
+		mostPopularBlock.draw(window);
 	}
 }
 
 void Score::setGameLost() {
 	gameLost = true;
 	timePlayed = theClock.getElapsedTime().asSeconds();
+
+	for (unsigned i = 0; i < pieceAddedCount.size(); i++) {
+		if (pieceAddedCount[i] > mostPopularPieceIndex)
+			mostPopularPieceIndex = i;
+	}
 
 	auto stream = files::getFileContents("resources/userData.txt");
 	stream >> localBest;
@@ -71,7 +87,12 @@ void Score::addCompletionLine() {
 	completionLines++;
 }
 
-void Score::addPiecePlaced() {
+void Score::addPiecePlaced(unsigned index) {
+	if (index > pieceAddedCount.size() - 1)
+		throw "Bad addPiecePlaced index value!";
+
+	pieceAddedCount[index]++;
+
 	placed++;
 }
 

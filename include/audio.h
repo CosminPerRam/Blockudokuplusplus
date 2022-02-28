@@ -7,8 +7,12 @@ class Audio
 {
 private:
 	static bool initialized;
-	static sf::SoundBuffer goodPlacement, badPlacement, completetion;
-	static sf::Sound playingSound;
+
+	static sf::SoundBuffer& goodPlacement();
+	static sf::SoundBuffer& badPlacement();
+	static sf::SoundBuffer& completetion();
+
+	static sf::Sound& playingSound();
 
 public:
 	enum class effect { GoodPlacement, BadPlacement, Completetion };

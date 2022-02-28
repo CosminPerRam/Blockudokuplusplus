@@ -7,6 +7,8 @@
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/Mouse.hpp>
 
+#include <SFML/Graphics/RectangleShape.hpp>
+
 PickupBoard::PickupBoard(Table& theTable, Score& theScore) : theTable(theTable), theScore(theScore)
 {
     generateBlocks();
@@ -14,7 +16,7 @@ PickupBoard::PickupBoard(Table& theTable, Score& theScore) : theTable(theTable),
 
 void PickupBoard::generateBlocks() {
     for (int i = 0; i < 3; i++)
-        pickupableBlocks[i] = new Block(getRandomBlock());
+        pickupableBlocks[i] = new Block();
 }
 
 bool PickupBoard::anyBlocksLeft() {
@@ -115,7 +117,7 @@ void PickupBoard::pollEvent(sf::RenderWindow& window, sf::Event& theEvent)
             if (pickedUpPreviewCoords.x != -1 || pickedUpPreviewCoords.y != -1) {
                 theTable.applyBlock(*pickupableBlocks[pickedUpIndex], pickedUpPreviewCoords);
 
-                theScore.addPiecePlaced();
+                theScore.addPiecePlaced(pickupableBlocks[pickedUpIndex]->getStructureIndex());
 
                 delete pickupableBlocks[pickedUpIndex];
                 pickupableBlocks[pickedUpIndex] = nullptr;
