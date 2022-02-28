@@ -28,7 +28,6 @@ void Score::draw(sf::RenderWindow& window) {
 	else {
 		std::string endGameStatsString = "Game lost, stats: \n Score: " + std::to_string(score) +
 			"\n Local best: " + std::to_string(localBest) +
-			"\n Network best: " +
 			"\n Blocks used: " + std::to_string(placed) +
 			"\n Squares: " + std::to_string(completionSquares) +
 			"\n Lines: " + std::to_string(completionLines) +
