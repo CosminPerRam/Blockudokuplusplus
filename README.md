@@ -1,5 +1,5 @@
 # Blockudoku++
-This is a very basic copy of the Blockudoku mobile game ([Android](https://play.google.com/store/apps/details?id=com.easybrain.block.puzzle.games&hl=en&gl=US), [IOS](https://apps.apple.com/us/app/blockudoku-block-puzzle-game/id1452227871)) written in C++14 using SFML, originally made as the final project for the university OOP class.
+This is a very basic copy of the Blockudoku mobile game ([Android](https://play.google.com/store/apps/details?id=com.easybrain.block.puzzle.games&hl=en&gl=US), [IOS](https://apps.apple.com/us/app/blockudoku-block-puzzle-game/id1452227871)) written in C++14 using SFML, originally made as the final project for the university's OOP class.
 
 ## Precompiled binaries
 Check the [releases](https://github.com/CosminPerRam/Blockudokuplusplus/releases) page.  

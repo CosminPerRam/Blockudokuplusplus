@@ -26,17 +26,17 @@ void Score::draw(sf::RenderWindow& window) {
 		window.draw(theText);
 	}
 	else {
-		std::string endGameStatsString = "Game lost, stats: \n         Score: " + std::to_string(score) +
-			"\n    Local best: " + std::to_string(localBest) +
-			"\n  Squares made: " + std::to_string(completionSquares) +
-			"\n    Lines made: " + std::to_string(completionLines) +
-			"\n    Best combo: " + std::to_string(bestCombo) +
-			"\n   Blocks used: " + std::to_string(placed) +
-			"\n          Time: " + std::to_string((unsigned)timePlayed) + " seconds" +
-			"\n           APM: " + std::to_string(timePlayed / placed);
+		std::string endGameStatsString = "Game lost, stats: \n        Score: " + std::to_string(score) + (score > localBest ? " (highscore)" : "") +
+			"\n   Local best: " + std::to_string(localBest) +
+			"\n Squares made: " + std::to_string(completionSquares) +
+			"\n   Lines made: " + std::to_string(completionLines) +
+			"\n   Best combo: " + std::to_string(bestCombo) +
+			"\n  Blocks used: " + std::to_string(placed) +
+			"\n         Time: " + std::to_string((unsigned)timePlayed) + " seconds" +
+			"\n          APM: " + std::to_string(timePlayed / placed);
 
 		if (score)
-			endGameStatsString += "\n           SPM: " + std::to_string(timePlayed / score);
+			endGameStatsString += "\n          SPM: " + std::to_string(timePlayed / score);
 
 		theText.setCharacterSize(16);
 		theText.setPosition({ SCORE_START_POSITION_X, SCORE_START_POSITION_Y });

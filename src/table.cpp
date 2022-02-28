@@ -208,25 +208,22 @@ void Table::draw(sf::RenderWindow& window)
     for (unsigned l = 0; l < 9; l++) {
         for (unsigned c = 0; c < 9; c++) {
             sf::RectangleShape cell;
-            cell.setPosition({ startPosition.x + CELL_SPACING * l, startPosition.y + CELL_SPACING * c });
-            cell.setSize({ CELL_SPACING, CELL_SPACING });
+            cell.setPosition({ startPosition.x + CELL_SPACING * l + 1, startPosition.y + CELL_SPACING * c + 1 });
+            cell.setSize({ CELL_SPACING - 2, CELL_SPACING - 2 });
 
             switch (cellTable[l][c]) {
             case cell::empty:
-            {
                 if ((l < 3 && c < 3) || (c > 5 && l < 3) || (l > 5 && c < 3) || (l > 5 && c > 5) || (l > 2 && l < 6 && c > 2 && c < 6))
                     cell.setFillColor(COLOR_GRAY);
                 else
                     cell.setFillColor(COLOR_WHITE);
-            } break;
+                break;
             case cell::occupied:
-            {
                 cell.setFillColor(COLOR_BLUE);
-            } break;
+                break;
             case cell::preview:
-            {
                 cell.setFillColor(COLOR_LIGHT_BLUE);
-            } break;
+                break;
             }
 
             window.draw(cell);
