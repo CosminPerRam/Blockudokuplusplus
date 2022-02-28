@@ -14,11 +14,12 @@ private:
 	sf::Clock theClock;
 
 	float timePlayed = 0;
+	bool gameLost = false;
 
 	unsigned localBest = 0;
 
 	unsigned score = 0, placed = 0, completionSquares = 0, completionLines = 0;
-	bool gameLost = false;
+	int combo = -1, bestCombo = 0;
 
 public:
 	Score();
@@ -32,4 +33,7 @@ public:
 	void addCompletionLine();
 
 	void addPiecePlaced();
+
+	void addToCombo();
+	void resetCombo();
 };

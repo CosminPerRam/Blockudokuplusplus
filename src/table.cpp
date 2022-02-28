@@ -126,7 +126,12 @@ void Table::applyBlock(Block& theBlock, const sf::Vector2i& tableCellCoords)
     }
 
     if (!checkCompletetion())
+    {
         Audio::play(Audio::effect::GoodPlacement);
+        theScore.resetCombo();
+    }
+    else
+        theScore.addToCombo();
 }
 
 sf::Vector2i Table::previewBlock(Block& theHoldingBlock, const sf::Vector2f& mousePosition)
