@@ -14,7 +14,7 @@ Table::Table(Score& theScore) : theScore(theScore)
 
 sf::Vector2i Table::mousePositionToCellPosition(const sf::Vector2f& mousePosition)
 {
-    sf::Vector2f startPosition = { TABLE_START_POSITION_X, TABLE_START_POSITION_Y };
+    sf::Vector2f startPosition = { TABLE_POSITION_X, TABLE_POSITION_Y };
 
     for (int l = 0; l < 9; l++) {
         for (int c = 0; c < 9; c++) {
@@ -202,7 +202,7 @@ bool Table::canBlockBePlaced(Block& theBlock)
 
 void Table::draw(sf::RenderWindow& window)
 {
-    sf::Vector2f startPosition = { TABLE_START_POSITION_X, TABLE_START_POSITION_Y };
+    sf::Vector2f startPosition = { TABLE_POSITION_X, TABLE_POSITION_Y };
     float lineLength = CELL_SPACING * TABLE_SIZE;
 
     for (unsigned l = 0; l < 9; l++) {

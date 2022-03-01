@@ -10,11 +10,10 @@
 class Game
 {
 private:
-	Score theScore = (Block::getAllStructuresCount());
-	Table theTable = (theScore);
-	PickupBoard pickupBoard = PickupBoard(theTable, theScore);
+	static Score *theScore;
+	static Table *theTable;
+	static PickupBoard *pickupBoard;
 
-private:
 	void draw(sf::RenderWindow& window);
 	void pollEvent(sf::RenderWindow& window, sf::Event& theEvent);
 
@@ -22,4 +21,6 @@ public:
 	Game();
 
 	void start();
+
+	static void restart();
 };

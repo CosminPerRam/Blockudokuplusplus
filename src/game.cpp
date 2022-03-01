@@ -5,22 +5,36 @@
 
 #include <SFML/Graphics/RenderWindow.hpp>
 
+Score *Game::theScore = new Score(Block::getAllStructuresCount());
+Table *Game::theTable = new Table(*theScore);
+PickupBoard *Game::pickupBoard = new PickupBoard(*theTable, *theScore);
+
 Game::Game() {
     Audio::initialize();
 }
 
-void Game::draw(sf::RenderWindow& window) {
-    theScore.draw(window);
+void Game::restart() {
+    delete theScore;
+    delete theTable;
+    delete pickupBoard;
 
-    if (!theScore.getGameState()) {
-        theTable.draw(window);
-        pickupBoard.draw(window);
+    theScore = new Score(Block::getAllStructuresCount());
+    theTable = new Table(*theScore);
+    pickupBoard = new PickupBoard(*theTable, *theScore);
+}
+
+void Game::draw(sf::RenderWindow& window) {
+    theScore->draw(window);
+
+    if (!theScore->isGameLost()) {
+        theTable->draw(window);
+        pickupBoard->draw(window);
     }
 }
 
 void Game::pollEvent(sf::RenderWindow& window, sf::Event &theEvent) {
-    if(!theScore.getGameState())
-        pickupBoard.pollEvent(window, theEvent);
+    theScore->pollEvent(window, theEvent);
+    pickupBoard->pollEvent(window, theEvent);
 }
 
 void Game::start() {

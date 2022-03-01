@@ -20,7 +20,7 @@ private:
 	sf::Vector2f pickedUpPosition;
 	sf::Vector2i pickedUpPreviewCoords;
 
-	const sf::Vector2f startPosition = { PICKUP_START_POSITION_X, PICKUP_START_POSITION_Y };
+	const sf::Vector2f startPosition = { PICKUP_POSITION_X, PICKUP_POSITION_Y };
 	const int BoardLength = CELL_SPACING * 9, BoardHeight = CELL_SPACING * 3;
 
 	Table& theTable;

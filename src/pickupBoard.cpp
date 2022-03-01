@@ -77,8 +77,8 @@ void PickupBoard::draw(sf::RenderWindow& window)
                 auto bounds = pickupableBlocks[i]->getLocalBounds();
                 
                 pickupableBlocks[i]->setScale(0.85f + (3 - (int)std::max(pickupableBlocks[i]->getStructureSize().x, pickupableBlocks[i]->getStructureSize().y)) * 0.15f);
-                pickupableBlocks[i]->setPosition({ PICKUP_START_POSITION_Y + BoardHeight * i + (BoardHeight - bounds.width) / 2.f,
-                    PICKUP_START_POSITION_X + (BoardHeight - bounds.height) / 2.f });
+                pickupableBlocks[i]->setPosition({ PICKUP_POSITION_Y + BoardHeight * i + (BoardHeight - bounds.width) / 2.f,
+                    PICKUP_POSITION_X + (BoardHeight - bounds.height) / 2.f });
             }
 
             pickupableBlocks[i]->draw(window);
@@ -88,6 +88,9 @@ void PickupBoard::draw(sf::RenderWindow& window)
 
 void PickupBoard::pollEvent(sf::RenderWindow& window, sf::Event& theEvent)
 {
+    if (theScore.isGameLost())
+        return;
+
     sf::Vector2f mousePosition = window.mapPixelToCoords(sf::Mouse::getPosition(window));
     sf::Vector2f mousePositionWithOffset = { mousePosition.x - PICKUP_OFFSET, mousePosition.y - PICKUP_OFFSET };
 

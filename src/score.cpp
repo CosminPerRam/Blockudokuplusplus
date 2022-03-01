@@ -3,6 +3,10 @@
 #include "spacing.h"
 #include "colors.h"
 #include "utilities.h"
+#include "game.h"
+
+#include <SFML/Window/Event.hpp>
+#include <SFML/Window/Mouse.hpp>
 
 Score::Score(unsigned piecesCount) {
 	pieceAddedCount.resize(piecesCount, 0);
@@ -11,18 +15,24 @@ Score::Score(unsigned piecesCount) {
 
 	theText.setFillColor(COLOR_BLACK);
 	theText.setFont(theFont);
+
+	restartButton.setFillColor(COLOR_WHITE);
+	restartButton.setOutlineColor(COLOR_BLACK);
+	restartButton.setOutlineThickness(2);
+	restartButton.setSize({ RESTART_SIZE_WIDTH, RESTART_SIZE_HEIGHT });
+	restartButton.setPosition({ RESTART_POSITION_X - RESTART_SIZE_WIDTH / 2.f, RESTART_POSITION_Y - RESTART_SIZE_HEIGHT / 4.f });
 }
 
 void Score::draw(sf::RenderWindow& window) {
 	if (!gameLost) {
 		theText.setCharacterSize(16);
 
-		theText.setPosition({ SCORE_START_POSITION_X, SCORE_START_POSITION_Y });
+		theText.setPosition({ SCORE_POSITION_X, SCORE_POSITION_Y });
 		theText.setString("Score: " + std::to_string(score) + "\tPlaced: " + std::to_string(placed));
 
 		window.draw(theText);
 
-		theText.setPosition({ SCORE_START_POSITION2_X, SCORE_START_POSITION2_Y });
+		theText.setPosition({ SCORE_POSITION2_X, SCORE_POSITION2_Y });
 		theText.setString("Squares: " + std::to_string(completionSquares) + "\tCombo: " + std::to_string(combo > -1 ? combo : 0) + "\nLines: " + std::to_string(completionLines));
 
 		window.draw(theText);
@@ -39,13 +49,33 @@ void Score::draw(sf::RenderWindow& window) {
 			"\n          SPM: " + std::to_string(timePlayed / score) +
 			"\nThe most popular block: ";
 
-		theText.setCharacterSize(16);
-		theText.setPosition({ SCORE_START_POSITION_X, SCORE_START_POSITION_Y });
 		theText.setString(endGameStatsString);
+		theText.setCharacterSize(16);
+		theText.setPosition({ SCORE_POSITION_X, SCORE_POSITION_Y });
 
 		window.draw(theText);
 		
 		mostPopularBlock->draw(window);
+
+		window.draw(restartButton);
+
+		theText.setString("Restart");
+		theText.setCharacterSize(24);
+		theText.setPosition({ RESTART_POSITION_X - theText.getLocalBounds().width / 2.f, RESTART_POSITION_Y - theText.getLocalBounds().height / 2.f });
+
+		window.draw(theText);
+	}
+}
+
+void Score::pollEvent(sf::RenderWindow& window, sf::Event& theEvent) {
+	if (!gameLost)
+		return;
+	
+	if (theEvent.type == sf::Event::MouseButtonPressed && theEvent.mouseButton.button == sf::Mouse::Left) {
+		sf::Vector2f mousePosition = window.mapPixelToCoords(sf::Mouse::getPosition(window));
+
+		if (restartButton.getGlobalBounds().contains({ mousePosition.x, mousePosition.y }))
+			Game::restart();
 	}
 }
 
@@ -74,7 +104,7 @@ void Score::setGameLost() {
 		files::writeToFile(std::to_string(score), "resources/userData.txt");
 }
 
-bool Score::getGameState() {
+bool Score::isGameLost() {
 	return gameLost;
 }
 

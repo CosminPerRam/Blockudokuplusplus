@@ -6,13 +6,15 @@
 #include <SFML/Graphics/Font.hpp>
 #include <SFML/Graphics/Text.hpp>
 #include <SFML/System/Clock.hpp>
+#include <SFML/Graphics/RectangleShape.hpp>
 
-class Score : Drawable
+class Score : Drawable, Eventer
 {
 private:
 	sf::Font theFont;
 	sf::Text theText;
 	sf::Clock theClock;
+	sf::RectangleShape restartButton;
 
 	std::vector<unsigned> pieceAddedCount;
 	Block* mostPopularBlock = nullptr;
@@ -29,9 +31,10 @@ public:
 	Score(unsigned piecesCount);
 
 	void draw(sf::RenderWindow& window);
+	void pollEvent(sf::RenderWindow& window, sf::Event& theEvent);
 
 	void setGameLost();
-	bool getGameState();
+	bool isGameLost();
 
 	void addCompletionSquare();
 	void addCompletionLine();
