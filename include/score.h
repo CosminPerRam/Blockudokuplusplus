@@ -15,7 +15,7 @@ private:
 	sf::Clock theClock;
 
 	std::vector<unsigned> pieceAddedCount;
-	Block* mostPopularBlock;
+	Block* mostPopularBlock = nullptr;
 
 	float timePlayed = 0;
 	bool gameLost = false;

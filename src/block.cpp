@@ -4,8 +4,6 @@
 #include "colors.h"
 #include "utilities.h"
 
-#include <SFML/Graphics/RectangleShape.hpp>
-
 const std::vector<std::vector<std::vector<int>>> Block::allStructures = {
 		{{1}}, //dot
 		{{1, 1}}, //hline-2
@@ -82,6 +80,11 @@ const std::vector<std::vector<int>>& Block::getStructure(unsigned structureIndex
 
 	this->structureSize = { h, w };
 
+	cell.setSize({ CELL_SPACING, CELL_SPACING });
+	cell.setScale({ this->scale , this->scale });
+	cell.setFillColor(COLOR_BLUE);
+	cell.setFillColor({ cell.getFillColor().r, cell.getFillColor().g, cell.getFillColor().b, opacity });
+
 	return structure;
 }
 
@@ -111,6 +114,8 @@ sf::FloatRect Block::getLocalBounds() {
 
 void Block::setScale(const float& scale) {
 	this->scale = scale;
+
+	cell.setScale({ this->scale , this->scale });
 }
 
 void Block::setPosition(const sf::Vector2f& position) {
@@ -119,15 +124,11 @@ void Block::setPosition(const sf::Vector2f& position) {
 
 void Block::setOpacity(const unsigned& opacity) {
 	this->opacity = opacity;
+
+	cell.setFillColor({ cell.getFillColor().r, cell.getFillColor().g, cell.getFillColor().b, this->opacity });
 }
 
 void Block::draw(sf::RenderWindow& window) {
-	sf::RectangleShape cell;
-	cell.setSize({ CELL_SPACING, CELL_SPACING });
-	cell.setScale({ this->scale , this->scale });
-	cell.setFillColor(COLOR_BLUE);
-	cell.setFillColor({ cell.getFillColor().r, cell.getFillColor().g, cell.getFillColor().b, opacity });
-
 	sf::VertexArray borders(sf::Lines, 4 * 2);
 
 	for (unsigned l = 0; l < structure.size(); l++) {

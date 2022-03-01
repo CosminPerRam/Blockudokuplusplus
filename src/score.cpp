@@ -35,19 +35,16 @@ void Score::draw(sf::RenderWindow& window) {
 			"\n   Best combo: " + std::to_string(bestCombo) +
 			"\n  Blocks used: " + std::to_string(placed) +
 			"\n         Time: " + std::to_string((unsigned)timePlayed) + " seconds" +
-			"\n          APM: " + std::to_string(timePlayed / placed);
-
-		if (score)
-			endGameStatsString += "\n          SPM: " + std::to_string(timePlayed / score);
-
-		endGameStatsString += "\nThe most popular block: ";
+			"\n          APM: " + std::to_string(timePlayed / placed) +
+			"\n          SPM: " + std::to_string(timePlayed / score) +
+			"\nThe most popular block: ";
 
 		theText.setCharacterSize(16);
 		theText.setPosition({ SCORE_START_POSITION_X, SCORE_START_POSITION_Y });
 		theText.setString(endGameStatsString);
 
 		window.draw(theText);
-
+		
 		mostPopularBlock->draw(window);
 	}
 }
@@ -56,14 +53,17 @@ void Score::setGameLost() {
 	gameLost = true;
 	timePlayed = theClock.getElapsedTime().asSeconds();
 
-	unsigned mostPopularBlockIndex = 0;	//its also the most generated one, shhh
+	unsigned mostPopularBlockIndex = 0, mostPopularBlockValue = 0;	//its also the most generated one, shhh
 	for (unsigned i = 0; i < pieceAddedCount.size(); i++) {
-		if (pieceAddedCount[i] > mostPopularBlockIndex)
+		if (pieceAddedCount[i] > mostPopularBlockValue)
+		{
 			mostPopularBlockIndex = i;
+			mostPopularBlockValue = pieceAddedCount[i];
+		}
 	}
 
-	this->mostPopularBlock = new Block(mostPopularBlockIndex);
-	mostPopularBlock->setScale(0.75);
+	mostPopularBlock = new Block(mostPopularBlockIndex);
+	mostPopularBlock->setScale(0.24);
 	mostPopularBlock->setPosition({ SCORE_POPULAR_PIECE_POSITION_X - mostPopularBlock->getLocalBounds().width / 2.f,
 		SCORE_POPULAR_PIECE_POSITION_Y - mostPopularBlock->getLocalBounds().height / 2.f });
 

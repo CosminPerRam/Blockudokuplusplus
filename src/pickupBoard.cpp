@@ -7,8 +7,6 @@
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/Mouse.hpp>
 
-#include <SFML/Graphics/RectangleShape.hpp>
-
 PickupBoard::PickupBoard(Table& theTable, Score& theScore) : theTable(theTable), theScore(theScore)
 {
     generateBlocks();
