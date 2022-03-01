@@ -1,12 +1,11 @@
 #pragma once
 
 #include "impl.h"
+#include "block.h"
 
 #include <SFML/Graphics/Font.hpp>
 #include <SFML/Graphics/Text.hpp>
 #include <SFML/System/Clock.hpp>
-
-#include <iostream>
 
 class Score : Drawable
 {
@@ -16,7 +15,7 @@ private:
 	sf::Clock theClock;
 
 	std::vector<unsigned> pieceAddedCount;
-	unsigned mostPopularPieceIndex = 0;
+	Block* mostPopularBlock;
 
 	float timePlayed = 0;
 	bool gameLost = false;

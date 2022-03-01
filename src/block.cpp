@@ -5,10 +5,8 @@
 #include "utilities.h"
 
 #include <SFML/Graphics/RectangleShape.hpp>
-#include <iostream>
 
-std::vector<std::vector<std::vector<int>>>& Block::allStructures() {
-	static std::vector<std::vector<std::vector<int>>> allStructures = {
+const std::vector<std::vector<std::vector<int>>> Block::allStructures = {
 		{{1}}, //dot
 		{{1, 1}}, //hline-2
 		{{1, 1, 1}}, //hline-3
@@ -54,30 +52,27 @@ std::vector<std::vector<std::vector<int>>>& Block::allStructures() {
 		{{0, 1, 1}, {1, 1, 0}}, //z reverse
 		{{0, 1}, {1, 1}, {1, 0}}, //up z
 		{{1, 0}, {1, 1}, {0, 1}}  //up z reverse
-	};
-
-	return allStructures;
-}
+};
 
 Block::Block()
-	: structure(this->generateStructure(trueRandom::getNumberInBetween(0, allStructures().size() - 1)))
+	: structure(this->getStructure(trueRandom::getNumberInBetween(0, allStructures.size() - 1)))
 {
-	std::cout << "Generated: "<< structureIndex << std::endl;
+
 }
 
 Block::Block(unsigned structureIndex)
-	: structure(this->generateStructure(structureIndex))
+	: structure(this->getStructure(structureIndex))
 {
 	
 }
 
-const std::vector<std::vector<int>>& Block::generateStructure(unsigned structureIndex) {
-	if (structureIndex > allStructures().size() - 1)
-		throw "Bad structureIndex value."; //redundant because this will never happen in this code
+const std::vector<std::vector<int>>& Block::getStructure(unsigned structureIndex) {
+	if (structureIndex > allStructures.size() - 1)
+		throw "Bad structure index value."; //redundant because this will never happen
 
 	this->structureIndex = structureIndex;
-	const std::vector<std::vector<int>>& structure = allStructures()[structureIndex];
 
+	const std::vector<std::vector<int>>& structure = allStructures[structureIndex];
 	unsigned h = structure.size(), w = 1;
 
 	for (unsigned i = 0; i < structure.size(); i++) {
@@ -85,8 +80,7 @@ const std::vector<std::vector<int>>& Block::generateStructure(unsigned structure
 			w = structure[i].size();
 	}
 
-	structureSize = { h, w };
-	std::cout << h << " " << w << std::endl;
+	this->structureSize = { h, w };
 
 	return structure;
 }
@@ -104,7 +98,7 @@ const sf::Vector2u Block::getStructureSize() {
 }
 
 unsigned Block::getAllStructuresCount() {
-	return allStructures().size();
+	return allStructures.size();
 }
 
 const float Block::getScale() {

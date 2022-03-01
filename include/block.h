@@ -7,17 +7,17 @@
 class Block : Drawable
 {
 private:
-	static std::vector<std::vector<std::vector<int>>>& allStructures();
-	static int d;
-	const std::vector<std::vector<int>>& structure;
+	static const std::vector<std::vector<std::vector<int>>> allStructures;
+
 	unsigned structureIndex;
 	sf::Vector2u structureSize;
+	const std::vector<std::vector<int>>& structure;
 
 	sf::Vector2f position = { 10, 10 };
 	float scale = 1;
 	sf::Uint8 opacity = 255;
 
-	const std::vector<std::vector<int>>& generateStructure(unsigned structureIndex);
+	const std::vector<std::vector<int>>& getStructure(unsigned structureIndex);
 
 public:
 	Block();
@@ -29,15 +29,15 @@ public:
 
 	void setOpacity(const unsigned& opacity);
 
+	const float getScale();
+
 	const std::vector<std::vector<int>>& getStructure();
 	const unsigned getStructureIndex();
 	const sf::Vector2u getStructureSize();
 
-	static unsigned getAllStructuresCount();
-
-	const float getScale();
-
 	sf::FloatRect getLocalBounds();
+
+	static unsigned getAllStructuresCount();
 
 	void draw(sf::RenderWindow& window);
 };

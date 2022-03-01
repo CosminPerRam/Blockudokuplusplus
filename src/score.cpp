@@ -3,7 +3,6 @@
 #include "spacing.h"
 #include "colors.h"
 #include "utilities.h"
-#include "block.h"
 
 Score::Score(unsigned piecesCount) {
 	pieceAddedCount.resize(piecesCount, 0);
@@ -41,19 +40,15 @@ void Score::draw(sf::RenderWindow& window) {
 		if (score)
 			endGameStatsString += "\n          SPM: " + std::to_string(timePlayed / score);
 
+		endGameStatsString += "\nThe most popular block: ";
+
 		theText.setCharacterSize(16);
 		theText.setPosition({ SCORE_START_POSITION_X, SCORE_START_POSITION_Y });
 		theText.setString(endGameStatsString);
 
 		window.draw(theText);
 
-		Block mostPopularBlock(mostPopularPieceIndex); //its also the most generated one, shhh
-
-		mostPopularBlock.setScale(0.85f + (3 - (int)std::max(mostPopularBlock.getStructureSize().x, mostPopularBlock.getStructureSize().y)) * 0.15f);
-		mostPopularBlock.setPosition({ SCORE_POPULAR_PIECE_POSITION_Y + mostPopularBlock.getLocalBounds().width / 2.f,
-			SCORE_POPULAR_PIECE_POSITION_X + mostPopularBlock.getLocalBounds().height / 2.f });
-
-		mostPopularBlock.draw(window);
+		mostPopularBlock->draw(window);
 	}
 }
 
@@ -61,10 +56,16 @@ void Score::setGameLost() {
 	gameLost = true;
 	timePlayed = theClock.getElapsedTime().asSeconds();
 
+	unsigned mostPopularBlockIndex = 0;	//its also the most generated one, shhh
 	for (unsigned i = 0; i < pieceAddedCount.size(); i++) {
-		if (pieceAddedCount[i] > mostPopularPieceIndex)
-			mostPopularPieceIndex = i;
+		if (pieceAddedCount[i] > mostPopularBlockIndex)
+			mostPopularBlockIndex = i;
 	}
+
+	this->mostPopularBlock = new Block(mostPopularBlockIndex);
+	mostPopularBlock->setScale(0.75);
+	mostPopularBlock->setPosition({ SCORE_POPULAR_PIECE_POSITION_X - mostPopularBlock->getLocalBounds().width / 2.f,
+		SCORE_POPULAR_PIECE_POSITION_Y - mostPopularBlock->getLocalBounds().height / 2.f });
 
 	auto stream = files::getFileContents("resources/userData.txt");
 	stream >> localBest;

@@ -18,3 +18,4 @@ Using all modules except for the network one.
 (Ex: the path for the `bin` folder inside SFML should look like this: `repo/libraries/SFML-2.5.1/bin`)
 6. (Windows) Open `Blockudoku.sln` (originally made with Visual Studio 2019)
 7. (Windows) Select the desired configuration (Debug/Release) and build!
+*. (Windows) Note: `openal32.dll` (from SFML's `bin` folder) is needed to be in the Debug/Release folder.
