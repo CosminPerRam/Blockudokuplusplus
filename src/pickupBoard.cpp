@@ -46,6 +46,9 @@ bool PickupBoard::canAnyBlocksBePlaced() {
 
 void PickupBoard::draw(sf::RenderWindow& window)
 {
+    if (theScore.isGameLost())
+        return;
+
     sf::VertexArray borders(sf::Lines, 2 * 2 + 4 * 2);
 
     for (unsigned i = 0; i < 2; i++) {

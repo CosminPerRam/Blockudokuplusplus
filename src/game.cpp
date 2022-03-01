@@ -25,14 +25,13 @@ void Game::restart() {
 
 void Game::draw(sf::RenderWindow& window) {
     theScore->draw(window);
-
-    if (!theScore->isGameLost()) {
-        theTable->draw(window);
-        pickupBoard->draw(window);
-    }
+    theTable->draw(window);
+    Audio::draw(window);
+    pickupBoard->draw(window);
 }
 
 void Game::pollEvent(sf::RenderWindow& window, sf::Event &theEvent) {
+    Audio::pollEvent(window, theEvent);
     theScore->pollEvent(window, theEvent);
     pickupBoard->pollEvent(window, theEvent);
 }

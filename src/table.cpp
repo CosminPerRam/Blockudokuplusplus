@@ -202,6 +202,9 @@ bool Table::canBlockBePlaced(Block& theBlock)
 
 void Table::draw(sf::RenderWindow& window)
 {
+    if (theScore.isGameLost())
+        return;
+
     sf::Vector2f startPosition = { TABLE_POSITION_X, TABLE_POSITION_Y };
     float lineLength = CELL_SPACING * TABLE_SIZE;
 
@@ -228,9 +231,7 @@ void Table::draw(sf::RenderWindow& window)
 
             window.draw(cell);
         }
-    }
-
-    //DRAW CELLS END
+    } //DRAW CELLS END
 
     sf::VertexArray minorGrid(sf::Lines, 2 * (TABLE_SIZE * 2 - 2));
 
@@ -272,7 +273,5 @@ void Table::draw(sf::RenderWindow& window)
         majorGrid[gridPositionOffset + i * 2 + 1].color = COLOR_BLACK;
     }
 
-    window.draw(majorGrid);
-
-    //DRAW GRID END
+    window.draw(majorGrid); //DRAW GRID END
 }

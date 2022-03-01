@@ -74,7 +74,7 @@ void Score::pollEvent(sf::RenderWindow& window, sf::Event& theEvent) {
 	if (theEvent.type == sf::Event::MouseButtonPressed && theEvent.mouseButton.button == sf::Mouse::Left) {
 		sf::Vector2f mousePosition = window.mapPixelToCoords(sf::Mouse::getPosition(window));
 
-		if (restartButton.getGlobalBounds().contains({ mousePosition.x, mousePosition.y }))
+		if (restartButton.getGlobalBounds().contains({ mousePosition.x, mousePosition.y })) 
 			Game::restart();
 	}
 }
