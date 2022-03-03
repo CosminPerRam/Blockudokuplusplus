@@ -28,7 +28,7 @@ sf::Vector2i Table::mousePositionToCellPosition(const sf::Vector2f& mousePositio
     return { -1, -1 };
 }
 
-bool Table::checkCompletetion() {
+unsigned Table::checkCompletetion() {
     std::vector<sf::Vector2u> completedBoxes;
     std::vector<unsigned> completedHorizontalLines;
     std::vector<unsigned> completedVerticalLines;
@@ -106,10 +106,10 @@ bool Table::checkCompletetion() {
     if (!completedBoxes.empty() || !completedVerticalLines.empty() || !completedHorizontalLines.empty())
     {
         Audio::play(Audio::effect::Completetion);
-        return true;
+        return completedBoxes.size() + completedVerticalLines.size() + completedHorizontalLines.size();
     }
 
-    return false;
+    return 0;
 }
 
 void Table::applyBlock(Block& theBlock, const sf::Vector2i& tableCellCoords)
@@ -125,13 +125,18 @@ void Table::applyBlock(Block& theBlock, const sf::Vector2i& tableCellCoords)
         }
     }
 
-    if (!checkCompletetion())
+    unsigned completedMarks = checkCompletetion();
+    if (!completedMarks)
     {
         Audio::play(Audio::effect::GoodPlacement);
         theScore.resetCombo();
     }
-    else
-        theScore.addToCombo();
+    else {
+        theScore.addToCombo(completedMarks);
+
+        if(completedMarks > 1) //give one point for getting more marks at one time
+            theScore.addToCombo(1);
+    }
 }
 
 sf::Vector2i Table::previewBlock(Block& theHoldingBlock, const sf::Vector2f& mousePosition)

@@ -18,7 +18,7 @@ private:
 
 	sf::Vector2i mousePositionToCellPosition(const sf::Vector2f& mousePosition);
 
-	bool checkCompletetion();
+	unsigned checkCompletetion();
 
 public:
 	Table(Score& theScore);

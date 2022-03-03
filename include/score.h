@@ -42,6 +42,6 @@ public:
 
 	void addPiecePlaced(unsigned index);
 
-	void addToCombo();
+	void addToCombo(unsigned amount);
 	void resetCombo();
 };

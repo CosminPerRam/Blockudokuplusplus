@@ -133,8 +133,8 @@ void Score::addPiecePlaced(unsigned index) {
 	placed++;
 }
 
-void Score::addToCombo() {	//How combo works:
-	combo++;				//If you continously complete lines/blocks, its a combo
+void Score::addToCombo(unsigned amount) {	//How combo works:
+	combo += amount;						//If you continously complete lines/blocks (or more at one time), its a combo
 }
 
 void Score::resetCombo() {
