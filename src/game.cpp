@@ -13,6 +13,12 @@ Game::Game() {
     Audio::initialize();
 }
 
+Game::~Game() {
+    delete theScore;
+    delete theTable;
+    delete pickupBoard;
+}
+
 void Game::restart() {
     delete theScore;
     delete theTable;

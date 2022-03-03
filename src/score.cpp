@@ -8,7 +8,8 @@
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/Mouse.hpp>
 
-Score::Score(unsigned piecesCount) {
+Score::Score(unsigned piecesCount) 
+{
 	pieceAddedCount.resize(piecesCount, 0);
 
 	theFont.loadFromFile("resources/courierNewFont.ttf");
@@ -21,6 +22,11 @@ Score::Score(unsigned piecesCount) {
 	restartButton.setOutlineThickness(2);
 	restartButton.setSize({ RESTART_SIZE_WIDTH, RESTART_SIZE_HEIGHT });
 	restartButton.setPosition({ RESTART_POSITION_X - RESTART_SIZE_WIDTH / 2.f, RESTART_POSITION_Y - RESTART_SIZE_HEIGHT / 4.f });
+}
+
+Score::~Score()
+{
+	delete mostPopularBlock;
 }
 
 void Score::draw(sf::RenderWindow& window) {

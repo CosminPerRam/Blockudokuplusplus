@@ -33,6 +33,7 @@ private:
 
 public:
 	PickupBoard(Table& theTable, Score& theScore);
+	~PickupBoard();
 
 	void draw(sf::RenderWindow& window);
 	void pollEvent(sf::RenderWindow& window, sf::Event& theEvent);

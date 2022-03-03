@@ -12,6 +12,12 @@ PickupBoard::PickupBoard(Table& theTable, Score& theScore) : theTable(theTable),
     generateBlocks();
 }
 
+PickupBoard::~PickupBoard()
+{
+    for (unsigned i = 0; i < 3; i++)
+        delete pickupableBlocks[i];
+}
+
 void PickupBoard::generateBlocks() {
     for (int i = 0; i < 3; i++)
         pickupableBlocks[i] = new Block();

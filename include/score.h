@@ -29,6 +29,7 @@ private:
 
 public:
 	Score(unsigned piecesCount);
+	~Score();
 
 	void draw(sf::RenderWindow& window);
 	void pollEvent(sf::RenderWindow& window, sf::Event& theEvent);
