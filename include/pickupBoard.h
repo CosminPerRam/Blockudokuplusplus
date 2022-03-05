@@ -7,6 +7,7 @@
 #include "score.h"
 
 #include <SFML/System/Vector2.hpp>
+#include <SFML/Graphics/VertexArray.hpp>
 #include <SFML/Graphics/Rect.hpp>
 
 #include <array>
@@ -14,6 +15,8 @@
 class PickupBoard : Drawable, Eventer
 {
 private:
+	sf::VertexArray borders = sf::VertexArray(sf::Lines, 2 * 2 + 4 * 2);
+
 	std::array<Block*, 3> pickupableBlocks = { nullptr };
 
 	int pickedUpIndex = -1;

@@ -7,8 +7,6 @@
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/Rect.hpp>
 
-#include <array>
-
 Table::completetion::completetion(mark theType, unsigned a, unsigned b) {
     type = theType;
 
@@ -28,7 +26,42 @@ Table::completetion::completetion(mark theType, unsigned a, unsigned b) {
 
 Table::Table(Score& theScore) : theScore(theScore)
 {
+    sf::Vector2f startPosition = { TABLE_POSITION_X, TABLE_POSITION_Y };
+    float lineLength = CELL_SPACING * TABLE_SIZE;
 
+    for (unsigned i = 0; i < TABLE_SIZE - 1; i++) {
+        float rowY = CELL_SPACING * (i + 1.f);
+        minorGrid[i * 2].position = { startPosition.y, rowY + startPosition.y };
+        minorGrid[i * 2].color = COLOR_LIGHT_BLUE;
+        minorGrid[i * 2 + 1].position = { lineLength + startPosition.y, rowY + startPosition.y };
+        minorGrid[i * 2 + 1].color = COLOR_LIGHT_BLUE;
+    }
+
+    unsigned gridPositionOffset = (TABLE_SIZE - 1) * 2;
+    for (unsigned i = 0; i < TABLE_SIZE - 1; i++) {
+        float rowX = CELL_SPACING * (i + 1.f);
+        minorGrid[gridPositionOffset + i * 2].position = { rowX + startPosition.x, startPosition.x };
+        minorGrid[gridPositionOffset + i * 2].color = COLOR_LIGHT_BLUE;
+        minorGrid[gridPositionOffset + i * 2 + 1].position = { rowX + startPosition.x, lineLength + startPosition.x };
+        minorGrid[gridPositionOffset + i * 2 + 1].color = COLOR_LIGHT_BLUE;
+    }
+
+    for (unsigned i = 0; i < 4; i++) {
+        float rowY = (CELL_SPACING * 3.f) * i;
+        majorGrid[i * 2].position = { startPosition.y, rowY + startPosition.y };
+        majorGrid[i * 2].color = COLOR_BLACK;
+        majorGrid[i * 2 + 1].position = { lineLength + startPosition.y, rowY + startPosition.y };
+        majorGrid[i * 2 + 1].color = COLOR_BLACK;
+    }
+
+    gridPositionOffset = 4 * 2;
+    for (unsigned i = 0; i < 4; i++) {
+        float rowX = (CELL_SPACING * 3.f) * i;
+        majorGrid[gridPositionOffset + i * 2].position = { rowX + startPosition.x, startPosition.x };
+        majorGrid[gridPositionOffset + i * 2].color = COLOR_BLACK;
+        majorGrid[gridPositionOffset + i * 2 + 1].position = { rowX + startPosition.x, lineLength + startPosition.x };
+        majorGrid[gridPositionOffset + i * 2 + 1].color = COLOR_BLACK;
+    }
 }
 
 sf::Vector2i Table::mousePositionToCellPosition(const sf::Vector2f& mousePosition)
@@ -159,6 +192,13 @@ void Table::applyBlock(Block& theBlock, const sf::Vector2i& tableCellCoords) {
         if(completedMarks->size() > 1) //give one point for getting more marks at one time
             theScore.addToCombo(1);
 
+        for (const auto& mark : *completedMarks) {
+            if(mark.type == mark::square)
+                theScore.addCompletionSquare();
+            else
+                theScore.addCompletionLine();
+        }
+
         executeCompletetionsWith(completedMarks, cell::empty);
     }
 }
@@ -239,14 +279,12 @@ bool Table::canBlockBePlaced(Block& theBlock)
 
 void Table::draw(sf::RenderWindow& window)
 {
-    sf::Vector2f startPosition = { TABLE_POSITION_X, TABLE_POSITION_Y };
-    float lineLength = CELL_SPACING * TABLE_SIZE;
+    sf::RectangleShape cell;
+    cell.setSize({ CELL_SPACING - 2, CELL_SPACING - 2 });
 
     for (unsigned l = 0; l < 9; l++) {
         for (unsigned c = 0; c < 9; c++) {
-            sf::RectangleShape cell;
-            cell.setPosition({ startPosition.x + CELL_SPACING * l + 1, startPosition.y + CELL_SPACING * c + 1 });
-            cell.setSize({ CELL_SPACING - 2, CELL_SPACING - 2 });
+            cell.setPosition({ TABLE_POSITION_X + CELL_SPACING * l + 1.f, TABLE_POSITION_Y + CELL_SPACING * c + 1.f });
 
             switch (cellTable[l][c]) {
             case cell::empty:
@@ -270,45 +308,6 @@ void Table::draw(sf::RenderWindow& window)
         }
     } //DRAW CELLS END
 
-    sf::VertexArray minorGrid(sf::Lines, 2 * (TABLE_SIZE * 2 - 2));
-
-    for (unsigned i = 0; i < TABLE_SIZE - 1; i++) {
-        float rowY = CELL_SPACING * (i + 1.f);
-        minorGrid[i * 2].position = { startPosition.y, rowY + startPosition.y };
-        minorGrid[i * 2].color = COLOR_LIGHT_BLUE;
-        minorGrid[i * 2 + 1].position = { lineLength + startPosition.y, rowY + startPosition.y };
-        minorGrid[i * 2 + 1].color = COLOR_LIGHT_BLUE;
-    }
-
-    unsigned gridPositionOffset = (TABLE_SIZE - 1) * 2;
-    for (unsigned i = 0; i < TABLE_SIZE - 1; i++) {
-        float rowX = CELL_SPACING * (i + 1.f);
-        minorGrid[gridPositionOffset + i * 2].position = { rowX + startPosition.x, startPosition.x };
-        minorGrid[gridPositionOffset + i * 2].color = COLOR_LIGHT_BLUE;
-        minorGrid[gridPositionOffset + i * 2 + 1].position = { rowX + startPosition.x, lineLength + startPosition.x };
-        minorGrid[gridPositionOffset + i * 2 + 1].color = COLOR_LIGHT_BLUE;
-    }
-
     window.draw(minorGrid);
-
-    sf::VertexArray majorGrid(sf::Lines, 4 * 2 * 2);
-
-    for (unsigned i = 0; i < 4; i++) {
-        float rowY = (CELL_SPACING * 3.f) * i;
-        majorGrid[i * 2].position = { startPosition.y, rowY + startPosition.y };
-        majorGrid[i * 2].color = COLOR_BLACK;
-        majorGrid[i * 2 + 1].position = { lineLength + startPosition.y, rowY + startPosition.y };
-        majorGrid[i * 2 + 1].color = COLOR_BLACK;
-    }
-
-    gridPositionOffset = 4 * 2;
-    for (unsigned i = 0; i < 4; i++) {
-        float rowX = (CELL_SPACING * 3.f) * i;
-        majorGrid[gridPositionOffset + i * 2].position = { rowX + startPosition.x, startPosition.x };
-        majorGrid[gridPositionOffset + i * 2].color = COLOR_BLACK;
-        majorGrid[gridPositionOffset + i * 2 + 1].position = { rowX + startPosition.x, lineLength + startPosition.x };
-        majorGrid[gridPositionOffset + i * 2 + 1].color = COLOR_BLACK;
-    }
-
     window.draw(majorGrid); //DRAW GRID END
 }

@@ -131,12 +131,11 @@ void Block::setFloating(bool isFloating) {
 
 void Block::draw(sf::RenderWindow& window) {
 	sf::VertexArray borders(sf::Lines, 4 * 2);
+	sf::Vector2f cellPosition;
 
 	for (unsigned l = 0; l < structure.size(); l++) {
 		for (unsigned c = 0; c < structure[l].size(); c++) {
 			if (structure[l][c] == 1) {
-				sf::Vector2f cellPosition;
-				
 				if(floating)
 					cellPosition = { position.x + (4 + CELL_SPACING) * l * scale, position.y + (4 + CELL_SPACING) * c * scale };
 				else

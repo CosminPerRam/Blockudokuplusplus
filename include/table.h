@@ -3,6 +3,9 @@
 #include "impl.h"
 #include "block.h"
 #include "score.h"
+#include "spacing.h"
+
+#include <SFML/Graphics/VertexArray.hpp>
 
 #include <memory>
 
@@ -13,6 +16,9 @@ public:
 	enum class mark { square, vline, hline };
 
 private:
+	sf::VertexArray minorGrid = sf::VertexArray(sf::Lines, 2 * (TABLE_SIZE * 2 - 2));
+	sf::VertexArray majorGrid = sf::VertexArray(sf::Lines, 4 * 2 * 2);
+
 	struct completetion {
 		mark type;
 		unsigned x = 0, y = 0; //vline uses only x, hline only y and square both

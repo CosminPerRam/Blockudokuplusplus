@@ -52,7 +52,7 @@ void Score::draw(sf::RenderWindow& window) {
 			"\n  Blocks used: " + std::to_string(placed) +
 			"\n         Time: " + std::to_string((unsigned)timePlayed) + " seconds" +
 			"\n          APM: " + std::to_string(timePlayed / placed) +
-			"\n          SPM: " + std::to_string(timePlayed / score) +
+			"\n          SPM: " + std::to_string(score > 0 ? timePlayed / score : 0) +
 			"\nThe most popular block: ";
 
 		theText.setString(endGameStatsString);
