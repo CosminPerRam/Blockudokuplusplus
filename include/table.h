@@ -4,21 +4,33 @@
 #include "block.h"
 #include "score.h"
 
+#include <memory>
+
 class Table : Drawable
 {
 public:
-	enum cell { empty = 0, occupied, preview };
+	enum cell { empty = 0, occupied, preview, occupiedPreview };
+	enum class mark { square, vline, hline };
 
 private:
-	cell cellTable[9][9] = { empty };
+	struct completetion {
+		mark type;
+		unsigned x = 0, y = 0; //vline uses only x, hline only y and square both
+
+		completetion(mark theType, unsigned a, unsigned b = 0);
+	};
+
+	cell cellTable[9][9] = { cell::empty };
 
 	Score& theScore;
 
 	sf::Vector2i previewApplyCoords = {-1, -1};
+	void clearPreviews();
 
 	sf::Vector2i mousePositionToCellPosition(const sf::Vector2f& mousePosition);
 
-	unsigned checkCompletetion();
+	std::unique_ptr<std::vector<completetion>> checkCompletetion();
+	void executeCompletetionsWith(std::unique_ptr<std::vector<completetion>>& completetions, cell withCell);
 
 public:
 	Table(Score& theScore);

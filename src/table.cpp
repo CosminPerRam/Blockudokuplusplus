@@ -7,6 +7,25 @@
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/Rect.hpp>
 
+#include <array>
+
+Table::completetion::completetion(mark theType, unsigned a, unsigned b) {
+    type = theType;
+
+    switch (theType) {
+    case mark::square:
+        x = a;
+        y = b;
+        break;
+    case mark::hline:
+        x = a;
+        break;
+    case mark::vline:
+        y = a;
+        break;
+    }
+}
+
 Table::Table(Score& theScore) : theScore(theScore)
 {
 
@@ -28,10 +47,8 @@ sf::Vector2i Table::mousePositionToCellPosition(const sf::Vector2f& mousePositio
     return { -1, -1 };
 }
 
-unsigned Table::checkCompletetion() {
-    std::vector<sf::Vector2u> completedBoxes;
-    std::vector<unsigned> completedHorizontalLines;
-    std::vector<unsigned> completedVerticalLines;
+std::unique_ptr<std::vector<Table::completetion>> Table::checkCompletetion() {
+    auto completions = std::make_unique<std::vector<completetion>>();
 
     //blocks
     for (unsigned i = 0; i < 3; i++) {
@@ -45,7 +62,7 @@ unsigned Table::checkCompletetion() {
             }
 
             if (isBlockFull)
-                completedBoxes.emplace_back(sf::Vector2u{i, j});
+                completions->emplace_back(mark::square, i * 3, j * 3);
         }
     }
     
@@ -61,7 +78,7 @@ unsigned Table::checkCompletetion() {
         }
 
         if(isVerticalLineFull)
-            completedVerticalLines.emplace_back(i);
+            completions->emplace_back(mark::vline, i);
     }
 
     //horizontal lines
@@ -76,44 +93,48 @@ unsigned Table::checkCompletetion() {
         }
 
         if (isHorizontalLineFull)
-            completedHorizontalLines.emplace_back(j);
+            completions->emplace_back(mark::hline, j);
     }
 
-    //completed stuff
-    for (auto& box : completedBoxes) {
-        for (unsigned m = 0; m < 3; m++) {
-            for (unsigned n = 0; n < 3; n++)
-                cellTable[box.x * 3 + m][box.y * 3 + n] = cell::empty;
-        }
-
-        theScore.addCompletionSquare();
-    }
-
-    for (unsigned j : completedVerticalLines) {
-        for (unsigned m = 0; m < 9; m++)
-            cellTable[m][j] = cell::empty;
-
-        theScore.addCompletionLine();
-    }
-
-    for (unsigned i : completedHorizontalLines) {
-        for (unsigned m = 0; m < 9; m++)
-            cellTable[i][m] = cell::empty;
-
-        theScore.addCompletionLine();
-    }
-
-    if (!completedBoxes.empty() || !completedVerticalLines.empty() || !completedHorizontalLines.empty())
-    {
-        Audio::play(Audio::effect::Completetion);
-        return completedBoxes.size() + completedVerticalLines.size() + completedHorizontalLines.size();
-    }
-
-    return 0;
+    return completions;
 }
 
-void Table::applyBlock(Block& theBlock, const sf::Vector2i& tableCellCoords)
-{
+void Table::executeCompletetionsWith(std::unique_ptr<std::vector<completetion>>& completetions, cell withCell) {
+    std::vector<sf::Vector2u> coords;
+    coords.reserve(completetions->size() * 9);
+
+    for (const auto& mark : *completetions) {
+        switch (mark.type) {
+        case mark::square:
+            for (unsigned i = 0; i < 3; i++) {
+                for (unsigned j = 0; j < 3; j++)
+                    coords.emplace_back(mark.x + i, mark.y + j);
+            }
+            break;
+        case mark::vline:
+            for (unsigned m = 0; m < 9; m++)
+                coords.emplace_back(m, mark.y);
+            break;
+        case mark::hline:
+            for (unsigned m = 0; m < 9; m++) 
+                coords.emplace_back(mark.x, m);
+            break;
+        }
+    }
+
+    for (unsigned i = 0; i < coords.size(); i++) {
+        auto& coord = coords[i];
+
+        if (withCell == cell::occupiedPreview) {
+            if(cellTable[coord.x][coord.y] == cell::occupied)
+                cellTable[coord.x][coord.y] = cell::occupiedPreview;
+        }
+        else
+            cellTable[coord.x][coord.y] = withCell;
+    }
+}
+
+void Table::applyBlock(Block& theBlock, const sf::Vector2i& tableCellCoords) {
     //wont do any verifications for the tableCellCords or the block compatibility
     //because this function is SUPPOSED to be used ONLY with the RIGHT stuff.
 
@@ -125,17 +146,31 @@ void Table::applyBlock(Block& theBlock, const sf::Vector2i& tableCellCoords)
         }
     }
 
-    unsigned completedMarks = checkCompletetion();
-    if (!completedMarks)
+    auto completedMarks = checkCompletetion();
+    if (completedMarks->empty())
     {
         Audio::play(Audio::effect::GoodPlacement);
         theScore.resetCombo();
     }
     else {
-        theScore.addToCombo(completedMarks);
+        Audio::play(Audio::effect::Completetion);
 
-        if(completedMarks > 1) //give one point for getting more marks at one time
+        theScore.addToCombo(completedMarks->size());
+        if(completedMarks->size() > 1) //give one point for getting more marks at one time
             theScore.addToCombo(1);
+
+        executeCompletetionsWith(completedMarks, cell::empty);
+    }
+}
+
+void Table::clearPreviews() {
+    for (unsigned i = 0; i < 9; i++) {
+        for (unsigned j = 0; j < 9; j++) {
+            if (cellTable[i][j] == cell::occupiedPreview)
+                cellTable[i][j] = cell::occupied;
+            else if (cellTable[i][j] == cell::preview)
+                cellTable[i][j] = cell::empty;
+        }
     }
 }
 
@@ -143,14 +178,8 @@ sf::Vector2i Table::previewBlock(Block& theHoldingBlock, const sf::Vector2f& mou
 {
     auto cellCoords = mousePositionToCellPosition(mousePosition);
 
-    if (previewApplyCoords.x != -1 && previewApplyCoords.y != -1 && previewApplyCoords != cellCoords) {
-        for (unsigned x = 0; x < theHoldingBlock.getStructureSize().x; x++) {
-            for (unsigned y = 0; y < theHoldingBlock.getStructureSize().y; y++) {
-                if (cellTable[previewApplyCoords.x + x][previewApplyCoords.y + y] == cell::preview)
-                    cellTable[previewApplyCoords.x + x][previewApplyCoords.y + y] = cell::empty;
-            }
-        }
-    }
+    if (previewApplyCoords.x != -1 && previewApplyCoords.y != -1 && previewApplyCoords != cellCoords)
+        clearPreviews();
 
     if (cellCoords.x == -1 || cellCoords.y == -1)
         return { -1, -1 }; //first check mouse is in a cell
@@ -177,6 +206,9 @@ sf::Vector2i Table::previewBlock(Block& theHoldingBlock, const sf::Vector2f& mou
                 cellTable[cellCoords.x + x][cellCoords.y + y] = cell::preview;
         }
     }
+
+    auto completetionMarks = checkCompletetion();
+    executeCompletetionsWith(completetionMarks, cell::occupiedPreview);
 
     return cellCoords;
 }
@@ -207,9 +239,6 @@ bool Table::canBlockBePlaced(Block& theBlock)
 
 void Table::draw(sf::RenderWindow& window)
 {
-    if (theScore.isGameLost())
-        return;
-
     sf::Vector2f startPosition = { TABLE_POSITION_X, TABLE_POSITION_Y };
     float lineLength = CELL_SPACING * TABLE_SIZE;
 
@@ -231,6 +260,9 @@ void Table::draw(sf::RenderWindow& window)
                 break;
             case cell::preview:
                 cell.setFillColor(COLOR_LIGHT_BLUE);
+                break;
+            case cell::occupiedPreview:
+                cell.setFillColor(COLOR_DARKER_BLUE);
                 break;
             }
 
