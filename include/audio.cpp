@@ -65,7 +65,7 @@ void Audio::initialize() {
 
 	audioSprite().setPosition({ AUDIO_POSITION_X, AUDIO_POSITION_Y });
 	audioSprite().setTexture(volumeTexture());
-	audioSprite().setScale(0.48, 0.48);
+	audioSprite().setScale(0.48f, 0.48f);
 	
 	initialized = true;
 }

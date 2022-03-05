@@ -6,3 +6,4 @@
 
 #define COLOR_BLUE {54, 184, 255}
 #define COLOR_LIGHT_BLUE {176, 227, 255}
+#define COLOR_DARKER_BLUE {80, 160, 204}

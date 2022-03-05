@@ -52,23 +52,20 @@ const std::vector<std::vector<std::vector<int>>> Block::allStructures = {
 		{{1, 0}, {1, 1}, {0, 1}}  //up z reverse
 };
 
+Block::Block(unsigned structureIndex)
+	: structure(this->getStructure(structureIndex))
+{
+
+}
+
 Block::Block()
 	: structure(this->getStructure(trueRandom::getNumberInBetween(0, allStructures.size() - 1)))
 {
 
 }
 
-Block::Block(unsigned structureIndex)
-	: structure(this->getStructure(structureIndex))
-{
-	
-}
-
 const std::vector<std::vector<int>>& Block::getStructure(unsigned structureIndex) {
-	if (structureIndex > allStructures.size() - 1)
-		throw "Bad structure index value."; //redundant because this will never happen
-
-	this->structureIndex = structureIndex;
+	this->structureIndex = structureIndex; 
 
 	const std::vector<std::vector<int>>& structure = allStructures[structureIndex];
 	unsigned h = structure.size(), w = 1;
@@ -108,7 +105,7 @@ const float Block::getScale() {
 	return this->scale;
 }
 
-sf::FloatRect Block::getLocalBounds() {
+sf::FloatRect Block::getGlobalBounds() {
 	return { position.x, position.y, structureSize.x * CELL_SPACING * scale, structureSize.y * CELL_SPACING * scale };
 }
 
@@ -128,13 +125,23 @@ void Block::setOpacity(const unsigned& opacity) {
 	cell.setFillColor({ cell.getFillColor().r, cell.getFillColor().g, cell.getFillColor().b, this->opacity });
 }
 
+void Block::setFloating(bool isFloating) {
+	this->floating = isFloating;
+}
+
 void Block::draw(sf::RenderWindow& window) {
 	sf::VertexArray borders(sf::Lines, 4 * 2);
 
 	for (unsigned l = 0; l < structure.size(); l++) {
 		for (unsigned c = 0; c < structure[l].size(); c++) {
 			if (structure[l][c] == 1) {
-				sf::Vector2f cellPosition = { position.x + CELL_SPACING * l * scale, position.y + CELL_SPACING * c * scale };
+				sf::Vector2f cellPosition;
+				
+				if(floating)
+					cellPosition = { position.x + (4 + CELL_SPACING) * l * scale, position.y + (4 + CELL_SPACING) * c * scale };
+				else
+					cellPosition = { position.x + CELL_SPACING * l * scale, position.y + CELL_SPACING * c * scale };
+
 				cell.setPosition(cellPosition);
 
 				window.draw(cell);

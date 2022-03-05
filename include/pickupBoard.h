@@ -27,6 +27,7 @@ private:
 	Score& theScore;
 
 	void generateBlocks();
+	void placeIndexInDefaultPosition(unsigned i);
 
 	bool anyBlocksLeft();
 	bool canAnyBlocksBePlaced();

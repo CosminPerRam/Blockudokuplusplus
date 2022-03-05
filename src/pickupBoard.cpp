@@ -19,8 +19,19 @@ PickupBoard::~PickupBoard()
 }
 
 void PickupBoard::generateBlocks() {
-    for (int i = 0; i < 3; i++)
+    for (int i = 0; i < 3; i++) {
         pickupableBlocks[i] = new Block();
+
+        placeIndexInDefaultPosition(i);
+    }
+}
+
+void PickupBoard::placeIndexInDefaultPosition(unsigned i) {
+    pickupableBlocks[i]->setScale(0.85f + (3 - (int)std::max(pickupableBlocks[i]->getStructureSize().x, pickupableBlocks[i]->getStructureSize().y)) * 0.15f);
+
+    sf::FloatRect bounds = pickupableBlocks[i]->getGlobalBounds();
+    pickupableBlocks[i]->setPosition({ PICKUP_POSITION_Y + BoardHeight * i + (BoardHeight - bounds.width) / 2.f,
+        PICKUP_POSITION_X + (BoardHeight - bounds.height) / 2.f });
 }
 
 bool PickupBoard::anyBlocksLeft() {
@@ -52,9 +63,6 @@ bool PickupBoard::canAnyBlocksBePlaced() {
 
 void PickupBoard::draw(sf::RenderWindow& window)
 {
-    if (theScore.isGameLost())
-        return;
-
     sf::VertexArray borders(sf::Lines, 2 * 2 + 4 * 2);
 
     for (unsigned i = 0; i < 2; i++) {
@@ -77,44 +85,30 @@ void PickupBoard::draw(sf::RenderWindow& window)
     window.draw(borders);
 
     for (unsigned i = 0; i < 3; i++) {
-        if (pickupableBlocks[i] != nullptr) {
-            if (pickedUpIndex == i) {
-                pickupableBlocks[i]->setScale(0.9f);
-                pickupableBlocks[i]->setPosition(pickedUpPosition);
-            }
-            else {
-                auto bounds = pickupableBlocks[i]->getLocalBounds();
-                
-                pickupableBlocks[i]->setScale(0.85f + (3 - (int)std::max(pickupableBlocks[i]->getStructureSize().x, pickupableBlocks[i]->getStructureSize().y)) * 0.15f);
-                pickupableBlocks[i]->setPosition({ PICKUP_POSITION_Y + BoardHeight * i + (BoardHeight - bounds.width) / 2.f,
-                    PICKUP_POSITION_X + (BoardHeight - bounds.height) / 2.f });
-            }
-
+        if (pickupableBlocks[i] != nullptr)
             pickupableBlocks[i]->draw(window);
-        }
     }
 }
 
 void PickupBoard::pollEvent(sf::RenderWindow& window, sf::Event& theEvent)
 {
-    if (theScore.isGameLost())
-        return;
-
     sf::Vector2f mousePosition = window.mapPixelToCoords(sf::Mouse::getPosition(window));
     sf::Vector2f mousePositionWithOffset = { mousePosition.x - PICKUP_OFFSET, mousePosition.y - PICKUP_OFFSET };
 
     if (pickedUpIndex != -1) {
-        pickedUpPosition = mousePositionWithOffset;
+        pickupableBlocks[pickedUpIndex]->setPosition(mousePositionWithOffset);
         pickedUpPreviewCoords = theTable.previewBlock(*pickupableBlocks[pickedUpIndex], mousePosition);
     }
     else {
         if (theEvent.type == sf::Event::MouseButtonPressed && theEvent.mouseButton.button == sf::Mouse::Left) {
             for (unsigned i = 0; i < 3 && pickedUpIndex == -1; i++) {
                 if (pickupableBlocks[i] != nullptr) {
-                    if (pickupableBlocks[i]->getLocalBounds().contains({ mousePosition.x, mousePosition.y }))
+                    if (pickupableBlocks[i]->getGlobalBounds().contains({ mousePosition.x, mousePosition.y }))
                     {
-                        pickedUpPosition = mousePositionWithOffset; //if this werent to be here, the first frame would be rendered on the last position remembered
                         pickedUpIndex = i;
+
+                        pickupableBlocks[i]->setFloating(true);
+                        pickupableBlocks[i]->setScale(PICKUP_SCALE);
                     }
                 }
             }
@@ -124,6 +118,8 @@ void PickupBoard::pollEvent(sf::RenderWindow& window, sf::Event& theEvent)
     if (theEvent.type == sf::Event::MouseButtonReleased && theEvent.mouseButton.button == sf::Mouse::Left) {
         if (pickedUpIndex != -1)
         {
+            pickupableBlocks[pickedUpIndex]->setFloating(false);
+
             if (pickedUpPreviewCoords.x != -1 || pickedUpPreviewCoords.y != -1) {
                 theTable.applyBlock(*pickupableBlocks[pickedUpIndex], pickedUpPreviewCoords);
 
@@ -140,8 +136,11 @@ void PickupBoard::pollEvent(sf::RenderWindow& window, sf::Event& theEvent)
 
                 pickedUpPreviewCoords = { -1, -1 };
             }
-            else
+            else {
+                placeIndexInDefaultPosition(pickedUpIndex);
+
                 Audio::play(Audio::effect::BadPlacement);
+            }
 
             pickedUpIndex = -1;
         }

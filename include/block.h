@@ -16,6 +16,7 @@ private:
 	sf::Vector2f position = { 10, 10 };
 	float scale = 1;
 	sf::Uint8 opacity = 255;
+	bool floating = false;
 
 	unsigned structureIndex;
 	sf::Vector2u structureSize;
@@ -31,6 +32,7 @@ public:
 	void setScale(const float& scale);
 	void setPosition(const sf::Vector2f& position);
 	void setOpacity(const unsigned& opacity);
+	void setFloating(bool isFloating);
 
 	const float getScale();
 
@@ -38,7 +40,7 @@ public:
 	const sf::Vector2u getStructureSize();
 	const unsigned getStructureIndex();
 
-	sf::FloatRect getLocalBounds();
+	sf::FloatRect getGlobalBounds();
 
 	static unsigned getAllStructuresCount();
 

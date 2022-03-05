@@ -99,9 +99,9 @@ void Score::setGameLost() {
 	}
 
 	mostPopularBlock = new Block(mostPopularBlockIndex);
-	mostPopularBlock->setScale(0.24);
-	mostPopularBlock->setPosition({ SCORE_POPULAR_PIECE_POSITION_X - mostPopularBlock->getLocalBounds().width / 2.f,
-		SCORE_POPULAR_PIECE_POSITION_Y - mostPopularBlock->getLocalBounds().height / 2.f });
+	mostPopularBlock->setScale(0.24f);
+	mostPopularBlock->setPosition({ SCORE_POPULAR_PIECE_POSITION_X - mostPopularBlock->getGlobalBounds().width / 2.f,
+		SCORE_POPULAR_PIECE_POSITION_Y - mostPopularBlock->getGlobalBounds().height / 2.f });
 
 	auto stream = files::getFileContents("resources/userData.txt");
 	stream >> localBest;
@@ -125,9 +125,6 @@ void Score::addCompletionLine() {
 }
 
 void Score::addPiecePlaced(unsigned index) {
-	if (index > pieceAddedCount.size() - 1)
-		throw "Bad addPiecePlaced index value!";
-
 	pieceAddedCount[index]++;
 
 	placed++;
