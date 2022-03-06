@@ -15,12 +15,17 @@ Only [SFML](https://www.sfml-dev.org/) 2.5.1!
 Using all modules except for the network one.
 
 ## Building the game
+### Windows
+Here are the instructions on how to build the game using Visual Studio.
 1. Clone/download the repo
 2. Enter the repo directory
 3. Create a folder named `libraries`
 4. Download SFML 2.5.1 32-bit VS 2017 (from [here](https://www.sfml-dev.org/download/sfml/2.5.1/))
 5. Unzip and place the contents in the `libraries` folder.  
 (Ex: the path for the `bin` folder inside SFML should look like this: `repo/libraries/SFML-2.5.1/bin`)
-6. (Windows) Open `Blockudoku.sln` (originally made with Visual Studio 2019)
-7. (Windows) Select the desired configuration (Debug/Release) and build!
-*. (Windows) Note: `openal32.dll` (from SFML's `bin` folder) is needed to be in the Debug/Release folder.
+6. Open `Blockudoku.sln` (originally made with Visual Studio 2019)
+7. Select the desired configuration (Debug/Release) and build!
+*. Note: `openal32.dll` (from SFML's `bin` folder) is needed to be in the Debug/Release folder.
+
+### Linux/MacOS
+Clone the repo and check out the cmake script. (Thanks Thrasher#3205)
