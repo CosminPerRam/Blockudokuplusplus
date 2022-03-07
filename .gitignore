@@ -4,4 +4,5 @@
 /Release/*
 
 /libraries/*
-*.txt
+
+/resources/*.txt
