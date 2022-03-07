@@ -26,4 +26,4 @@ Only [SFML](https://www.sfml-dev.org/) 2.5.1! (Using all modules except for the 
 *. Note: `openal32.dll` (from SFML's `bin` folder) is needed to be in the Debug/Release folder.
 
 ### Linux/MacOS - CMake
-Clone the repo and check out the cmake script. (Thanks Thrasher#3205)
+Clone the repo and check out the cmake script. (Thanks [@ChrisTrasher](https://github.com/ChrisThrasher))
