@@ -7,8 +7,8 @@ The game uses audio effects from the original Blockudoku game.
 It also uses icons from [Icons8](https://icons8.com/).
 
 ## Precompiled binaries
-Check the [releases](https://github.com/CosminPerRam/Blockudokuplusplus/releases) page.  
-Although precompiled binaries are only available for Windows, the code is cross platform.
+Check the [releases](https://github.com/CosminPerRam/Blockudokuplusplus/releases) page.
+Although I can provide binaries only for Windows (and sometimes for Apple Silicon), the code is cross platform!
 
 ## Dependencies
 Only [SFML](https://www.sfml-dev.org/) 2.5.1! (Using all modules except for the `network` one)
