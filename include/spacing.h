@@ -1,5 +1,11 @@
 #pragma once
 
+/*
+	Defines every element where it will draw
+	some components are depended on other component's location,
+	this simplifies modifying the ui element's positions.
+*/
+
 #define WINDOW_HEIGHT 340
 #define WINDOW_WIDTH 470
 

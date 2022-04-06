@@ -6,6 +6,9 @@
 
 #include <vector>
 
+/*
+	A block is a certain formation of cells.
+*/
 class Block : Drawable
 {
 private:

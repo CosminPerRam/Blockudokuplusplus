@@ -12,7 +12,8 @@ Score::Score(unsigned piecesCount)
 {
 	pieceAddedCount.resize(piecesCount, 0);
 
-	theFont.loadFromFile("resources/courierNewFont.ttf");
+	if(!theFont.loadFromFile("resources/courierNewFont.ttf"))
+		throw "Couldn't load the font";
 
 	theText.setFillColor(COLOR_BLACK);
 	theText.setFont(theFont);
@@ -89,7 +90,7 @@ void Score::setGameLost() {
 	gameLost = true;
 	timePlayed = theClock.getElapsedTime().asSeconds();
 
-	unsigned mostPopularBlockIndex = 0, mostPopularBlockValue = 0;	//its also the most generated one, shhh
+	unsigned mostPopularBlockIndex = 0, mostPopularBlockValue = 0;	//the most popular block is the most generated one
 	for (unsigned i = 0; i < pieceAddedCount.size(); i++) {
 		if (pieceAddedCount[i] > mostPopularBlockValue)
 		{

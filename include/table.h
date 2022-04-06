@@ -9,6 +9,10 @@
 
 #include <memory>
 
+/*
+	The cells table, it does not memorize where which block
+	has been placed, it has a cell matrix.
+*/
 class Table : Drawable
 {
 public:
@@ -16,10 +20,14 @@ public:
 	enum class mark { square, vline, hline };
 
 private:
+	/*
+		These variables store the margins of the table, they can be calculated and run
+		at rendertime but calculating them only one time and reusing them is much better performance-wise
+	*/
 	sf::VertexArray minorGrid = sf::VertexArray(sf::Lines, 2 * (TABLE_SIZE * 2 - 2));
 	sf::VertexArray majorGrid = sf::VertexArray(sf::Lines, 4 * 2 * 2);
 
-	struct completetion {
+	struct completetion { //a simple class to remember if a completition is a square, line or vertical line
 		mark type;
 		unsigned x = 0, y = 0; //vline uses only x, hline only y and square both
 

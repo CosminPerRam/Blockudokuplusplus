@@ -1,5 +1,10 @@
 #pragma once
 
+/*
+	defines the game palette, the look can 
+	be easily changed from these variables
+*/
+
 #define COLOR_GRAY {237, 237, 237}
 #define COLOR_BLACK {0, 0, 0}
 #define COLOR_WHITE {255, 255, 255}

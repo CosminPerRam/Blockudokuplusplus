@@ -7,6 +7,10 @@
 #include <SFML/Window/Event.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 
+/*
+	Like the Audio class, this is a static class as its not possible
+	to have multiple instances of the game running at the same time.
+*/
 class Game
 {
 private:
@@ -14,14 +18,11 @@ private:
 	static Table *theTable;
 	static PickupBoard *pickupBoard;
 
-	void draw(sf::RenderWindow& window);
-	void pollEvent(sf::RenderWindow& window, sf::Event& theEvent);
+	static void draw(sf::RenderWindow& window);
+	static void pollEvent(sf::RenderWindow& window, sf::Event& theEvent);
 
 public:
-	Game();
-	~Game();
-
-	void start();
+	static int start();
 
 	static void restart();
 };

@@ -4,6 +4,7 @@
 #include "colors.h"
 #include "utilities.h"
 
+//defines the existing blocks structures
 const std::vector<std::vector<std::vector<int>>> Block::allStructures = {
 		{{1}}, //dot
 		{{1, 1}}, //hline-2
@@ -145,6 +146,7 @@ void Block::draw(sf::RenderWindow& window) {
 
 				window.draw(cell);
 
+				//always recalculates the margins because a block can be moved graphically
 				for (unsigned i = 0; i < 2; i++) {
 					float rowY = CELL_SPACING * i * 1.f;
 					borders[i * 2].position = { cellPosition.x, cellPosition.y + rowY * scale };

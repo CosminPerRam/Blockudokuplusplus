@@ -2,6 +2,11 @@
 
 #include <SFML/Graphics/RenderWindow.hpp>
 
+/*
+	These classes are simple templates declaring that a 
+	component can be drawn or that it has polling processing
+*/
+
 class Drawable
 {
 public:

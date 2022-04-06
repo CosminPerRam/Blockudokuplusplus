@@ -12,6 +12,10 @@
 
 #include <array>
 
+/*
+	Manages picking up, regenerating the blocks and checking if the game is lost.
+	The rest of the classes have nothing to do with its components.
+*/
 class PickupBoard : Drawable, Eventer
 {
 private:

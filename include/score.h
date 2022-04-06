@@ -8,6 +8,10 @@
 #include <SFML/System/Clock.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
 
+/*
+	The score has 2 faces, one while the game
+	is running and one when the game is lost.
+*/
 class Score : Drawable, Eventer
 {
 private:
