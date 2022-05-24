@@ -1,8 +1,8 @@
 
 #include "table.h"
-#include "colors.h"
 #include "spacing.h"
 #include "audio.h"
+#include "settings.h"
 
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/Rect.hpp>
@@ -26,41 +26,46 @@ Table::completetion::completetion(mark theType, unsigned a, unsigned b) {
 
 Table::Table(Score& theScore) : theScore(theScore)
 {
+    Table::updateColors();
+    Table::calculateVertexes();
+}
+
+void Table::calculateVertexes() {
     sf::Vector2f startPosition = { TABLE_POSITION_X, TABLE_POSITION_Y };
     float lineLength = CELL_SPACING * TABLE_SIZE;
 
     for (unsigned i = 0; i < TABLE_SIZE - 1; i++) {
         float rowY = CELL_SPACING * (i + 1.f);
         minorGrid[i * 2].position = { startPosition.y, rowY + startPosition.y };
-        minorGrid[i * 2].color = COLOR_LIGHT_BLUE;
+        minorGrid[i * 2].color = MINOR_COLOR;
         minorGrid[i * 2 + 1].position = { lineLength + startPosition.y, rowY + startPosition.y };
-        minorGrid[i * 2 + 1].color = COLOR_LIGHT_BLUE;
+        minorGrid[i * 2 + 1].color = MINOR_COLOR;
     }
 
     unsigned gridPositionOffset = (TABLE_SIZE - 1) * 2;
     for (unsigned i = 0; i < TABLE_SIZE - 1; i++) {
         float rowX = CELL_SPACING * (i + 1.f);
         minorGrid[gridPositionOffset + i * 2].position = { rowX + startPosition.x, startPosition.x };
-        minorGrid[gridPositionOffset + i * 2].color = COLOR_LIGHT_BLUE;
+        minorGrid[gridPositionOffset + i * 2].color = MINOR_COLOR;
         minorGrid[gridPositionOffset + i * 2 + 1].position = { rowX + startPosition.x, lineLength + startPosition.x };
-        minorGrid[gridPositionOffset + i * 2 + 1].color = COLOR_LIGHT_BLUE;
+        minorGrid[gridPositionOffset + i * 2 + 1].color = MINOR_COLOR;
     }
 
     for (unsigned i = 0; i < 4; i++) {
         float rowY = (CELL_SPACING * 3.f) * i;
         majorGrid[i * 2].position = { startPosition.y, rowY + startPosition.y };
-        majorGrid[i * 2].color = COLOR_BLACK;
+        majorGrid[i * 2].color = MAJOR_COLOR;
         majorGrid[i * 2 + 1].position = { lineLength + startPosition.y, rowY + startPosition.y };
-        majorGrid[i * 2 + 1].color = COLOR_BLACK;
+        majorGrid[i * 2 + 1].color = MAJOR_COLOR;
     }
 
     gridPositionOffset = 4 * 2;
     for (unsigned i = 0; i < 4; i++) {
         float rowX = (CELL_SPACING * 3.f) * i;
         majorGrid[gridPositionOffset + i * 2].position = { rowX + startPosition.x, startPosition.x };
-        majorGrid[gridPositionOffset + i * 2].color = COLOR_BLACK;
+        majorGrid[gridPositionOffset + i * 2].color = MAJOR_COLOR;
         majorGrid[gridPositionOffset + i * 2 + 1].position = { rowX + startPosition.x, lineLength + startPosition.x };
-        majorGrid[gridPositionOffset + i * 2 + 1].color = COLOR_BLACK;
+        majorGrid[gridPositionOffset + i * 2 + 1].color = MAJOR_COLOR;
     }
 }
 
@@ -289,18 +294,18 @@ void Table::draw(sf::RenderWindow& window)
             switch (cellTable[l][c]) {
             case cell::empty:
                 if ((l < 3 && c < 3) || (c > 5 && l < 3) || (l > 5 && c < 3) || (l > 5 && c > 5) || (l > 2 && l < 6 && c > 2 && c < 6))
-                    cell.setFillColor(COLOR_GRAY);
+                    cell.setFillColor(TABLE_ODD);
                 else
-                    cell.setFillColor(COLOR_WHITE);
+                    cell.setFillColor(TABLE_EVEN);
                 break;
             case cell::occupied:
-                cell.setFillColor(COLOR_BLUE);
+                cell.setFillColor(CELL_SOLID);
                 break;
             case cell::preview:
-                cell.setFillColor(COLOR_LIGHT_BLUE);
+                cell.setFillColor(CELL_PREVIEW);
                 break;
             case cell::occupiedPreview:
-                cell.setFillColor(COLOR_DARKER_BLUE);
+                cell.setFillColor(CELL_COMPLETION);
                 break;
             }
 
@@ -310,4 +315,17 @@ void Table::draw(sf::RenderWindow& window)
 
     window.draw(minorGrid);
     window.draw(majorGrid); //DRAW GRID END
+}
+
+void Table::updateColors() {
+    MINOR_COLOR = toColor(Settings::Aspect::tableMinor);
+    MAJOR_COLOR = toColor(Settings::Aspect::tableMajor);
+
+    Table::calculateVertexes();
+
+    TABLE_ODD = toColor(Settings::Aspect::tableOdd);
+    TABLE_EVEN = toColor(Settings::Aspect::tableEven);
+    CELL_SOLID = toColor(Settings::Aspect::cellSolid);
+    CELL_COMPLETION = toColor(Settings::Aspect::cellCompletion);
+    CELL_PREVIEW = toColor(Settings::Aspect::cellPreview);
 }

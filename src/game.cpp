@@ -8,6 +8,9 @@
 Score *Game::theScore = new Score(Block::getAllStructuresCount());
 Table *Game::theTable = new Table(*theScore);
 PickupBoard *Game::pickupBoard = new PickupBoard(*theTable, *theScore);
+ImguiInterface* Game::imguiInterface = new ImguiInterface();
+
+sf::Clock Game::deltaClock;
 
 void Game::restart() {
     delete theScore;    //restarting the game just deletes the pointers
@@ -27,9 +30,13 @@ void Game::draw(sf::RenderWindow& window) {
         Audio::draw(window);
         pickupBoard->draw(window);
     }
+
+    ImguiInterface::draw(window);
 }
 
 void Game::pollEvent(sf::RenderWindow& window, sf::Event &theEvent) {
+    ImguiInterface::pollEvent(window, theEvent);
+
     theScore->pollEvent(window, theEvent);
 
     if (!theScore->isGameLost()) { //if the game is not lost, poll everything
@@ -38,12 +45,25 @@ void Game::pollEvent(sf::RenderWindow& window, sf::Event &theEvent) {
     }
 }
 
+void Game::update(sf::RenderWindow& window) {
+    sf::Time dt = deltaClock.restart();
+
+    ImguiInterface::update(window, dt);
+}
+
 int Game::start() {
     Audio::initialize();
 
-    sf::RenderWindow window(sf::VideoMode(WINDOW_HEIGHT, WINDOW_WIDTH), "Blockudoku", sf::Style::Close);
+    Settings::load("test.txt");
 
+    Game::theTable->updateColors();
+    Game::theScore->updateColors();
+    Game::pickupBoard->updateColors();
+
+    sf::RenderWindow window(sf::VideoMode(WINDOW_HEIGHT, WINDOW_WIDTH), "Blockudoku", sf::Style::Close);
     window.setVerticalSyncEnabled(true);
+
+    ImguiInterface::initialize(window);
 
     while (window.isOpen())
     {   //while the window is open, the game processes and renders stuff
@@ -53,13 +73,16 @@ int Game::start() {
             if (event.type == sf::Event::Closed)
                 window.close();
 
-            pollEvent(window, event);
+            Game::pollEvent(window, event);
         }
 
-        window.clear(sf::Color(255, 255, 255));
+        Game::update(window);
+
+        window.clear(toColor(Settings::Aspect::appBackground));
         draw(window); //draws everything
         window.display();
     }
 
+    ImguiInterface::shutdown();
     return 0;
 }

@@ -18,3 +18,9 @@ class Eventer
 public:
 	virtual void pollEvent(sf::RenderWindow& window, sf::Event& theEvent) = 0;
 };
+
+class Colored
+{
+public:
+	virtual void updateColors() = 0;
+};

@@ -13,13 +13,19 @@
 	The cells table, it does not memorize where which block
 	has been placed, it has a cell matrix.
 */
-class Table : Drawable
+class Table : Drawable, Colored
 {
 public:
 	enum cell { empty = 0, occupied, preview, occupiedPreview };
 	enum class mark { square, vline, hline };
 
+	void calculateVertexes();
+
 private:
+	sf::Color MINOR_COLOR, MAJOR_COLOR;
+	sf::Color TABLE_ODD, TABLE_EVEN;
+	sf::Color CELL_SOLID, CELL_COMPLETION, CELL_PREVIEW;
+
 	/*
 		These variables store the margins of the table, they can be calculated and run
 		at rendertime but calculating them only one time and reusing them is much better performance-wise
@@ -50,6 +56,7 @@ public:
 	Table(Score& theScore);
 
 	void draw(sf::RenderWindow& window);
+	void updateColors();
 
 	void applyBlock(Block& theBlock, const sf::Vector2i& tableCellCoords);
 	sf::Vector2i previewBlock(Block& theHoldingBlock, const sf::Vector2f& mousePosition);

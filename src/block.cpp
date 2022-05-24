@@ -1,7 +1,7 @@
 
 #include "block.h"
 #include "spacing.h"
-#include "colors.h"
+#include "settings.h"
 #include "utilities.h"
 
 //defines the existing blocks structures
@@ -80,8 +80,6 @@ const std::vector<std::vector<int>>& Block::getStructure(unsigned structureIndex
 
 	cell.setSize({ CELL_SPACING, CELL_SPACING });
 	cell.setScale({ this->scale , this->scale });
-	cell.setFillColor(COLOR_BLUE);
-	cell.setFillColor({ cell.getFillColor().r, cell.getFillColor().g, cell.getFillColor().b, opacity });
 
 	return structure;
 }
@@ -142,26 +140,30 @@ void Block::draw(sf::RenderWindow& window) {
 				else
 					cellPosition = { position.x + CELL_SPACING * l * scale, position.y + CELL_SPACING * c * scale };
 
+				cell.setFillColor(toColor(Settings::Aspect::cellSolid));
+				cell.setFillColor({ cell.getFillColor().r, cell.getFillColor().g, cell.getFillColor().b, opacity });
 				cell.setPosition(cellPosition);
 
 				window.draw(cell);
+
+				auto blockMarginsColor = toColor(Settings::Aspect::cellMargins);
 
 				//always recalculates the margins because a block can be moved graphically
 				for (unsigned i = 0; i < 2; i++) {
 					float rowY = CELL_SPACING * i * 1.f;
 					borders[i * 2].position = { cellPosition.x, cellPosition.y + rowY * scale };
-					borders[i * 2].color = COLOR_BLACK;
+					borders[i * 2].color = blockMarginsColor;
 					borders[i * 2 + 1].position = { cellPosition.x + CELL_SPACING * scale, cellPosition.y + rowY * scale };
-					borders[i * 2 + 1].color = COLOR_BLACK;
+					borders[i * 2 + 1].color = blockMarginsColor;
 				}
 				
 				unsigned borderPositionOffset = 4;
 				for (unsigned i = 0; i < 2; i++) {
 					float rowX = CELL_SPACING * i * 1.f;
 					borders[borderPositionOffset + i * 2].position = { cellPosition.x + rowX * scale, cellPosition.y };
-					borders[borderPositionOffset + i * 2].color = COLOR_BLACK;
+					borders[borderPositionOffset + i * 2].color = blockMarginsColor;
 					borders[borderPositionOffset + i * 2 + 1].position = { cellPosition.x + rowX * scale, cellPosition.y + CELL_SPACING * scale };
-					borders[borderPositionOffset + i * 2 + 1].color = COLOR_BLACK;
+					borders[borderPositionOffset + i * 2 + 1].color = blockMarginsColor;
 				}
 
 				window.draw(borders);

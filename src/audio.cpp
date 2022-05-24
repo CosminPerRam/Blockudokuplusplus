@@ -1,13 +1,14 @@
 
 #include "audio.h"
 #include "spacing.h"
+#include "settings.h"
 
 #include <SFML/Audio/SoundBuffer.hpp>
 #include <SFML/Audio/Sound.hpp>
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Window/Event.hpp>
 
-bool Audio::initialized = false, Audio::muted = false;
+bool Audio::initialized = false;
 
 sf::SoundBuffer& Audio::goodPlacement() {
 	static sf::SoundBuffer goodPlacement;
@@ -99,16 +100,20 @@ void Audio::pollEvent(sf::RenderWindow& window, sf::Event& theEvent) {
 
 		if (audioSprite().getGlobalBounds().contains(mousePosition))
 		{
-			muted = !muted;
+			Settings::General::muted = !Settings::General::muted;
 
-			if (muted) {
-				playingSound().setVolume(0);
-				audioSprite().setTexture(muteTexture());
-			}
-			else {
-				playingSound().setVolume(100);
-				audioSprite().setTexture(volumeTexture());
-			}
+			Audio::updateState();
 		}
+	}
+}
+
+void Audio::updateState() {
+	if (Settings::General::muted) {
+		playingSound().setVolume(0);
+		audioSprite().setTexture(muteTexture());
+	}
+	else {
+		playingSound().setVolume(Settings::General::volume);
+		audioSprite().setTexture(volumeTexture());
 	}
 }

@@ -1,6 +1,6 @@
 
 #include "pickupBoard.h"
-#include "colors.h"
+#include "settings.h"
 #include "audio.h"
 
 #include <SFML/Window/Event.hpp>
@@ -8,24 +8,7 @@
 
 PickupBoard::PickupBoard(Table& theTable, Score& theScore) : theTable(theTable), theScore(theScore)
 {
-    generateBlocks();
-
-    for (unsigned i = 0; i < 2; i++) {
-        float rowY = BoardHeight * i * 1.f;
-        borders[i * 2].position = { startPosition.y, rowY + startPosition.x };
-        borders[i * 2].color = COLOR_GRAY;
-        borders[i * 2 + 1].position = { BoardLength + startPosition.y, rowY + startPosition.x };
-        borders[i * 2 + 1].color = COLOR_GRAY;
-    }
-
-    unsigned gridPositionOffset = 4;
-    for (unsigned i = 0; i < 4; i++) {
-        float rowX = BoardHeight * i * 1.f;
-        borders[gridPositionOffset + i * 2].position = { rowX + startPosition.y, startPosition.x };
-        borders[gridPositionOffset + i * 2].color = COLOR_GRAY;
-        borders[gridPositionOffset + i * 2 + 1].position = { rowX + startPosition.y, BoardHeight + startPosition.x };
-        borders[gridPositionOffset + i * 2 + 1].color = COLOR_GRAY;
-    }
+    PickupBoard::generateBlocks();
 }
 
 PickupBoard::~PickupBoard()
@@ -34,11 +17,30 @@ PickupBoard::~PickupBoard()
         delete pickupableBlocks[i];
 }
 
+void PickupBoard::calculateVertexes() {
+    for (unsigned i = 0; i < 2; i++) {
+        float rowY = BoardHeight * i * 1.f;
+        borders[i * 2].position = { startPosition.y, rowY + startPosition.x };
+        borders[i * 2].color = MARGINS;
+        borders[i * 2 + 1].position = { BoardLength + startPosition.y, rowY + startPosition.x };
+        borders[i * 2 + 1].color = MARGINS;
+    }
+
+    unsigned gridPositionOffset = 4;
+    for (unsigned i = 0; i < 4; i++) {
+        float rowX = BoardHeight * i * 1.f;
+        borders[gridPositionOffset + i * 2].position = { rowX + startPosition.y, startPosition.x };
+        borders[gridPositionOffset + i * 2].color = MARGINS;
+        borders[gridPositionOffset + i * 2 + 1].position = { rowX + startPosition.y, BoardHeight + startPosition.x };
+        borders[gridPositionOffset + i * 2 + 1].color = MARGINS;
+    }
+}
+
 void PickupBoard::generateBlocks() {
     for (int i = 0; i < 3; i++) {
         pickupableBlocks[i] = new Block();
 
-        placeIndexInDefaultPosition(i);
+        PickupBoard::placeIndexInDefaultPosition(i);
     }
 }
 
@@ -142,4 +144,10 @@ void PickupBoard::pollEvent(sf::RenderWindow& window, sf::Event& theEvent)
             pickedUpIndex = -1;
         }
     }
+}
+
+void PickupBoard::updateColors() {
+    MARGINS = toColor(Settings::Aspect::pickupMargins);
+
+    PickupBoard::calculateVertexes();
 }

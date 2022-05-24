@@ -2,6 +2,7 @@
 
 #include "impl.h"
 #include "block.h"
+#include "settings.h"
 
 #include <SFML/Graphics/Font.hpp>
 #include <SFML/Graphics/Text.hpp>
@@ -12,9 +13,11 @@
 	The score has 2 faces, one while the game
 	is running and one when the game is lost.
 */
-class Score : Drawable, Eventer
+class Score : Drawable, Eventer, Colored
 {
 private:
+	sf::Color TEXT_COLOR;
+
 	sf::Font theFont;
 	sf::Text theText;
 	sf::Clock theClock;
@@ -37,6 +40,7 @@ public:
 
 	void draw(sf::RenderWindow& window);
 	void pollEvent(sf::RenderWindow& window, sf::Event& theEvent);
+	void updateColors();
 
 	void setGameLost();
 	bool isGameLost();

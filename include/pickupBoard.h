@@ -16,9 +16,11 @@
 	Manages picking up, regenerating the blocks and checking if the game is lost.
 	The rest of the classes have nothing to do with its components.
 */
-class PickupBoard : Drawable, Eventer
+class PickupBoard : Drawable, Eventer, Colored
 {
 private:
+	sf::Color MARGINS;
+
 	sf::VertexArray borders = sf::VertexArray(sf::Lines, 2 * 2 + 4 * 2);
 
 	std::array<Block*, 3> pickupableBlocks = { nullptr };
@@ -39,10 +41,13 @@ private:
 	bool anyBlocksLeft();
 	bool canAnyBlocksBePlaced();
 
+	void calculateVertexes();
+
 public:
 	PickupBoard(Table& theTable, Score& theScore);
 	~PickupBoard();
 
 	void draw(sf::RenderWindow& window);
 	void pollEvent(sf::RenderWindow& window, sf::Event& theEvent);
+	void updateColors();
 };

@@ -6,3 +6,5 @@
 /libraries/*
 
 /resources/*.txt
+
+*.ini

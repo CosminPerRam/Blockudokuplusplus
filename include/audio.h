@@ -14,7 +14,7 @@
 class Audio : Drawable, Eventer
 {
 private:
-	static bool initialized, muted;
+	static bool initialized;
 
 	static sf::SoundBuffer& goodPlacement();
 	static sf::SoundBuffer& badPlacement();
@@ -34,4 +34,6 @@ public:
 
 	static void draw(sf::RenderWindow& window);
 	static void pollEvent(sf::RenderWindow& window, sf::Event& theEvent);
+
+	static void updateState();
 };

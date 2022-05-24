@@ -1,7 +1,7 @@
 
 #include "score.h"
 #include "spacing.h"
-#include "colors.h"
+#include "settings.h"
 #include "utilities.h"
 #include "game.h"
 
@@ -15,11 +15,12 @@ Score::Score(unsigned piecesCount)
 	if(!theFont.loadFromFile("resources/courierNewFont.ttf"))
 		throw "Couldn't load the font";
 
-	theText.setFillColor(COLOR_BLACK);
+	Score::updateColors();
+
 	theText.setFont(theFont);
 
-	restartButton.setFillColor(COLOR_WHITE);
-	restartButton.setOutlineColor(COLOR_BLACK);
+	restartButton.setFillColor({ 255,255,255 });
+	restartButton.setOutlineColor({ 0,0,0 });
 	restartButton.setOutlineThickness(2);
 	restartButton.setSize({ RESTART_SIZE_WIDTH, RESTART_SIZE_HEIGHT });
 	restartButton.setPosition({ RESTART_POSITION_X - RESTART_SIZE_WIDTH / 2.f, RESTART_POSITION_Y - RESTART_SIZE_HEIGHT / 4.f });
@@ -84,6 +85,12 @@ void Score::pollEvent(sf::RenderWindow& window, sf::Event& theEvent) {
 		if (restartButton.getGlobalBounds().contains({ mousePosition.x, mousePosition.y })) 
 			Game::restart();
 	}
+}
+
+void Score::updateColors() {
+	TEXT_COLOR = toColor(Settings::Aspect::textColor);
+
+	theText.setFillColor(TEXT_COLOR);
 }
 
 void Score::setGameLost() {

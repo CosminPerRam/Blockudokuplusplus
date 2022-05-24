@@ -96,12 +96,19 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="libraries\imgui\imgui-SFML.cpp" />
+    <ClCompile Include="libraries\imgui\imgui.cpp" />
+    <ClCompile Include="libraries\imgui\imgui_draw.cpp" />
+    <ClCompile Include="libraries\imgui\imgui_tables.cpp" />
+    <ClCompile Include="libraries\imgui\imgui_widgets.cpp" />
     <ClCompile Include="src\audio.cpp" />
     <ClCompile Include="src\block.cpp" />
     <ClCompile Include="src\game.cpp" />
+    <ClCompile Include="src\imguiInterface.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\pickupBoard.cpp" />
     <ClCompile Include="src\score.cpp" />
+    <ClCompile Include="src\settings.cpp" />
     <ClCompile Include="src\table.cpp" />
     <ClCompile Include="src\utilities.cpp" />
   </ItemGroup>
@@ -111,9 +118,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\block.h" />
-    <ClInclude Include="include\colors.h" />
     <ClInclude Include="include\game.h" />
+    <ClInclude Include="include\imguiInterface.h" />
     <ClInclude Include="include\impl.h" />
+    <ClInclude Include="include\settings.h" />
     <ClInclude Include="include\pickupBoard.h" />
     <ClInclude Include="include\score.h" />
     <ClInclude Include="include\audio.h" />
