@@ -54,6 +54,8 @@ void Score::reset() {
 	timePlayed = 0;
 	score = 0, placed = 0, completionSquares = 0, completionLines = 0;
 	combo = -1, bestCombo = 0;
+
+	gameLost = false;
 }
 
 void Score::draw(sf::RenderWindow& window) {

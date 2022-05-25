@@ -4,10 +4,12 @@
 #include "block.h"
 #include "score.h"
 #include "spacing.h"
+#include "cellMatrix.h"
 
 #include <SFML/Graphics/VertexArray.hpp>
 
 #include <memory>
+#include <array>
 
 /*
 	The cells table, it does not memorize where which block
@@ -15,12 +17,6 @@
 */
 class Table : Drawable, Colored
 {
-public:
-	enum cell { empty = 0, occupied, preview, occupiedPreview };
-	enum class mark { square, vline, hline };
-
-	void calculateVertexes();
-
 private:
 	sf::Color MINOR_COLOR, MAJOR_COLOR;
 	sf::Color TABLE_ODD, TABLE_EVEN;
@@ -33,24 +29,13 @@ private:
 	sf::VertexArray minorGrid = sf::VertexArray(sf::Lines, 2 * (TABLE_SIZE * 2 - 2));
 	sf::VertexArray majorGrid = sf::VertexArray(sf::Lines, 4 * 2 * 2);
 
-	struct completetion { //a simple class to remember if a completition is a square, line or vertical line
-		mark type;
-		unsigned x = 0, y = 0; //vline uses only x, hline only y and square both
-
-		completetion(mark theType, unsigned a, unsigned b = 0);
-	};
-
-	cell cellTable[9][9] = { cell::empty };
+	cellMatrix theMatrix;
 
 	Score& theScore;
 
-	sf::Vector2i previewApplyCoords = {-1, -1};
-	void clearPreviews();
-
 	sf::Vector2i mousePositionToCellPosition(const sf::Vector2f& mousePosition);
 
-	std::unique_ptr<std::vector<completetion>> checkCompletetion();
-	void executeCompletetionsWith(std::unique_ptr<std::vector<completetion>>& completetions, cell withCell);
+	void calculateVertexes();
 
 public:
 	Table(Score& theScore);
@@ -58,10 +43,12 @@ public:
 	void draw(sf::RenderWindow& window);
 	void updateColors();
 
-	void applyBlock(Block& theBlock, const sf::Vector2i& tableCellCoords);
-	sf::Vector2i previewBlock(Block& theHoldingBlock, const sf::Vector2f& mousePosition);
+	void applyBlock(Block& theBlock, const sf::Vector2u& tableCellCoords);
 	bool canBlockBePlaced(Block& theBlock);
 
+	sf::Vector2i previewBlock(Block& theHoldingBlock, const sf::Vector2f& mousePosition);
+
+	const cellMatrix& getMatrix();
 	void reset();
 
 	friend class ImguiInterface;

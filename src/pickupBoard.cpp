@@ -2,9 +2,12 @@
 #include "pickupBoard.h"
 #include "settings.h"
 #include "audio.h"
+#include "cellMatrix.h"
 
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/Mouse.hpp>
+
+#include <iostream>
 
 PickupBoard::PickupBoard(Table& theTable, Score& theScore) : theTable(theTable), theScore(theScore)
 {
@@ -82,6 +85,78 @@ bool PickupBoard::canAnyBlocksBePlaced() {
     return canAnyBePlaced;
 }
 
+bool PickupBoard::recursiveCanAnyBlocksBePlaced(int firstIndex, int secondIndex)
+{
+    static cellMatrix virtualMatrix;
+
+    if (firstIndex == -1)
+        virtualMatrix = theTable.getMatrix();
+
+    unsigned amountMissing = 0;
+    for (unsigned i = 0; i < 3; i++) {
+        if (pickupableBlocks[i] == nullptr)
+            amountMissing++;
+    }
+
+    if (amountMissing == 1 && secondIndex != -1)
+    {
+        if (virtualMatrix.getBlockPlacingPositions(*pickupableBlocks[secondIndex]).size() != 0)
+        {
+            std::cout << "b" << std::endl;
+            return true;
+        }
+    }
+
+    for (unsigned i = 0; i < 3; i++) {
+        Block* theCurrentBlock = pickupableBlocks[i];
+        if (theCurrentBlock == nullptr || i == firstIndex || i == secondIndex)
+            continue;
+
+        auto positions = virtualMatrix.getBlockPlacingPositions(*theCurrentBlock);
+
+        if (positions.size() != 0) {
+            if (amountMissing == 2) //the other two blocks are missing
+            {
+                std::cout << "a" << std::endl;
+                return true;
+            }
+
+            if (secondIndex != -1) //the current iteration is the last block
+            {
+                std::cout << "c" << std::endl;
+                return true;
+            }
+        }
+
+        std::unique_ptr<std::vector<completetion>> positionCompletetions;
+        for (const auto& p : positions) {
+            virtualMatrix.applyBlock(*theCurrentBlock, p);
+            positionCompletetions = virtualMatrix.checkCompletetion();
+            virtualMatrix.executeCompletetions(positionCompletetions, cell::empty);
+
+            if (firstIndex == -1) {
+                if (recursiveCanAnyBlocksBePlaced(i)) {
+                    std::cout << "e" << std::endl;
+                    return true;
+                }
+            }
+            else {
+                if (recursiveCanAnyBlocksBePlaced(firstIndex, i)) {
+                    std::cout << "f" << std::endl;
+                    return true;
+                }
+            }
+
+            virtualMatrix.executeCompletetions(positionCompletetions, cell::occupied);
+            virtualMatrix.applyBlock(*theCurrentBlock, p, cell::empty);
+        }
+    }
+
+    std::cout << "d" << std::endl;
+
+    return false;
+}
+
 void PickupBoard::draw(sf::RenderWindow& window)
 {
     window.draw(borders);
@@ -123,7 +198,7 @@ void PickupBoard::pollEvent(sf::RenderWindow& window, sf::Event& theEvent)
             pickupableBlocks[pickedUpIndex]->setFloating(false);
 
             if (pickedUpPreviewCoords.x != -1 || pickedUpPreviewCoords.y != -1) {
-                theTable.applyBlock(*pickupableBlocks[pickedUpIndex], pickedUpPreviewCoords);
+                theTable.applyBlock(*pickupableBlocks[pickedUpIndex], {static_cast<unsigned>(pickedUpPreviewCoords.x), static_cast<unsigned>(pickedUpPreviewCoords.y)});
 
                 theScore.addPiecePlaced(pickupableBlocks[pickedUpIndex]->getStructureIndex());
 
@@ -139,8 +214,16 @@ void PickupBoard::pollEvent(sf::RenderWindow& window, sf::Event& theEvent)
                 if (!anyBlocksLeft())
                     generateBlocks();
 
-                if (!canAnyBlocksBePlaced())
-                    theScore.setGameLost();
+                std::cout << recursiveCanAnyBlocksBePlaced() << std::endl << std::endl;
+                /*if (Settings::Gameplay::checkGameInAdvance)
+                {
+                    if (!canAnyBlocksBePlaced() || !recursiveCanAnyBlocksBePlaced())
+                        theScore.setGameLost();
+                }
+                else */{
+                    if (!canAnyBlocksBePlaced())
+                        theScore.setGameLost();
+                }
 
                 pickedUpPreviewCoords = { -1, -1 };
             }
