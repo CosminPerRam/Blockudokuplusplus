@@ -10,13 +10,20 @@ namespace Settings
 
 	namespace General
 	{
-		extern bool autoplace;
-		extern float autoplaceDelay;
-
 		extern bool showImgui;
+	}
 
+	namespace Audio
+	{
 		extern bool muted;
 		extern int volume;
+		extern float pitch;
+	}
+
+	namespace Gameplay
+	{
+		extern bool autoplace;
+		extern float autoplaceDelay;
 	}
 
 	namespace Aspect

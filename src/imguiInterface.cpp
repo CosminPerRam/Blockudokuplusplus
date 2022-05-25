@@ -7,6 +7,10 @@
 
 #include <SFML/Window/Event.hpp>
 
+#include <iostream>
+
+char ImguiInterface::fileName[64] = {"settings.cfg"};
+
 void ImguiInterface::initialize(sf::RenderWindow& window) {
 	ImGui::SFML::Init(window);
 }
@@ -32,15 +36,23 @@ void ImguiInterface::draw(sf::RenderWindow& window) {
 
 		if (ImGui::Button("Hide"))
 			Settings::General::showImgui = false;
+		ImGui::SameLine();
+		if (ImGui::Button("Save"))
+			std::cout << fileName << std::endl;
+		ImGui::SameLine();
+		if (ImGui::Button("Load"))
+			int i = 2;
+
+		ImGui::InputText("FileName", ImguiInterface::fileName, FILENAME_LENGTH);
 
         ImGuiTabBarFlags tab_bar_flags = ImGuiTabBarFlags_None;
         if (ImGui::BeginTabBar("MyTabBar", tab_bar_flags))
         {
-            if (ImGui::BeginTabItem("General"))
+            if (ImGui::BeginTabItem("Gameplay"))
             {
-				ImGui::Checkbox("Autoplace", &Settings::General::autoplace);
-				if (Settings::General::autoplace)
-					ImGui::SliderFloat("Seconds delay", &Settings::General::autoplaceDelay, 0.25, 2);
+				ImGui::Checkbox("Autoplace", &Settings::Gameplay::autoplace);
+				if (Settings::Gameplay::autoplace)
+					ImGui::SliderFloat("Seconds delay", &Settings::Gameplay::autoplaceDelay, 0.25, 2);
 
                 ImGui::EndTabItem();
             }
@@ -90,9 +102,11 @@ void ImguiInterface::draw(sf::RenderWindow& window) {
             }
 			if (ImGui::BeginTabItem("Audio"))
 			{
-				ImGui::Checkbox("Mute", &Settings::General::muted);
-				if (!Settings::General::muted)
-					ImGui::SliderInt("Volume", &Settings::General::volume, 0, 100);
+				ImGui::Checkbox("Mute", &Settings::Audio::muted);
+				if (!Settings::Audio::muted)
+					ImGui::SliderInt("Volume", &Settings::Audio::volume, 0, 100);
+
+				ImGui::SliderFloat("Pitch", &Settings::Audio::pitch, 0.1, 1.9);
 
 				Audio::updateState();
 

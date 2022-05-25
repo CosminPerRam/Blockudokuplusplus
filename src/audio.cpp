@@ -100,7 +100,7 @@ void Audio::pollEvent(sf::RenderWindow& window, sf::Event& theEvent) {
 
 		if (audioSprite().getGlobalBounds().contains(mousePosition))
 		{
-			Settings::General::muted = !Settings::General::muted;
+			Settings::Audio::muted = !Settings::Audio::muted;
 
 			Audio::updateState();
 		}
@@ -108,12 +108,14 @@ void Audio::pollEvent(sf::RenderWindow& window, sf::Event& theEvent) {
 }
 
 void Audio::updateState() {
-	if (Settings::General::muted) {
+	playingSound().setPitch(Settings::Audio::pitch);
+
+	if (Settings::Audio::muted) {
 		playingSound().setVolume(0);
 		audioSprite().setTexture(muteTexture());
 	}
 	else {
-		playingSound().setVolume(Settings::General::volume);
+		playingSound().setVolume(Settings::Audio::volume);
 		audioSprite().setTexture(volumeTexture());
 	}
 }

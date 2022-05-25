@@ -15,13 +15,20 @@ namespace Settings
 
 	namespace General
 	{
-		bool autoplace = false;
-		float autoplaceDelay = 1;
-
 		bool showImgui = false;
+	}
 
+	namespace Audio
+	{
 		bool muted = false;
 		int volume = 100;
+		float pitch = 1;
+	}
+
+	namespace Gameplay
+	{
+		bool autoplace = false;
+		float autoplaceDelay = 1;
 	}
 
 	namespace Aspect

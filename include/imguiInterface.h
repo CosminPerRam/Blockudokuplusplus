@@ -5,8 +5,13 @@
 
 #include "impl.h"
 
+#define FILENAME_LENGTH 64
+
 class ImguiInterface// : Drawable, Eventer
 {
+private:
+	static char fileName[FILENAME_LENGTH];
+
 public:
 	static void initialize(sf::RenderWindow& window);
 	static void shutdown();
