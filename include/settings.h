@@ -24,6 +24,9 @@ namespace Settings
 	{
 		extern bool autoplace;
 		extern float autoplaceDelay;
+
+		extern bool continousGenerate;
+		extern int blockModel;
 	}
 
 	namespace Aspect

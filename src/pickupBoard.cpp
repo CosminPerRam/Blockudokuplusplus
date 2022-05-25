@@ -36,10 +36,9 @@ void PickupBoard::calculateVertexes() {
     }
 }
 
-void PickupBoard::generateBlocks() {
+void PickupBoard::generateBlocks(int structureIndex) {
     for (int i = 0; i < 3; i++) {
-        pickupableBlocks[i] = new Block();
-
+        pickupableBlocks[i] = new Block(structureIndex);
         PickupBoard::placeIndexInDefaultPosition(i);
     }
 }
@@ -125,7 +124,13 @@ void PickupBoard::pollEvent(sf::RenderWindow& window, sf::Event& theEvent)
                 theScore.addPiecePlaced(pickupableBlocks[pickedUpIndex]->getStructureIndex());
 
                 delete pickupableBlocks[pickedUpIndex];
-                pickupableBlocks[pickedUpIndex] = nullptr;
+
+                if (Settings::Gameplay::continousGenerate) {
+                    pickupableBlocks[pickedUpIndex] = new Block(Settings::Gameplay::blockModel);
+                    PickupBoard::placeIndexInDefaultPosition(pickedUpIndex);
+                }
+                else
+                    pickupableBlocks[pickedUpIndex] = nullptr;
 
                 if (!anyBlocksLeft())
                     generateBlocks();

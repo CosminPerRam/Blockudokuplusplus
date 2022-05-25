@@ -29,6 +29,9 @@ namespace Settings
 	{
 		bool autoplace = false;
 		float autoplaceDelay = 1;
+
+		bool continousGenerate = false;
+		int blockModel = -1;
 	}
 
 	namespace Aspect

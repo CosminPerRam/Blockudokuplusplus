@@ -5,19 +5,19 @@
 
 #include <SFML/Graphics/RenderWindow.hpp>
 
-Score *Game::theScore = new Score(Block::getAllStructuresCount());
-Table *Game::theTable = new Table(*theScore);
-PickupBoard *Game::pickupBoard = new PickupBoard(*theTable, *theScore);
-ImguiInterface* Game::imguiInterface = new ImguiInterface();
+Score* Game::theScore = nullptr;
+Table *Game::theTable = nullptr;
+PickupBoard *Game::pickupBoard = nullptr;
+ImguiInterface* Game::imguiInterface = nullptr;
 
 sf::Clock Game::deltaClock;
 
 void Game::restart() {
-    delete theScore;    //restarting the game just deletes the pointers
-    delete theTable;    //and re-initializes them, this is easier to do
-    delete pickupBoard; //but not that intuitive
+    delete theScore;
+    delete theTable;
+    delete pickupBoard;
 
-    theScore = new Score(Block::getAllStructuresCount());
+    theScore = new Score(structures::grouped.size());
     theTable = new Table(*theScore);
     pickupBoard = new PickupBoard(*theTable, *theScore);
 }
@@ -56,9 +56,7 @@ int Game::start() {
 
     Settings::load("test.txt");
 
-    Game::theTable->updateColors();
-    Game::theScore->updateColors();
-    Game::pickupBoard->updateColors();
+    Game::restart();
 
     sf::RenderWindow window(sf::VideoMode(WINDOW_HEIGHT, WINDOW_WIDTH), "Blockudoku", sf::Style::Close);
     window.setVerticalSyncEnabled(true);

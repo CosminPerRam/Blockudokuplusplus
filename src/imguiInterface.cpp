@@ -7,8 +7,6 @@
 
 #include <SFML/Window/Event.hpp>
 
-#include <iostream>
-
 char ImguiInterface::fileName[64] = {"settings.cfg"};
 
 void ImguiInterface::initialize(sf::RenderWindow& window) {
@@ -38,10 +36,21 @@ void ImguiInterface::draw(sf::RenderWindow& window) {
 			Settings::General::showImgui = false;
 		ImGui::SameLine();
 		if (ImGui::Button("Save"))
-			std::cout << fileName << std::endl;
+			ImGui::OpenPopup("FileSavedPopup");
+		if (ImGui::BeginPopup("FileSavedPopup")) {
+			bool saved = Settings::save(fileName);
+			ImGui::Text(saved ? "Successfully saved!" : "Couldn't save.");
+			ImGui::EndPopup();
+		}
 		ImGui::SameLine();
 		if (ImGui::Button("Load"))
-			int i = 2;
+			ImGui::OpenPopup("FileLoadedPopup");
+		if (ImGui::BeginPopup("FileLoadedPopup")) {
+			bool loaded = Settings::load(fileName);
+
+			ImGui::Text(loaded ? "Successfully loaded!" : "Couldn't load.");
+			ImGui::EndPopup();
+		}
 
 		ImGui::InputText("FileName", ImguiInterface::fileName, FILENAME_LENGTH);
 
@@ -50,9 +59,47 @@ void ImguiInterface::draw(sf::RenderWindow& window) {
         {
             if (ImGui::BeginTabItem("Gameplay"))
             {
-				ImGui::Checkbox("Autoplace", &Settings::Gameplay::autoplace);
-				if (Settings::Gameplay::autoplace)
-					ImGui::SliderFloat("Seconds delay", &Settings::Gameplay::autoplaceDelay, 0.25, 2);
+				if (ImGui::TreeNode("Bot"))
+				{
+					ImGui::Checkbox("Autoplace", &Settings::Gameplay::autoplace);
+					if (Settings::Gameplay::autoplace)
+						ImGui::SliderFloat("Delay seconds", &Settings::Gameplay::autoplaceDelay, 0.25, 2);
+
+					ImGui::TreePop();
+				}
+
+				if (ImGui::TreeNode("Blocks"))
+				{
+					ImGui::Text("Generate: ");
+					ImGui::Checkbox("Continously", &Settings::Gameplay::continousGenerate);
+
+					ImGui::Text("Type: ");
+					ImGui::SameLine();
+					if (ImGui::Button("Random"))
+						Settings::Gameplay::blockModel = -1;
+					ImGui::SameLine();
+					if (ImGui::Button("Model"))
+						ImGui::OpenPopup("ModelGeneratePopup");
+
+					ImGui::Text("Selected: ");
+					ImGui::SameLine();
+					ImGui::Text(Settings::Gameplay::blockModel == -1 ? "Random" : structures::grouped[Settings::Gameplay::blockModel]->name);
+
+					if (ImGui::Button("Regenerate"))
+						Game::pickupBoard->generateBlocks(Settings::Gameplay::blockModel);
+
+					if (ImGui::BeginPopup("ModelGeneratePopup"))
+					{
+						for (size_t i = 0; i < structures::grouped.size(); i++) {
+							if (ImGui::Selectable(structures::grouped[i]->name))
+								Settings::Gameplay::blockModel = i; //not really true mapping, if the structure array changes the name array needs to be changed too
+						}
+
+						ImGui::EndPopup();
+					}
+
+					ImGui::TreePop();
+				}
 
                 ImGui::EndTabItem();
             }
@@ -106,7 +153,7 @@ void ImguiInterface::draw(sf::RenderWindow& window) {
 				if (!Settings::Audio::muted)
 					ImGui::SliderInt("Volume", &Settings::Audio::volume, 0, 100);
 
-				ImGui::SliderFloat("Pitch", &Settings::Audio::pitch, 0.1, 1.9);
+				ImGui::SliderFloat("Pitch", &Settings::Audio::pitch, 0.1f, 1.9f);
 
 				Audio::updateState();
 
