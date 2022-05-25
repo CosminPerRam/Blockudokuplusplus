@@ -4,7 +4,7 @@
 #include <random>
 #include <fstream>
 
-int trueRandom::getNumberInBetween(unsigned a, unsigned b) {
+int random::getNumberInBetween(unsigned a, unsigned b) {
     static std::random_device rd; // obtain a random number from hardware
     static std::mt19937 gen(rd()); // seed the generator
 

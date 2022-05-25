@@ -35,7 +35,7 @@ private:
 	Table& theTable;
 	Score& theScore;
 
-	void generateBlocks(int structureIndex = -1);
+	void generateBlocks();
 	void placeIndexInDefaultPosition(unsigned i);
 
 	bool anyBlocksLeft();
@@ -50,6 +50,8 @@ public:
 	void draw(sf::RenderWindow& window);
 	void pollEvent(sf::RenderWindow& window, sf::Event& theEvent);
 	void updateColors();
+
+	void reset();
 
 	friend class ImguiInterface;
 };

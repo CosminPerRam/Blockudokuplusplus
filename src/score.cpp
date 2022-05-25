@@ -8,6 +8,23 @@
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/Mouse.hpp>
 
+const char* Score::Data::filePath = "resources/userData.txt";
+
+void Score::Data::writeLocalBest(unsigned score)
+{
+	files::writeToFile(std::to_string(score), "resources/userData.txt");
+}
+
+unsigned Score::Data::getLocalBest()
+{
+	unsigned localBest;
+
+	auto stream = files::getFileContents("resources/userData.txt");
+	stream >> localBest;
+
+	return localBest;
+}
+
 Score::Score(unsigned piecesCount) 
 {
 	pieceAddedCount.resize(piecesCount, 0);
@@ -29,6 +46,14 @@ Score::Score(unsigned piecesCount)
 Score::~Score()
 {
 	delete mostPopularBlock;
+}
+
+void Score::reset() {
+	std::fill(pieceAddedCount.begin(), pieceAddedCount.end(), 0);
+
+	timePlayed = 0;
+	score = 0, placed = 0, completionSquares = 0, completionLines = 0;
+	combo = -1, bestCombo = 0;
 }
 
 void Score::draw(sf::RenderWindow& window) {
@@ -111,11 +136,10 @@ void Score::setGameLost() {
 	mostPopularBlock->setPosition({ SCORE_POPULAR_PIECE_POSITION_X - mostPopularBlock->getGlobalBounds().width / 2.f,
 		SCORE_POPULAR_PIECE_POSITION_Y - mostPopularBlock->getGlobalBounds().height / 2.f });
 
-	auto stream = files::getFileContents("resources/userData.txt");
-	stream >> localBest;
+	localBest = Data::getLocalBest();
 
 	if (score > localBest)
-		files::writeToFile(std::to_string(score), "resources/userData.txt");
+		Data::writeLocalBest(score);
 }
 
 bool Score::isGameLost() {

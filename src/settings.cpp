@@ -8,9 +8,12 @@ namespace Settings
 	}
 
 	bool load(const char* fileName) {
-		Aspect::defaultValues();
 
 		return true;
+	}
+
+	void defaults() {
+		Aspect::defaultValues();
 	}
 
 	namespace General
@@ -29,6 +32,8 @@ namespace Settings
 	{
 		bool autoplace = false;
 		float autoplaceDelay = 1;
+
+		bool checkGameInAdvance = false;
 
 		bool continousGenerate = false;
 		int blockModel = -1;

@@ -2,7 +2,7 @@
 
 #include <sstream>
 
-namespace trueRandom
+namespace random
 {
 	int getNumberInBetween(unsigned a, unsigned b);
 }

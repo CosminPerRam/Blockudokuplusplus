@@ -17,6 +17,10 @@ PickupBoard::~PickupBoard()
         delete pickupableBlocks[i];
 }
 
+void PickupBoard::reset() {
+    PickupBoard::generateBlocks();
+}
+
 void PickupBoard::calculateVertexes() {
     for (unsigned i = 0; i < 2; i++) {
         float rowY = BoardHeight * i * 1.f;
@@ -36,9 +40,9 @@ void PickupBoard::calculateVertexes() {
     }
 }
 
-void PickupBoard::generateBlocks(int structureIndex) {
+void PickupBoard::generateBlocks() {
     for (int i = 0; i < 3; i++) {
-        pickupableBlocks[i] = new Block(structureIndex);
+        pickupableBlocks[i] = new Block(Settings::Gameplay::blockModel);
         PickupBoard::placeIndexInDefaultPosition(i);
     }
 }

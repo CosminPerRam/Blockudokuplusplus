@@ -4,6 +4,7 @@
 #include "settings.h"
 #include "audio.h"
 #include "game.h"
+#include "utilities.h"
 
 #include <SFML/Window/Event.hpp>
 
@@ -59,20 +60,28 @@ void ImguiInterface::draw(sf::RenderWindow& window) {
         {
             if (ImGui::BeginTabItem("Gameplay"))
             {
-				if (ImGui::TreeNode("Bot"))
+				if (ImGui::TreeNode("Game"))
 				{
+					if (ImGui::Button("Restart game"))
+						Game::restart();
+					ImGui::SameLine();
+					if (ImGui::Button("Clear board"))
+						Game::theTable->reset();
+
+					ImGui::Separator();
+
 					ImGui::Checkbox("Autoplace", &Settings::Gameplay::autoplace);
 					if (Settings::Gameplay::autoplace)
 						ImGui::SliderFloat("Delay seconds", &Settings::Gameplay::autoplaceDelay, 0.25, 2);
+
+					ImGui::Separator();
+					ImGui::Checkbox("Check game in advance", &Settings::Gameplay::checkGameInAdvance);
 
 					ImGui::TreePop();
 				}
 
 				if (ImGui::TreeNode("Blocks"))
 				{
-					ImGui::Text("Generate: ");
-					ImGui::Checkbox("Continously", &Settings::Gameplay::continousGenerate);
-
 					ImGui::Text("Type: ");
 					ImGui::SameLine();
 					if (ImGui::Button("Random"))
@@ -84,18 +93,45 @@ void ImguiInterface::draw(sf::RenderWindow& window) {
 					ImGui::Text("Selected: ");
 					ImGui::SameLine();
 					ImGui::Text(Settings::Gameplay::blockModel == -1 ? "Random" : structures::grouped[Settings::Gameplay::blockModel]->name);
+					
+					ImGui::Separator();
 
 					if (ImGui::Button("Regenerate"))
-						Game::pickupBoard->generateBlocks(Settings::Gameplay::blockModel);
+						Game::pickupBoard->generateBlocks();
+					ImGui::SameLine();
+					ImGui::Checkbox("Continously", &Settings::Gameplay::continousGenerate);
 
 					if (ImGui::BeginPopup("ModelGeneratePopup"))
 					{
 						for (size_t i = 0; i < structures::grouped.size(); i++) {
 							if (ImGui::Selectable(structures::grouped[i]->name))
-								Settings::Gameplay::blockModel = i; //not really true mapping, if the structure array changes the name array needs to be changed too
+								Settings::Gameplay::blockModel = i;
 						}
 
 						ImGui::EndPopup();
+					}
+
+					ImGui::TreePop();
+				}
+
+				if (ImGui::TreeNode("Score"))
+				{
+					ImGui::Text("Current: ");
+					ImGui::SameLine();
+					ImGui::Text(std::to_string(Game::theScore->score).c_str());
+					ImGui::SameLine();
+					if (ImGui::Button("Reset"))
+						Game::theScore->reset();
+
+					static unsigned localBest = Score::Data::getLocalBest();
+
+					ImGui::Text("Highscore: ");
+					ImGui::SameLine();
+					ImGui::Text(std::to_string(localBest).c_str());
+					ImGui::SameLine();
+					if (ImGui::Button("Reset")) {
+						Score::Data::writeLocalBest(0);
+						localBest = 0;
 					}
 
 					ImGui::TreePop();

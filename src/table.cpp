@@ -30,6 +30,13 @@ Table::Table(Score& theScore) : theScore(theScore)
     Table::calculateVertexes();
 }
 
+void Table::reset() {
+    for (unsigned i = 0; i < 9; i++) {
+        for (unsigned j = 0; j < 9; j++)
+            cellTable[i][j] = cell::empty;
+    }
+}
+
 void Table::calculateVertexes() {
     sf::Vector2f startPosition = { TABLE_POSITION_X, TABLE_POSITION_Y };
     float lineLength = CELL_SPACING * TABLE_SIZE;

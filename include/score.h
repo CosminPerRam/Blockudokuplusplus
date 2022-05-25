@@ -29,6 +29,15 @@ private:
 	float timePlayed = 0;
 	bool gameLost = false;
 
+	class Data
+	{
+	public:
+		static const char* filePath;
+
+		static void writeLocalBest(unsigned score);
+		static unsigned getLocalBest();
+	};
+
 	unsigned localBest = 0;
 
 	unsigned score = 0, placed = 0, completionSquares = 0, completionLines = 0;
@@ -52,4 +61,8 @@ public:
 
 	void addToCombo(unsigned amount);
 	void resetCombo();
+
+	void reset();
+
+	friend class ImguiInterface;
 };

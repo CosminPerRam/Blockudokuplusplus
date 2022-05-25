@@ -5,21 +5,17 @@
 
 #include <SFML/Graphics/RenderWindow.hpp>
 
-Score* Game::theScore = nullptr;
+Score *Game::theScore = nullptr;
 Table *Game::theTable = nullptr;
 PickupBoard *Game::pickupBoard = nullptr;
-ImguiInterface* Game::imguiInterface = nullptr;
+ImguiInterface *Game::imguiInterface = nullptr;
 
 sf::Clock Game::deltaClock;
 
 void Game::restart() {
-    delete theScore;
-    delete theTable;
-    delete pickupBoard;
-
-    theScore = new Score(structures::grouped.size());
-    theTable = new Table(*theScore);
-    pickupBoard = new PickupBoard(*theTable, *theScore);
+    theScore->reset();
+    theTable->reset();
+    pickupBoard->reset();
 }
 
 void Game::draw(sf::RenderWindow& window) {
@@ -54,9 +50,11 @@ void Game::update(sf::RenderWindow& window) {
 int Game::start() {
     Audio::initialize();
 
-    Settings::load("test.txt");
+    Settings::defaults();
 
-    Game::restart();
+    theScore = new Score(structures::grouped.size());
+    theTable = new Table(*theScore);
+    pickupBoard = new PickupBoard(*theTable, *theScore);
 
     sf::RenderWindow window(sf::VideoMode(WINDOW_HEIGHT, WINDOW_WIDTH), "Blockudoku", sf::Style::Close);
     window.setVerticalSyncEnabled(true);

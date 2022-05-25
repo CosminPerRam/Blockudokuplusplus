@@ -7,6 +7,7 @@ namespace Settings
 {
 	extern bool save(const char* fileName);
 	extern bool load(const char* fileName);
+	extern void defaults();
 
 	namespace General
 	{
@@ -24,6 +25,8 @@ namespace Settings
 	{
 		extern bool autoplace;
 		extern float autoplaceDelay;
+
+		extern bool checkGameInAdvance;
 
 		extern bool continousGenerate;
 		extern int blockModel;

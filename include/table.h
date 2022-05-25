@@ -61,4 +61,8 @@ public:
 	void applyBlock(Block& theBlock, const sf::Vector2i& tableCellCoords);
 	sf::Vector2i previewBlock(Block& theHoldingBlock, const sf::Vector2f& mousePosition);
 	bool canBlockBePlaced(Block& theBlock);
+
+	void reset();
+
+	friend class ImguiInterface;
 };
