@@ -35,6 +35,7 @@ private:
 	Table& theTable;
 	Score& theScore;
 
+	void generateMissingBlocks();
 	void generateBlocks();
 	void placeIndexInDefaultPosition(unsigned i);
 
@@ -51,6 +52,8 @@ public:
 	void draw(sf::RenderWindow& window);
 	void pollEvent(sf::RenderWindow& window, sf::Event& theEvent);
 	void updateColors();
+
+	bool isBoardLost();
 
 	void reset();
 

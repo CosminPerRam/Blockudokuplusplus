@@ -12,6 +12,11 @@ class ImguiInterface// : Drawable, Eventer
 private:
 	static char fileName[FILENAME_LENGTH];
 
+	struct Custom
+	{
+		static void HelpMarker(const char* desc);
+	};
+
 public:
 	static void initialize(sf::RenderWindow& window);
 	static void shutdown();

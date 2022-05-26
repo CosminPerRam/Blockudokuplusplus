@@ -30,8 +30,8 @@ namespace Settings
 
 	namespace Gameplay
 	{
-		bool autoplace = false;
-		float autoplaceDelay = 1;
+		bool autoplay = false;
+		float autoplayDelay = 1;
 
 		bool checkGameInAdvance = false;
 

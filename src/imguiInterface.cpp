@@ -10,6 +10,20 @@
 
 char ImguiInterface::fileName[64] = {"settings.cfg"};
 
+void ImguiInterface::Custom::HelpMarker(const char* desc)
+{
+	ImGui::SameLine();
+	ImGui::TextDisabled("(?)");
+	if (ImGui::IsItemHovered())
+	{
+		ImGui::BeginTooltip();
+		ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
+		ImGui::TextUnformatted(desc);
+		ImGui::PopTextWrapPos();
+		ImGui::EndTooltip();
+	}
+}
+
 void ImguiInterface::initialize(sf::RenderWindow& window) {
 	ImGui::SFML::Init(window);
 }
@@ -70,12 +84,20 @@ void ImguiInterface::draw(sf::RenderWindow& window) {
 
 					ImGui::Separator();
 
-					ImGui::Checkbox("Autoplace", &Settings::Gameplay::autoplace);
-					if (Settings::Gameplay::autoplace)
-						ImGui::SliderFloat("Delay seconds", &Settings::Gameplay::autoplaceDelay, 0.25, 2);
+					ImGui::Checkbox("Autoplay", &Settings::Gameplay::autoplay);
+					Custom::HelpMarker("Let the game play itself.");
+					if (Settings::Gameplay::autoplay) {
+						ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.50f);
+						ImGui::SliderFloat("Delay seconds", &Settings::Gameplay::autoplayDelay, 0.2, 2);
+					}
 
 					ImGui::Separator();
-					ImGui::Checkbox("Check game in advance", &Settings::Gameplay::checkGameInAdvance);
+					if (ImGui::Checkbox("Check game in advance", &Settings::Gameplay::checkGameInAdvance))
+					{
+						if (Game::pickupBoard->isBoardLost())
+							Game::theScore->setGameLost();
+					}
+					HelpMarker("Checks every possible move to see if the game is lost.");
 
 					ImGui::TreePop();
 				}
@@ -96,10 +118,15 @@ void ImguiInterface::draw(sf::RenderWindow& window) {
 					
 					ImGui::Separator();
 
-					if (ImGui::Button("Regenerate"))
+					if (ImGui::Button("Regenerate all"))
 						Game::pickupBoard->generateBlocks();
 					ImGui::SameLine();
-					ImGui::Checkbox("Continously", &Settings::Gameplay::continousGenerate);
+					if (ImGui::Button("Regenerate missing"))
+						Game::pickupBoard->generateMissingBlocks();
+
+					ImGui::Separator();
+					ImGui::Checkbox("Continously generation", &Settings::Gameplay::continousGenerate);
+					Custom::HelpMarker("Never lets a slot to be empty (if it was occupied beforehand)!");
 
 					if (ImGui::BeginPopup("ModelGeneratePopup"))
 					{
@@ -145,7 +172,7 @@ void ImguiInterface::draw(sf::RenderWindow& window) {
 
 				if (ImGui::TreeNode("Colors"))
 				{
-					if (ImGui::Button("Reset")) {
+					if (ImGui::Button("Set default values")) {
 						Settings::Aspect::defaultValues();
 
 						Game::theTable->updateColors();
@@ -186,8 +213,11 @@ void ImguiInterface::draw(sf::RenderWindow& window) {
 			if (ImGui::BeginTabItem("Audio"))
 			{
 				ImGui::Checkbox("Mute", &Settings::Audio::muted);
-				if (!Settings::Audio::muted)
+				if (!Settings::Audio::muted) {
+					
 					ImGui::SliderInt("Volume", &Settings::Audio::volume, 0, 100);
+					ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.50f);
+				}
 
 				ImGui::SliderFloat("Pitch", &Settings::Audio::pitch, 0.1f, 1.9f);
 

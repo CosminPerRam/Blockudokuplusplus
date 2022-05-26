@@ -7,8 +7,6 @@
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/Mouse.hpp>
 
-#include <iostream>
-
 PickupBoard::PickupBoard(Table& theTable, Score& theScore) : theTable(theTable), theScore(theScore)
 {
     PickupBoard::generateBlocks();
@@ -18,6 +16,13 @@ PickupBoard::~PickupBoard()
 {
     for (unsigned i = 0; i < 3; i++)
         delete pickupableBlocks[i];
+}
+
+bool PickupBoard::isBoardLost() {
+    if (Settings::Gameplay::checkGameInAdvance)
+        return !recursiveCanAnyBlocksBePlaced();
+
+    return !canAnyBlocksBePlaced();
 }
 
 void PickupBoard::reset() {
@@ -43,6 +48,14 @@ void PickupBoard::calculateVertexes() {
     }
 }
 
+void PickupBoard::generateMissingBlocks() {
+    for (int i = 0; i < 3; i++) {
+        if (pickupableBlocks[i] == nullptr) {
+            pickupableBlocks[i] = new Block(Settings::Gameplay::blockModel);
+            PickupBoard::placeIndexInDefaultPosition(i);
+        }
+    }
+}
 void PickupBoard::generateBlocks() {
     for (int i = 0; i < 3; i++) {
         pickupableBlocks[i] = new Block(Settings::Gameplay::blockModel);
@@ -99,7 +112,7 @@ bool PickupBoard::recursiveCanAnyBlocksBePlaced(int firstIndex, int secondIndex)
         if (theCurrentBlock == nullptr || i == firstIndex || i == secondIndex) {
             amountSkipped++;
 
-            if (amountSkipped == 3)
+            if (amountSkipped == 3) //no more blocks to process
                 return true;
         }
         else
@@ -117,7 +130,9 @@ bool PickupBoard::recursiveCanAnyBlocksBePlaced(int firstIndex, int secondIndex)
                         return true;
                 }
                 else {
-                    if (secondIndex != 1 || recursiveCanAnyBlocksBePlaced(firstIndex, i))
+                    if (secondIndex == -1)
+                        return recursiveCanAnyBlocksBePlaced(firstIndex, i);
+                    else //this is the third block we process and there ARE possible positions, so, its good
                         return true;
                 }
 
@@ -186,17 +201,9 @@ void PickupBoard::pollEvent(sf::RenderWindow& window, sf::Event& theEvent)
 
                 if (!anyBlocksLeft())
                     generateBlocks();
-
-                std::cout << recursiveCanAnyBlocksBePlaced() << std::endl << std::endl;
-                /*if (Settings::Gameplay::checkGameInAdvance)
-                {
-                    if (!canAnyBlocksBePlaced() || !recursiveCanAnyBlocksBePlaced())
-                        theScore.setGameLost();
-                }
-                else */{
-                    if (!canAnyBlocksBePlaced())
-                        theScore.setGameLost();
-                }
+                
+                if(isBoardLost())
+                    theScore.setGameLost();
 
                 pickedUpPreviewCoords = { -1, -1 };
             }

@@ -23,8 +23,8 @@ namespace Settings
 
 	namespace Gameplay
 	{
-		extern bool autoplace;
-		extern float autoplaceDelay;
+		extern bool autoplay;
+		extern float autoplayDelay;
 
 		extern bool checkGameInAdvance;
 
