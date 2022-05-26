@@ -92,67 +92,40 @@ bool PickupBoard::recursiveCanAnyBlocksBePlaced(int firstIndex, int secondIndex)
     if (firstIndex == -1)
         virtualMatrix = theTable.getMatrix();
 
-    unsigned amountMissing = 0;
-    for (unsigned i = 0; i < 3; i++) {
-        if (pickupableBlocks[i] == nullptr)
-            amountMissing++;
-    }
-
-    if (amountMissing == 1 && secondIndex != -1)
-    {
-        if (virtualMatrix.getBlockPlacingPositions(*pickupableBlocks[secondIndex]).size() != 0)
-        {
-            std::cout << "b" << std::endl;
-            return true;
-        }
-    }
-
+    unsigned amountSkipped = 0;
     for (unsigned i = 0; i < 3; i++) {
         Block* theCurrentBlock = pickupableBlocks[i];
-        if (theCurrentBlock == nullptr || i == firstIndex || i == secondIndex)
-            continue;
 
-        auto positions = virtualMatrix.getBlockPlacingPositions(*theCurrentBlock);
+        if (theCurrentBlock == nullptr || i == firstIndex || i == secondIndex) {
+            amountSkipped++;
 
-        if (positions.size() != 0) {
-            if (amountMissing == 2) //the other two blocks are missing
-            {
-                std::cout << "a" << std::endl;
+            if (amountSkipped == 3)
                 return true;
-            }
-
-            if (secondIndex != -1) //the current iteration is the last block
-            {
-                std::cout << "c" << std::endl;
-                return true;
-            }
         }
+        else
+        {
+            auto positions = virtualMatrix.getBlockPlacingPositions(*theCurrentBlock);
 
-        std::unique_ptr<std::vector<completetion>> positionCompletetions;
-        for (const auto& p : positions) {
-            virtualMatrix.applyBlock(*theCurrentBlock, p);
-            positionCompletetions = virtualMatrix.checkCompletetion();
-            virtualMatrix.executeCompletetions(positionCompletetions, cell::empty);
+            std::unique_ptr<std::vector<completetion>> positionCompletetions;
+            for (const auto& p : positions) {
+                virtualMatrix.applyBlock(*theCurrentBlock, p);
+                positionCompletetions = virtualMatrix.checkCompletetion();
+                virtualMatrix.executeCompletetions(positionCompletetions, cell::empty);
 
-            if (firstIndex == -1) {
-                if (recursiveCanAnyBlocksBePlaced(i)) {
-                    std::cout << "e" << std::endl;
-                    return true;
+                if (firstIndex == -1) {
+                    if (recursiveCanAnyBlocksBePlaced(i))
+                        return true;
                 }
-            }
-            else {
-                if (recursiveCanAnyBlocksBePlaced(firstIndex, i)) {
-                    std::cout << "f" << std::endl;
-                    return true;
+                else {
+                    if (secondIndex != 1 || recursiveCanAnyBlocksBePlaced(firstIndex, i))
+                        return true;
                 }
-            }
 
-            virtualMatrix.executeCompletetions(positionCompletetions, cell::occupied);
-            virtualMatrix.applyBlock(*theCurrentBlock, p, cell::empty);
+                virtualMatrix.executeCompletetions(positionCompletetions, cell::occupied);
+                virtualMatrix.applyBlock(*theCurrentBlock, p, cell::empty);
+            }
         }
     }
-
-    std::cout << "d" << std::endl;
 
     return false;
 }
