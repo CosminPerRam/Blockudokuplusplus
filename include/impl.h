@@ -19,6 +19,12 @@ public:
 	virtual void pollEvent(sf::RenderWindow& window, sf::Event& theEvent) = 0;
 };
 
+class Updater
+{
+public:
+	virtual void update(sf::RenderWindow& window, sf::Time& dt) = 0;
+};
+
 class Colored
 {
 public:

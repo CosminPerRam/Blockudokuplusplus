@@ -7,7 +7,7 @@
 
 #define FILENAME_LENGTH 64
 
-class ImguiInterface// : Drawable, Eventer
+class ImguiInterface : Drawable, Eventer, Updater
 {
 private:
 	static char fileName[FILENAME_LENGTH];
@@ -23,5 +23,5 @@ public:
 
 	static void draw(sf::RenderWindow& window);
 	static void pollEvent(sf::RenderWindow& window, sf::Event& theEvent);
-	static void update(sf::RenderWindow& window, sf::Time dt);
+	static void update(sf::RenderWindow& window, sf::Time& dt);
 };

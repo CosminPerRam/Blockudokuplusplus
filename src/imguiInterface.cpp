@@ -39,7 +39,7 @@ void ImguiInterface::pollEvent(sf::RenderWindow& window, sf::Event& theEvent) {
 		Settings::General::showImgui = !Settings::General::showImgui;
 }
 
-void ImguiInterface::update(sf::RenderWindow& window, sf::Time dt) {
+void ImguiInterface::update(sf::RenderWindow& window, sf::Time& dt) {
 	ImGui::SFML::Update(window, dt);
 }
 
@@ -88,7 +88,7 @@ void ImguiInterface::draw(sf::RenderWindow& window) {
 					Custom::HelpMarker("Let the game play itself.");
 					if (Settings::Gameplay::autoplay) {
 						ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.50f);
-						ImGui::SliderFloat("Delay seconds", &Settings::Gameplay::autoplayDelay, 0.2, 2);
+						ImGui::SliderFloat("Delay seconds", &Settings::Gameplay::autoplayDelay, 0.2f, 2.f);
 					}
 
 					ImGui::Separator();
@@ -97,7 +97,7 @@ void ImguiInterface::draw(sf::RenderWindow& window) {
 						if (Game::pickupBoard->isBoardLost())
 							Game::theScore->setGameLost();
 					}
-					HelpMarker("Checks every possible move to see if the game is lost.");
+					Custom::HelpMarker("Checks every possible move to see if the game is lost.");
 
 					ImGui::TreePop();
 				}
@@ -213,11 +213,8 @@ void ImguiInterface::draw(sf::RenderWindow& window) {
 			if (ImGui::BeginTabItem("Audio"))
 			{
 				ImGui::Checkbox("Mute", &Settings::Audio::muted);
-				if (!Settings::Audio::muted) {
-					
+				if (!Settings::Audio::muted)
 					ImGui::SliderInt("Volume", &Settings::Audio::volume, 0, 100);
-					ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.50f);
-				}
 
 				ImGui::SliderFloat("Pitch", &Settings::Audio::pitch, 0.1f, 1.9f);
 
