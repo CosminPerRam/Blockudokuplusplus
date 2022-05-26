@@ -58,4 +58,5 @@ public:
 	void reset();
 
 	friend class ImguiInterface;
+	friend class Bot;
 };

@@ -68,7 +68,10 @@ void Score::draw(sf::RenderWindow& window) {
 		window.draw(theText);
 
 		theText.setPosition({ SCORE_POSITION2_X, SCORE_POSITION2_Y });
-		theText.setString("Squares: " + std::to_string(completionSquares) + "\tCombo: " + std::to_string(combo > -1 ? combo : 0) + "\nLines: " + std::to_string(completionLines));
+		theText.setString("Squares: " + std::to_string(completionSquares) +
+			"\tCombo: " + std::to_string(combo > -1 ? combo : 0) +
+			"\nLines: " + std::to_string(completionLines) +
+			(Settings::Gameplay::autoplay ? "\tAutoplay." : ""));
 
 		window.draw(theText);
 	}

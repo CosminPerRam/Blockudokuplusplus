@@ -6,6 +6,7 @@
 #include "score.h"
 #include "block.h"
 #include "imguiInterface.h"
+#include "bot.h"
 
 #include <SFML/Window/Event.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
@@ -29,6 +30,7 @@ protected:
 	static Table *theTable;
 	static PickupBoard *pickupBoard;
 	static ImguiInterface *imguiInterface;
+	static Bot theBot;
 
 public:
 	static int start();
@@ -36,4 +38,5 @@ public:
 	static void restart();
 
 	friend class ImguiInterface;
+	friend class Bot;
 };

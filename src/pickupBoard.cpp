@@ -56,6 +56,7 @@ void PickupBoard::generateMissingBlocks() {
         }
     }
 }
+
 void PickupBoard::generateBlocks() {
     for (int i = 0; i < 3; i++) {
         pickupableBlocks[i] = new Block(Settings::Gameplay::blockModel);
@@ -157,6 +158,9 @@ void PickupBoard::draw(sf::RenderWindow& window)
 
 void PickupBoard::pollEvent(sf::RenderWindow& window, sf::Event& theEvent)
 {
+    if (Settings::Gameplay::autoplay)
+        return;
+
     sf::Vector2f mousePosition = window.mapPixelToCoords(sf::Mouse::getPosition(window));
     sf::Vector2f mousePositionWithOffset = { mousePosition.x - PICKUP_OFFSET, mousePosition.y - PICKUP_OFFSET };
 

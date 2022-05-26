@@ -9,6 +9,7 @@ Score *Game::theScore = nullptr;
 Table *Game::theTable = nullptr;
 PickupBoard *Game::pickupBoard = nullptr;
 ImguiInterface *Game::imguiInterface = nullptr;
+Bot Game::theBot;
 
 sf::Clock Game::deltaClock;
 
@@ -45,6 +46,9 @@ void Game::update(sf::RenderWindow& window) {
     sf::Time dt = deltaClock.restart();
 
     ImguiInterface::update(window, dt);
+
+    if (Settings::Gameplay::autoplay)
+        theBot.update(window, dt);
 }
 
 int Game::start() {

@@ -90,6 +90,12 @@ void ImguiInterface::draw(sf::RenderWindow& window) {
 						ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.50f);
 						ImGui::SliderFloat("Delay seconds", &Settings::Gameplay::autoplayDelay, 0.2f, 2.f);
 					}
+					else {
+						ImGui::SameLine();
+						if (ImGui::Button("Bot move"))
+							Game::theBot.doMove();
+						Custom::HelpMarker("Do a bot-assisted move.");
+					}
 
 					ImGui::Separator();
 					if (ImGui::Checkbox("Check game in advance", &Settings::Gameplay::checkGameInAdvance))
