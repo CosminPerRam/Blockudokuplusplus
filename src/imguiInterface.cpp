@@ -50,16 +50,18 @@ void ImguiInterface::draw(sf::RenderWindow& window) {
 		if (ImGui::Button("Hide"))
 			Settings::General::showImgui = false;
 		ImGui::SameLine();
-		if (ImGui::Button("Save"))
-			ImGui::OpenPopup("FileSavedPopup");
+		//if (ImGui::Button("Save"))
+		//	ImGui::OpenPopup("FileSavedPopup");
+		//ImGui::SameLine();
+		//if (ImGui::Button("Load"))
+		//	ImGui::OpenPopup("FileLoadedPopup");
+
 		if (ImGui::BeginPopup("FileSavedPopup")) {
 			bool saved = Settings::save(fileName);
 			ImGui::Text(saved ? "Successfully saved!" : "Couldn't save.");
 			ImGui::EndPopup();
 		}
-		ImGui::SameLine();
-		if (ImGui::Button("Load"))
-			ImGui::OpenPopup("FileLoadedPopup");
+
 		if (ImGui::BeginPopup("FileLoadedPopup")) {
 			bool loaded = Settings::load(fileName);
 
@@ -67,7 +69,7 @@ void ImguiInterface::draw(sf::RenderWindow& window) {
 			ImGui::EndPopup();
 		}
 
-		ImGui::InputText("FileName", ImguiInterface::fileName, FILENAME_LENGTH);
+		//ImGui::InputText("FileName", ImguiInterface::fileName, FILENAME_LENGTH);
 
         ImGuiTabBarFlags tab_bar_flags = ImGuiTabBarFlags_None;
         if (ImGui::BeginTabBar("MyTabBar", tab_bar_flags))
@@ -117,22 +119,9 @@ void ImguiInterface::draw(sf::RenderWindow& window) {
 					ImGui::SameLine();
 					if (ImGui::Button("Model"))
 						ImGui::OpenPopup("ModelGeneratePopup");
-
-					ImGui::Text("Selected: ");
-					ImGui::SameLine();
-					ImGui::Text(Settings::Gameplay::blockModel == -1 ? "Random" : structures::grouped[Settings::Gameplay::blockModel]->name);
-					
-					ImGui::Separator();
-
-					if (ImGui::Button("Regenerate all"))
-						Game::pickupBoard->generateBlocks();
-					ImGui::SameLine();
-					if (ImGui::Button("Regenerate missing"))
-						Game::pickupBoard->generateMissingBlocks();
-
-					ImGui::Separator();
-					ImGui::Checkbox("Continously generation", &Settings::Gameplay::continousGenerate);
-					Custom::HelpMarker("Never lets a slot to be empty (if it was occupied beforehand)!");
+					//ImGui::SameLine();
+					//if (ImGui::Button("Custom"))
+					//	int i = 0;
 
 					if (ImGui::BeginPopup("ModelGeneratePopup"))
 					{
@@ -143,6 +132,23 @@ void ImguiInterface::draw(sf::RenderWindow& window) {
 
 						ImGui::EndPopup();
 					}
+
+					ImGui::Text("Selected: ");
+					ImGui::SameLine();
+					ImGui::Text(Settings::Gameplay::blockModel == -1 ? "Random" : structures::grouped[Settings::Gameplay::blockModel]->name);
+					
+					ImGui::Separator();
+					ImGui::Text("Regenerate: ");
+					ImGui::SameLine();
+					if (ImGui::Button("All"))
+						Game::pickupBoard->generateBlocks();
+					ImGui::SameLine();
+					if (ImGui::Button("Missing"))
+						Game::pickupBoard->generateMissingBlocks();
+
+					ImGui::Separator();
+					ImGui::Checkbox("Continously generation", &Settings::Gameplay::continousGenerate);
+					Custom::HelpMarker("Never lets a slot to be empty (if it was occupied beforehand)!");
 
 					ImGui::TreePop();
 				}
@@ -174,7 +180,7 @@ void ImguiInterface::draw(sf::RenderWindow& window) {
             }
             if (ImGui::BeginTabItem("Aspect"))
             {
-				ImGui::Checkbox("Animations", &Settings::Aspect::animations);
+				//ImGui::Checkbox("Animations", &Settings::Aspect::animations);
 
 				if (ImGui::TreeNode("Colors"))
 				{

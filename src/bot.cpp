@@ -14,7 +14,7 @@ void Bot::update(sf::RenderWindow& window, sf::Time& dt) {
 }
 
 unsigned Bot::runBranch(std::vector<unsigned> alreadyChosen) {
-
+    return 1;
 }
 
 void Bot::doMove() {
