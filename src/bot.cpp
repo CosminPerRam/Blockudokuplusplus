@@ -10,47 +10,20 @@ void Bot::update(sf::RenderWindow& window, sf::Time& dt) {
 	elapsedTime += dt;
 
 	if (elapsedTime.asSeconds() > Settings::Gameplay::autoplayDelay) {
-		Bot::doMove();
+		Bot::doSet();
 
 		elapsedTime = sf::Time();
 	}
 }
 
 Bot::Branch::Branch(unsigned firstIndex, sf::Vector2u firstPosition)
-    : firstIndex(firstIndex), firstPosition(firstPosition), type(Type::Single) { }
+    : firstIndex(firstIndex), firstPosition(firstPosition), type(Type::Single), score(Game::theTable->theMatrix.getEmptyCellsAmount()) { }
 Bot::Branch::Branch(unsigned firstIndex, sf::Vector2u firstPosition, unsigned secondIndex, sf::Vector2u secondPosition)
-    : firstIndex(firstIndex), firstPosition(firstPosition), secondIndex(secondIndex), secondPosition(secondPosition), type(Type::Double) { }
+    : firstIndex(firstIndex), firstPosition(firstPosition), secondIndex(secondIndex), secondPosition(secondPosition), type(Type::Double), score(Game::theTable->theMatrix.getEmptyCellsAmount()) { }
 Bot::Branch::Branch(unsigned firstIndex, sf::Vector2u firstPosition, unsigned secondIndex, sf::Vector2u secondPosition, unsigned thirdIndex, sf::Vector2u thirdPosition)
-    : firstIndex(firstIndex), firstPosition(firstPosition), secondIndex(secondIndex), secondPosition(secondPosition), thirdIndex(thirdIndex), thirdPosition(thirdPosition), type(Type::Triple) { }
+    : firstIndex(firstIndex), firstPosition(firstPosition), secondIndex(secondIndex), secondPosition(secondPosition), thirdIndex(thirdIndex), thirdPosition(thirdPosition), type(Type::Triple), score(Game::theTable->theMatrix.getEmptyCellsAmount()) { }
 
-unsigned Bot::evaluateBranch(const Branch& branch) {
-    cellMatrix theMatrix = Game::theTable->theMatrix;
-
-    Block* firstBlock = Game::pickupBoard->pickupableBlocks[branch.firstIndex];
-    theMatrix.applyBlock(*firstBlock, branch.firstPosition);
-    auto firstCompletions = theMatrix.checkCompletetion();
-    theMatrix.executeCompletetions(firstCompletions, cell::empty);
-
-    if (branch.type != Branch::Type::Single) {
-        Block* secondBlock = Game::pickupBoard->pickupableBlocks[branch.secondIndex];
-
-        theMatrix.applyBlock(*secondBlock, branch.secondPosition);
-        auto secondCompletions = theMatrix.checkCompletetion();
-        theMatrix.executeCompletetions(secondCompletions, cell::empty);
-
-        if (branch.type != Branch::Type::Double) {
-            Block* thirdBlock = Game::pickupBoard->pickupableBlocks[branch.thirdIndex];
-            
-            theMatrix.applyBlock(*thirdBlock, branch.thirdPosition);
-            auto thirdCompletions = theMatrix.checkCompletetion();
-            theMatrix.executeCompletetions(thirdCompletions, cell::empty);
-        }
-    }
-
-    return theMatrix.getEmptyCellsAmount();
-}
-
-void Bot::doMove() {
+void Bot::doSet() {
     cellMatrix currentMatrix = Game::theTable->getMatrix();
 
     unsigned missingBlocks = 0;
@@ -70,12 +43,15 @@ void Bot::doMove() {
         auto firstPositions = currentMatrix.getBlockPlacingPositions(*firstBlock);
         for (const auto& firstPosition : firstPositions)
         {
+            currentMatrix.applyBlock(*firstBlock, firstPosition);
+            auto firstCompletions = currentMatrix.checkCompletetion();
+            currentMatrix.executeCompletetions(firstCompletions, cell::empty);
+
             if (missingBlocks == 2)
             {
                 branches.emplace_back(firstIndex, firstPosition);
                 continue;
             }
-            //add block checks
 
             for (unsigned secondIndex = 0; secondIndex < 3; secondIndex++) {
                 Block* secondBlock = Game::pickupBoard->pickupableBlocks[secondIndex];
@@ -85,6 +61,10 @@ void Bot::doMove() {
                 auto secondPositions = currentMatrix.getBlockPlacingPositions(*secondBlock);
                 for (const auto& secondPosition : secondPositions)
                 {
+                    currentMatrix.applyBlock(*secondBlock, secondPosition);
+                    auto secondCompletions = currentMatrix.checkCompletetion();
+                    currentMatrix.executeCompletetions(secondCompletions, cell::empty);
+
                     if (missingBlocks == 1)
                     {
                         branches.emplace_back(firstIndex, firstPosition, secondIndex, secondPosition);
@@ -100,20 +80,32 @@ void Bot::doMove() {
                         for (const auto& thirdPosition : thirdPosition)
                             branches.emplace_back(firstIndex, firstPosition, secondIndex, secondPosition, thirdIndex, thirdPosition);
                     }
+
+                    currentMatrix.executeCompletetions(secondCompletions, cell::occupied);
+                    currentMatrix.applyBlock(*secondBlock, secondPosition, cell::empty);
                 }
             }
+
+            currentMatrix.executeCompletetions(firstCompletions, cell::occupied);
+            currentMatrix.applyBlock(*firstBlock, firstPosition, cell::empty);
         }
     }
 
-    std::vector<unsigned> scores(branches.size());
-    for (unsigned i = 0; i < branches.size(); i++)
-        scores[i] = evaluateBranch(branches[i]);
-
-    if (branches.size() == 0)
+    if (branches.size() == 0) {
+        Settings::Gameplay::autoplay = false;
         return;
+    }
+
+    unsigned highestScoreAmount = 0, highestScoreIndex = 0;
+    for (unsigned i = 0; i < branches.size(); i++) {
+        const Branch& b = branches[i];
+        if (b.score > highestScoreAmount) {
+            highestScoreAmount = b.score;
+            highestScoreIndex = i;
+        }
+    }
 
     //executing the best branch...
-    unsigned highestScoreIndex = std::distance(scores.begin(), std::max_element(scores.begin(), scores.end()));
     const Branch& highestScoreBranch = branches[highestScoreIndex];
 
     Block*& firstBlock = Game::pickupBoard->pickupableBlocks[highestScoreBranch.firstIndex];

@@ -86,22 +86,28 @@ void ImguiInterface::draw(sf::RenderWindow& window) {
 
 					ImGui::Separator();
 
-					ImGui::Checkbox("Autoplay", &Settings::Gameplay::autoplay);
-					Custom::HelpMarker("Let the game play itself.");
+					if (ImGui::Checkbox("Autoplay", &Settings::Gameplay::autoplay)) {
+						if (Settings::Gameplay::checkGameInAdvance)
+							Settings::Gameplay::checkGameInAdvance = false;
+					}
+					Custom::HelpMarker("Let the game play itself. Stops before game is lost.");
 					if (Settings::Gameplay::autoplay) {
 						ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.50f);
 						ImGui::SliderFloat("Delay seconds", &Settings::Gameplay::autoplayDelay, 0.2f, 2.f);
 					}
 					else {
 						ImGui::SameLine();
-						if (ImGui::Button("Bot move"))
-							Game::theBot.doMove();
-						Custom::HelpMarker("Do a bot-assisted move.");
+						if (ImGui::Button("Bot place set"))
+							Game::theBot.doSet();
+						Custom::HelpMarker("Let the bot place the currently holding set of blocks.");
 					}
 
 					ImGui::Separator();
 					if (ImGui::Checkbox("Check game in advance", &Settings::Gameplay::checkGameInAdvance))
 					{
+						if (Settings::Gameplay::autoplay)
+							Settings::Gameplay::autoplay = false;
+
 						if (Game::pickupBoard->isBoardLost())
 							Game::theScore->setGameLost();
 					}

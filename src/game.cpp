@@ -47,8 +47,10 @@ void Game::update(sf::RenderWindow& window) {
 
     ImguiInterface::update(window, dt);
 
-    if (Settings::Gameplay::autoplay)
-        theBot.update(window, dt);
+    if (!theScore->isGameLost()) {
+        if (Settings::Gameplay::autoplay)
+            theBot.update(window, dt);
+    }
 }
 
 int Game::start() {
