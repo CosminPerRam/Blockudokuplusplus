@@ -90,7 +90,7 @@ void ImguiInterface::draw(sf::RenderWindow& window) {
 						if (Settings::Gameplay::checkGameInAdvance)
 							Settings::Gameplay::checkGameInAdvance = false;
 					}
-					Custom::HelpMarker("Let the game play itself. Stops before game is lost.");
+					Custom::HelpMarker("Let the game play itself.\nStops before game is lost.");
 					if (Settings::Gameplay::autoplay) {
 						ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.50f);
 						ImGui::SliderFloat("Delay seconds", &Settings::Gameplay::autoplayDelay, 0.2f, 2.f);
@@ -99,7 +99,7 @@ void ImguiInterface::draw(sf::RenderWindow& window) {
 						ImGui::SameLine();
 						if (ImGui::Button("Bot place set"))
 							Game::theBot.doSet();
-						Custom::HelpMarker("Let the bot place the currently holding set of blocks.");
+						Custom::HelpMarker("Let the bot place the holding set of blocks.");
 					}
 
 					ImGui::Separator();
@@ -111,7 +111,7 @@ void ImguiInterface::draw(sf::RenderWindow& window) {
 						if (Game::pickupBoard->isBoardLost())
 							Game::theScore->setGameLost();
 					}
-					Custom::HelpMarker("Checks every possible move to see if the game is lost.");
+					Custom::HelpMarker("Checks every possible move to\nverify if the game is lost.");
 
 					ImGui::TreePop();
 				}
@@ -154,7 +154,7 @@ void ImguiInterface::draw(sf::RenderWindow& window) {
 
 					ImGui::Separator();
 					ImGui::Checkbox("Continously generation", &Settings::Gameplay::continousGenerate);
-					Custom::HelpMarker("Never lets a slot to be empty (if it was occupied beforehand)!");
+					Custom::HelpMarker("Never lets a slot to be empty\n(if it was occupied beforehand)!");
 
 					ImGui::TreePop();
 				}
@@ -165,19 +165,15 @@ void ImguiInterface::draw(sf::RenderWindow& window) {
 					ImGui::SameLine();
 					ImGui::Text(std::to_string(Game::theScore->score).c_str());
 					ImGui::SameLine();
-					if (ImGui::Button("Reset"))
-						Game::theScore->reset();
-
-					static unsigned localBest = Score::Data::getLocalBest();
-
 					ImGui::Text("Highscore: ");
 					ImGui::SameLine();
-					ImGui::Text(std::to_string(localBest).c_str());
+					ImGui::Text(std::to_string(Score::Data::getLocalBest()).c_str());
+
+					if (ImGui::Button("Reset score"))
+						Game::theScore->reset();
 					ImGui::SameLine();
-					if (ImGui::Button("Reset")) {
+					if (ImGui::Button("Reset highscore"))
 						Score::Data::writeLocalBest(0);
-						localBest = 0;
-					}
 
 					ImGui::TreePop();
 				}

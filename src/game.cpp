@@ -14,7 +14,7 @@ Bot Game::theBot;
 sf::Clock Game::deltaClock;
 
 void Game::restart() {
-    theScore->reset();
+    theScore->reset(true);
     theTable->reset();
     pickupBoard->reset();
 }

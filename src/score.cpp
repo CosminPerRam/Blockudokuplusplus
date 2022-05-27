@@ -9,19 +9,20 @@
 #include <SFML/Window/Mouse.hpp>
 
 const char* Score::Data::filePath = "resources/userData.txt";
+unsigned Score::Data::localBest = 0;
 
 void Score::Data::writeLocalBest(unsigned score)
 {
+	localBest = score;
 	files::writeToFile(std::to_string(score), "resources/userData.txt");
 }
-
-unsigned Score::Data::getLocalBest()
+void Score::Data::loadLocalBest()
 {
-	unsigned localBest;
-
 	auto stream = files::getFileContents("resources/userData.txt");
 	stream >> localBest;
-
+}
+unsigned Score::Data::getLocalBest()
+{
 	return localBest;
 }
 
@@ -31,6 +32,8 @@ Score::Score(unsigned piecesCount)
 
 	if(!theFont.loadFromFile("resources/courierNewFont.ttf"))
 		throw "Couldn't load the font";
+
+	Data::loadLocalBest();
 
 	Score::updateColors();
 
@@ -48,14 +51,15 @@ Score::~Score()
 	delete mostPopularBlock;
 }
 
-void Score::reset() {
+void Score::reset(bool restart) {
 	std::fill(pieceAddedCount.begin(), pieceAddedCount.end(), 0);
 
 	timePlayed = 0;
 	score = 0, placed = 0, completionSquares = 0, completionLines = 0;
 	combo = -1, bestCombo = 0;
 
-	gameLost = false;
+	if(restart)
+		gameLost = false;
 }
 
 void Score::draw(sf::RenderWindow& window) {
@@ -76,8 +80,8 @@ void Score::draw(sf::RenderWindow& window) {
 		window.draw(theText);
 	}
 	else {
-		std::string endGameStatsString = "Game lost, stats: \n        Score: " + std::to_string(score) + (score > localBest ? " (highscore)" : "") +
-			"\n   Local best: " + std::to_string(localBest) +
+		std::string endGameStatsString = "Game lost, stats: \n        Score: " + std::to_string(score) + (score > Data::localBest ? " (highscore)" : "") +
+			"\n   Local best: " + std::to_string(Data::localBest) +
 			"\n Squares made: " + std::to_string(completionSquares) +
 			"\n   Lines made: " + std::to_string(completionLines) +
 			"\n   Best combo: " + std::to_string(bestCombo) +
@@ -141,9 +145,7 @@ void Score::setGameLost() {
 	mostPopularBlock->setPosition({ SCORE_POPULAR_PIECE_POSITION_X - mostPopularBlock->getGlobalBounds().width / 2.f,
 		SCORE_POPULAR_PIECE_POSITION_Y - mostPopularBlock->getGlobalBounds().height / 2.f });
 
-	localBest = Data::getLocalBest();
-
-	if (score > localBest)
+	if (score > Data::localBest)
 		Data::writeLocalBest(score);
 }
 

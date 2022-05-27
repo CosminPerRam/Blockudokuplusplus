@@ -34,11 +34,12 @@ private:
 	public:
 		static const char* filePath;
 
+		static unsigned localBest;
+
 		static void writeLocalBest(unsigned score);
+		static void loadLocalBest();
 		static unsigned getLocalBest();
 	};
-
-	unsigned localBest = 0;
 
 	unsigned score = 0, placed = 0, completionSquares = 0, completionLines = 0;
 	int combo = -1, bestCombo = 0;
@@ -62,7 +63,7 @@ public:
 	void addToCombo(unsigned amount);
 	void resetCombo();
 
-	void reset();
+	void reset(bool restart = false);
 
 	friend class ImguiInterface;
 };
