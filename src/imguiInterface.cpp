@@ -51,6 +51,7 @@ void ImguiInterface::draw(sf::RenderWindow& window) {
 
 	if (ImGui::Button("Hide"))
 		Settings::General::showImgui = false;
+	Custom::HelpMarker("Press 'M' to hide/show this menu.");
 	ImGui::SameLine();
 	//if (ImGui::Button("Save"))
 	//	ImGui::OpenPopup("FileSavedPopup");
