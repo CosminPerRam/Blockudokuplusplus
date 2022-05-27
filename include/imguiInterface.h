@@ -3,11 +3,9 @@
 #include "imgui.h"
 #include "imgui-SFML.h"
 
-#include "impl.h"
-
 #define FILENAME_LENGTH 64
 
-class ImguiInterface : Drawable, Eventer, Updater
+class ImguiInterface
 {
 private:
 	static char fileName[FILENAME_LENGTH];

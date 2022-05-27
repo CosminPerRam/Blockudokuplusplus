@@ -4,7 +4,7 @@
 #include <random>
 #include <fstream>
 
-int random::getNumberInBetween(unsigned a, unsigned b) {
+int Random::getNumberInBetween(unsigned a, unsigned b) {
     static std::random_device rd; // obtain a random number from hardware
     static std::mt19937 gen(rd()); // seed the generator
 
@@ -13,7 +13,7 @@ int random::getNumberInBetween(unsigned a, unsigned b) {
     return distr(gen);
 }
 
-std::stringstream files::getFileContents(const std::string& fileName) {
+std::stringstream Files::getFileContents(const std::string& fileName) {
     std::ifstream fin(fileName);
 
     std::stringstream theStream;
@@ -22,7 +22,7 @@ std::stringstream files::getFileContents(const std::string& fileName) {
     return theStream;
 }
 
-void files::writeToFile(const std::string& text, const std::string& fileName, bool overwrite) {
+void Files::writeToFile(const std::string& text, const std::string& fileName, bool overwrite) {
     std::ofstream fout;
 
     if (overwrite)

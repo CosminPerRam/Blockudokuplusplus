@@ -1,9 +1,10 @@
 
 #pragma once
 
-#include "impl.h"
+#include <SFML/Graphics/RenderWindow.hpp>
+#include <SFML/System/Vector2.hpp>
 
-class Bot : Updater
+class Bot
 {
 private:
 	sf::Time elapsedTime;

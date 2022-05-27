@@ -33,5 +33,5 @@ Although I can provide binaries only for Windows (and sometimes for Apple Silico
 *. Note: `openal32.dll` (from SFML's `bin` folder) is needed to be in the Debug/Release folder.
 
 ### Linux/MacOS - CMake
-(Currently broken, needs changes for imgui)  
+*. You still need to do the steps `3, 7, 8, 9` from above.  
 Clone the repo and check out the cmake script. (Thanks [@ChrisTrasher](https://github.com/ChrisThrasher))

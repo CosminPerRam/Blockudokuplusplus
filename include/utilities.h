@@ -2,12 +2,12 @@
 
 #include <sstream>
 
-namespace random
+namespace Random
 {
 	int getNumberInBetween(unsigned a, unsigned b);
 }
 
-namespace files
+namespace Files
 {
 	std::stringstream getFileContents(const std::string& fileName);
 

@@ -1,9 +1,8 @@
 #pragma once
 
-#include "impl.h"
-
 #include <SFML/Audio/SoundBuffer.hpp>
 #include <SFML/Audio/Sound.hpp>
+#include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/Sprite.hpp>
 
@@ -11,7 +10,7 @@
 	This class is responsible with managing every audio that plays in the game.
 	It also renders the mute/unmute button, it is here as its simpler to understand.
 */
-class Audio : Drawable, Eventer
+class Audio
 {
 private:
 	static bool initialized;

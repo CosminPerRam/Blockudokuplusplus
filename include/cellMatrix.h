@@ -5,6 +5,7 @@
 #include <SFML/System/Vector2.hpp>
 
 #include <array>
+#include <memory>
 
 enum cell { empty = 0, occupied, preview, occupiedPreview };
 enum class mark { square, vline, hline };

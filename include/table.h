@@ -1,6 +1,5 @@
 #pragma once
 
-#include "impl.h"
 #include "block.h"
 #include "score.h"
 #include "spacing.h"
@@ -15,7 +14,7 @@
 	The cells table, it does not memorize where which block
 	has been placed, it has a cell matrix.
 */
-class Table : Drawable, Colored
+class Table
 {
 private:
 	sf::Color MINOR_COLOR, MAJOR_COLOR;

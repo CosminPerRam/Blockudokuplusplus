@@ -124,7 +124,6 @@
     <ClInclude Include="include\cellMatrix.h" />
     <ClInclude Include="include\game.h" />
     <ClInclude Include="include\imguiInterface.h" />
-    <ClInclude Include="include\impl.h" />
     <ClInclude Include="include\settings.h" />
     <ClInclude Include="include\pickupBoard.h" />
     <ClInclude Include="include\score.h" />

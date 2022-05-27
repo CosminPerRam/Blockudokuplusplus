@@ -93,9 +93,6 @@
     <ClInclude Include="include\pickupBoard.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\impl.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\score.h">
       <Filter>Header Files</Filter>
     </ClInclude>

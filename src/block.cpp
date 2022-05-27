@@ -88,7 +88,7 @@ Block::Block(int structureIndex)
 
 const std::vector<std::vector<int>>& Block::getStructure(unsigned structureIndex) {
 	if(structureIndex == -1)
-		structureIndex = random::getNumberInBetween(0, structures::grouped.size() - 1);
+		structureIndex = Random::getNumberInBetween(0, structures::grouped.size() - 1);
 
 	this->structureIndex = structureIndex;
 	const std::vector<std::vector<int>>& structure = structures::grouped[structureIndex]->definition;

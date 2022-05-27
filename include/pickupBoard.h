@@ -1,6 +1,5 @@
 #pragma once
 
-#include "impl.h"
 #include "block.h"
 #include "spacing.h"
 #include "table.h"
@@ -16,7 +15,7 @@
 	Manages picking up, regenerating the blocks and checking if the game is lost.
 	The rest of the classes have nothing to do with its components.
 */
-class PickupBoard : Drawable, Eventer, Colored
+class PickupBoard
 {
 private:
 	sf::Color MARGINS;

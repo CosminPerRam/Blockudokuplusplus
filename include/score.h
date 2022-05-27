@@ -1,6 +1,5 @@
 #pragma once
 
-#include "impl.h"
 #include "block.h"
 #include "settings.h"
 
@@ -13,7 +12,7 @@
 	The score has 2 faces, one while the game
 	is running and one when the game is lost.
 */
-class Score : Drawable, Eventer, Colored
+class Score
 {
 private:
 	sf::Color TEXT_COLOR;

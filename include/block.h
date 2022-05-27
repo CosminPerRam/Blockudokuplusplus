@@ -1,8 +1,7 @@
 
 #pragma once
 
-#include "impl.h"
-
+#include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
 
 #include <vector>
@@ -35,7 +34,7 @@ namespace structures
 /*
 	A block is a certain formation of cells.
 */
-class Block : Drawable
+class Block
 {
 private:
 	sf::RectangleShape cell;
