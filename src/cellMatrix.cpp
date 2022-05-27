@@ -40,6 +40,19 @@ void cellMatrix::reset() {
     }
 }
 
+unsigned cellMatrix::getEmptyCellsAmount() const {
+    unsigned amount = 0;
+
+    for (unsigned i = 0; i < 9; i++) {
+        for (unsigned j = 0; j < 9; j++) {
+            if (cellTable[i][j] == cell::empty)
+                amount++;
+        }
+    }
+
+    return amount;
+}
+
 sf::Vector2i cellMatrix::previewBlock(Block& theHoldingBlock, const sf::Vector2i& matrixPosition)
 {
     const auto& blockStructure = theHoldingBlock.getStructure();

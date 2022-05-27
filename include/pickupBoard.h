@@ -35,13 +35,15 @@ private:
 	Table& theTable;
 	Score& theScore;
 
-	void generateMissingBlocks();
-	void generateBlocks();
+	void regenerateMissingBlocks();
+	void regenerateBlocks();
 	void placeIndexInDefaultPosition(unsigned i);
 
 	bool anyBlocksLeft();
 	bool canAnyBlocksBePlaced();
 	bool recursiveCanAnyBlocksBePlaced(int firstIndex = -1, int secondIndex = -1);
+
+	void updateBlocksState();
 
 	void calculateVertexes();
 

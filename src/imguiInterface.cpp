@@ -141,10 +141,10 @@ void ImguiInterface::draw(sf::RenderWindow& window) {
 					ImGui::Text("Regenerate: ");
 					ImGui::SameLine();
 					if (ImGui::Button("All"))
-						Game::pickupBoard->generateBlocks();
+						Game::pickupBoard->regenerateBlocks();
 					ImGui::SameLine();
 					if (ImGui::Button("Missing"))
-						Game::pickupBoard->generateMissingBlocks();
+						Game::pickupBoard->regenerateMissingBlocks();
 
 					ImGui::Separator();
 					ImGui::Checkbox("Continously generation", &Settings::Gameplay::continousGenerate);

@@ -9,7 +9,7 @@
 
 PickupBoard::PickupBoard(Table& theTable, Score& theScore) : theTable(theTable), theScore(theScore)
 {
-    PickupBoard::generateBlocks();
+    PickupBoard::regenerateBlocks();
 }
 
 PickupBoard::~PickupBoard()
@@ -26,7 +26,7 @@ bool PickupBoard::isBoardLost() {
 }
 
 void PickupBoard::reset() {
-    PickupBoard::generateBlocks();
+    PickupBoard::regenerateBlocks();
 }
 
 void PickupBoard::calculateVertexes() {
@@ -48,7 +48,7 @@ void PickupBoard::calculateVertexes() {
     }
 }
 
-void PickupBoard::generateMissingBlocks() {
+void PickupBoard::regenerateMissingBlocks() {
     for (int i = 0; i < 3; i++) {
         if (pickupableBlocks[i] == nullptr) {
             pickupableBlocks[i] = new Block(Settings::Gameplay::blockModel);
@@ -57,7 +57,7 @@ void PickupBoard::generateMissingBlocks() {
     }
 }
 
-void PickupBoard::generateBlocks() {
+void PickupBoard::regenerateBlocks() {
     for (int i = 0; i < 3; i++) {
         pickupableBlocks[i] = new Block(Settings::Gameplay::blockModel);
         PickupBoard::placeIndexInDefaultPosition(i);
@@ -85,6 +85,7 @@ bool PickupBoard::canAnyBlocksBePlaced() {
     bool canAnyBePlaced = false;
 
     for (unsigned i = 0; i < 3; i++) {
+        int k = 0;
         if (pickupableBlocks[i] == nullptr)
             continue;
 
@@ -146,6 +147,19 @@ bool PickupBoard::recursiveCanAnyBlocksBePlaced(int firstIndex, int secondIndex)
     return false;
 }
 
+void PickupBoard::updateBlocksState()
+{
+    if (Settings::Gameplay::continousGenerate)
+        regenerateMissingBlocks();
+    else {
+        if (!anyBlocksLeft())
+            regenerateBlocks();
+    }
+
+    if (isBoardLost())
+        theScore.setGameLost();
+}
+
 void PickupBoard::draw(sf::RenderWindow& window)
 {
     window.draw(borders);
@@ -195,19 +209,9 @@ void PickupBoard::pollEvent(sf::RenderWindow& window, sf::Event& theEvent)
                 theScore.addPiecePlaced(pickupableBlocks[pickedUpIndex]->getStructureIndex());
 
                 delete pickupableBlocks[pickedUpIndex];
+                pickupableBlocks[pickedUpIndex] = nullptr;
 
-                if (Settings::Gameplay::continousGenerate) {
-                    pickupableBlocks[pickedUpIndex] = new Block(Settings::Gameplay::blockModel);
-                    PickupBoard::placeIndexInDefaultPosition(pickedUpIndex);
-                }
-                else
-                    pickupableBlocks[pickedUpIndex] = nullptr;
-
-                if (!anyBlocksLeft())
-                    generateBlocks();
-                
-                if(isBoardLost())
-                    theScore.setGameLost();
+                updateBlocksState();
 
                 pickedUpPreviewCoords = { -1, -1 };
             }

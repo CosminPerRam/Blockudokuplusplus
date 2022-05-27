@@ -38,4 +38,5 @@ public:
 	std::vector<sf::Vector2u> getBlockPlacingPositions(Block& theBlock);
 
 	void reset();
+	unsigned getEmptyCellsAmount() const;
 };
