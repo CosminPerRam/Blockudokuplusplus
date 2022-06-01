@@ -10,6 +10,8 @@ class ImguiInterface
 private:
 	static char fileName[FILENAME_LENGTH];
 
+	static ImGuiWindowFlags window_flags;
+
 	struct Custom
 	{
 		static void HelpMarker(const char* desc);

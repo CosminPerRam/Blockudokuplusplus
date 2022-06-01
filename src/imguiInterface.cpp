@@ -9,6 +9,7 @@
 #include <SFML/Window/Event.hpp>
 
 char ImguiInterface::fileName[64] = {"settings.cfg"};
+ImGuiWindowFlags ImguiInterface::window_flags = 0;
 
 void ImguiInterface::Custom::HelpMarker(const char* desc)
 {
@@ -47,7 +48,7 @@ void ImguiInterface::draw(sf::RenderWindow& window) {
 	if (Settings::General::showImgui)
 		return;
 
-	ImGui::Begin("Settings");
+	ImGui::Begin("Settings", 0, window_flags);
 
 	if (ImGui::Button("Hide"))
 		Settings::General::showImgui = false;
@@ -284,6 +285,13 @@ void ImguiInterface::draw(sf::RenderWindow& window) {
 				ImGui::SliderFloat("Pitch", &Settings::Audio::pitch, 0.1f, 1.9f);
 
 				Audio::updateState();
+
+				ImGui::TreePop();
+			}
+			if (ImGui::TreeNode("ImGui"))
+			{
+				if(ImGui::Button("No background"))
+					window_flags ^= ImGuiWindowFlags_NoBackground;
 
 				ImGui::TreePop();
 			}
