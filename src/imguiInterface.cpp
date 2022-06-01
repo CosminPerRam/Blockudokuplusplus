@@ -237,7 +237,7 @@ void ImguiInterface::draw(sf::RenderWindow& window) {
 
 			ImGui::EndTabItem();
 		}
-		if (ImGui::BeginTabItem("Aspect"))
+		if (ImGui::BeginTabItem("Aspect/Audio"))
 		{
 			//ImGui::Checkbox("Animations", &Settings::Aspect::animations);
 			//let change font
@@ -279,18 +279,17 @@ void ImguiInterface::draw(sf::RenderWindow& window) {
 
 				ImGui::TreePop();
 			}
+			if (ImGui::TreeNode("Audio")) {
+				ImGui::Checkbox("Mute", &Settings::Audio::muted);
+				if (!Settings::Audio::muted)
+					ImGui::SliderInt("Volume", &Settings::Audio::volume, 0, 100);
 
-			ImGui::EndTabItem();
-		}
-		if (ImGui::BeginTabItem("Audio"))
-		{	//let change/swap audio on actions
-			ImGui::Checkbox("Mute", &Settings::Audio::muted);
-			if (!Settings::Audio::muted)
-				ImGui::SliderInt("Volume", &Settings::Audio::volume, 0, 100);
+				ImGui::SliderFloat("Pitch", &Settings::Audio::pitch, 0.1f, 1.9f);
 
-			ImGui::SliderFloat("Pitch", &Settings::Audio::pitch, 0.1f, 1.9f);
+				Audio::updateState();
 
-			Audio::updateState();
+				ImGui::TreePop();
+			}
 
 			ImGui::EndTabItem();
 		}
