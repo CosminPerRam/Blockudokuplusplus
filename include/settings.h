@@ -2,6 +2,7 @@
 #pragma once
 
 #include <SFML/Graphics/Color.hpp>
+#include <SFML/System/Vector2.hpp>
 
 namespace Settings
 {
@@ -30,6 +31,8 @@ namespace Settings
 
 		extern bool continousGenerate;
 		extern int blockModel;
+		extern unsigned customBlockSizeHeight, customBlockSizeWidth;
+		extern bool customBlockStructure[5][5];
 	}
 
 	namespace Aspect

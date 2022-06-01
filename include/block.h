@@ -8,9 +8,9 @@
 
 struct structure
 {
-	structure(const std::vector<std::vector<int>>& definition, const char* name);
+	structure(const std::vector<std::vector<bool>>& definition, const char* name);
 
-	const std::vector<std::vector<int>> definition;
+	const std::vector<std::vector<bool>> definition;
 	const char* name;
 };
 
@@ -46,9 +46,9 @@ private:
 
 	unsigned structureIndex;
 	sf::Vector2u structureSize;
-	const std::vector<std::vector<int>>& structure;
+	const std::vector<std::vector<bool>> structure;
 
-	const std::vector<std::vector<int>>& getStructure(unsigned structureIndex);
+	const std::vector<std::vector<bool>> getStructure(unsigned structureIndex);
 
 public:
 	Block(int structureIndex);
@@ -60,7 +60,7 @@ public:
 
 	const float getScale();
 
-	const std::vector<std::vector<int>>& getStructure();
+	const std::vector<std::vector<bool>>& getStructure();
 	const sf::Vector2u getStructureSize();
 	const unsigned getStructureIndex();
 

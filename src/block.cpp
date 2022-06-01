@@ -4,7 +4,7 @@
 #include "settings.h"
 #include "utilities.h"
 
-structure::structure(const std::vector<std::vector<int>>& definition, const char* name)
+structure::structure(const std::vector<std::vector<bool>>& definition, const char* name)
 	: definition(definition), name(name) {}
 
 //defines the existing blocks structures
@@ -78,20 +78,36 @@ namespace structures
 	};
 }
 
-
-
 Block::Block(int structureIndex)
 	: structure(this->getStructure(structureIndex))
 {
 
 }
 
-const std::vector<std::vector<int>>& Block::getStructure(unsigned structureIndex) {
+const std::vector<std::vector<bool>> Block::getStructure(unsigned structureIndex) {
 	if(structureIndex == -1)
 		structureIndex = Random::getNumberInBetween(0, structures::grouped.size() - 1);
+	else if (structureIndex == -2) {
+		std::vector<std::vector<bool>> structure;
+
+		for (unsigned i = 0; i < Settings::Gameplay::customBlockSizeWidth; i++) {
+			std::vector<bool> row;
+			for (unsigned j = 0; j < Settings::Gameplay::customBlockSizeHeight; j++)
+				row.emplace_back(Settings::Gameplay::customBlockStructure[j][i]);
+			
+			structure.emplace_back(row);
+		}
+
+		this->structureSize = { Settings::Gameplay::customBlockSizeHeight, Settings::Gameplay::customBlockSizeWidth };
+
+		cell.setSize({ CELL_SPACING, CELL_SPACING });
+		cell.setScale({ this->scale , this->scale });
+
+		return structure;
+	}
 
 	this->structureIndex = structureIndex;
-	const std::vector<std::vector<int>>& structure = structures::grouped[structureIndex]->definition;
+	const std::vector<std::vector<bool>>& structure = structures::grouped[structureIndex]->definition;
 	unsigned h = structure.size(), w = 1;
 
 	for (unsigned i = 0; i < structure.size(); i++) {
@@ -107,7 +123,7 @@ const std::vector<std::vector<int>>& Block::getStructure(unsigned structureIndex
 	return structure;
 }
 
-const std::vector<std::vector<int>>& Block::getStructure() {
+const std::vector<std::vector<bool>>& Block::getStructure() {
 	return this->structure;
 }
 

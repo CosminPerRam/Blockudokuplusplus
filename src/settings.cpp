@@ -37,6 +37,8 @@ namespace Settings
 
 		bool continousGenerate = false;
 		int blockModel = -1;
+		unsigned customBlockSizeHeight = 3, customBlockSizeWidth = 3;
+		bool customBlockStructure[5][5] = { 0 };
 	}
 
 	namespace Aspect

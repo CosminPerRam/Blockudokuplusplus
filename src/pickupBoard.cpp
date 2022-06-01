@@ -9,7 +9,7 @@
 
 PickupBoard::PickupBoard(Table& theTable, Score& theScore) : theTable(theTable), theScore(theScore)
 {
-    PickupBoard::regenerateBlocks();
+    PickupBoard::regenerateBlocks(pickupBlocks::all);
 }
 
 PickupBoard::~PickupBoard()
@@ -26,7 +26,7 @@ bool PickupBoard::isBoardLost() {
 }
 
 void PickupBoard::reset() {
-    PickupBoard::regenerateBlocks();
+    PickupBoard::regenerateBlocks(pickupBlocks::all);
 }
 
 void PickupBoard::calculateVertexes() {
@@ -48,19 +48,31 @@ void PickupBoard::calculateVertexes() {
     }
 }
 
-void PickupBoard::regenerateMissingBlocks() {
-    for (int i = 0; i < 3; i++) {
-        if (pickupableBlocks[i] == nullptr) {
+void PickupBoard::regenerateBlocks(pickupBlocks type) {
+    switch (type) {
+    case pickupBlocks::all:
+        for (int i = 0; i < 3; i++) {
             pickupableBlocks[i] = new Block(Settings::Gameplay::blockModel);
             PickupBoard::placeIndexInDefaultPosition(i);
         }
-    }
-}
-
-void PickupBoard::regenerateBlocks() {
-    for (int i = 0; i < 3; i++) {
-        pickupableBlocks[i] = new Block(Settings::Gameplay::blockModel);
-        PickupBoard::placeIndexInDefaultPosition(i);
+        break;
+    case pickupBlocks::missing:
+        for (int i = 0; i < 3; i++) {
+            if (pickupableBlocks[i] == nullptr) {
+                pickupableBlocks[i] = new Block(Settings::Gameplay::blockModel);
+                PickupBoard::placeIndexInDefaultPosition(i);
+            }
+        }
+        break;
+    case pickupBlocks::existing:
+        for (int i = 0; i < 3; i++) {
+            if (pickupableBlocks[i] != nullptr) {
+                delete pickupableBlocks[i];
+                pickupableBlocks[i] = new Block(Settings::Gameplay::blockModel);
+                PickupBoard::placeIndexInDefaultPosition(i);
+            }
+        }
+        break;
     }
 }
 
@@ -150,10 +162,10 @@ bool PickupBoard::recursiveCanAnyBlocksBePlaced(int firstIndex, int secondIndex)
 void PickupBoard::updateBlocksState()
 {
     if (Settings::Gameplay::continousGenerate)
-        regenerateMissingBlocks();
+        regenerateBlocks(pickupBlocks::missing);
     else {
         if (!anyBlocksLeft())
-            regenerateBlocks();
+            regenerateBlocks(pickupBlocks::all);
     }
 
     if (isBoardLost())

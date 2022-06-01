@@ -123,37 +123,78 @@ void ImguiInterface::draw(sf::RenderWindow& window) {
 			{
 				ImGui::Text("Type: ");
 				ImGui::SameLine();
-				if (ImGui::Button("Random"))
+				if (ImGui::Button("Random")) {
 					Settings::Gameplay::blockModel = -1;
+					Game::pickupBoard->regenerateBlocks(pickupBlocks::existing);
+				}
 				ImGui::SameLine();
 				if (ImGui::Button("Model"))
 					ImGui::OpenPopup("ModelGeneratePopup");
-				//ImGui::SameLine();
-				//if (ImGui::Button("Custom"))
-				//	int i = 0;
+				ImGui::SameLine();
+				if (ImGui::Button("Custom"))
+					ImGui::OpenPopup("CustomGeneratePopup");
 
 				if (ImGui::BeginPopup("ModelGeneratePopup"))
 				{
 					for (size_t i = 0; i < structures::grouped.size(); i++) {
-						if (ImGui::Selectable(structures::grouped[i]->name))
+						if (ImGui::Selectable(structures::grouped[i]->name)) {
 							Settings::Gameplay::blockModel = i;
+							Game::pickupBoard->regenerateBlocks(pickupBlocks::existing);
+						}
 					}
+
+					ImGui::EndPopup();
+				}
+
+				if (ImGui::BeginPopup("CustomGeneratePopup"))
+				{
+					Settings::Gameplay::blockModel = -2;
+
+					static unsigned cbs_min = 1, cbs_cbsmax = 5;
+
+					ImGui::PushItemWidth(68);
+					if(ImGui::SliderScalar("Width", ImGuiDataType_U32, &Settings::Gameplay::customBlockSizeWidth, &cbs_min, &cbs_cbsmax, "%u"))
+						Game::pickupBoard->regenerateBlocks(pickupBlocks::existing);
+					if(ImGui::SliderScalar("Height", ImGuiDataType_U32, &Settings::Gameplay::customBlockSizeHeight, &cbs_min, &cbs_cbsmax, "%u"))
+						Game::pickupBoard->regenerateBlocks(pickupBlocks::existing);
+					ImGui::PopItemWidth();
+
+					ImGui::Separator();
+
+					for (unsigned i = 0; i < Settings::Gameplay::customBlockSizeHeight; i++) {
+						for (unsigned j = 0; j < Settings::Gameplay::customBlockSizeWidth; j++) {
+							if (j > 0)
+								ImGui::SameLine();
+
+							ImGui::PushID(i * 5 + j);
+							if (ImGui::Selectable(" ", &Settings::Gameplay::customBlockStructure[i][j], ImGuiSelectableFlags_DontClosePopups, { 16, 16 }))
+								Game::pickupBoard->regenerateBlocks(pickupBlocks::existing);
+							ImGui::PopID();
+						}
+					}
+
+					ImGui::Separator();
 
 					ImGui::EndPopup();
 				}
 
 				ImGui::Text("Selected: ");
 				ImGui::SameLine();
-				ImGui::Text(Settings::Gameplay::blockModel == -1 ? "Random" : structures::grouped[Settings::Gameplay::blockModel]->name);
+				if (Settings::Gameplay::blockModel == -1)
+					ImGui::Text("Random");
+				else if (Settings::Gameplay::blockModel == -2)
+					ImGui::Text("Custom");
+				else
+					ImGui::Text(structures::grouped[Settings::Gameplay::blockModel]->name);
 
 				ImGui::Separator();
 				ImGui::Text("Regenerate: ");
 				ImGui::SameLine();
 				if (ImGui::Button("All"))
-					Game::pickupBoard->regenerateBlocks();
+					Game::pickupBoard->regenerateBlocks(pickupBlocks::all);
 				ImGui::SameLine();
 				if (ImGui::Button("Missing"))
-					Game::pickupBoard->regenerateMissingBlocks();
+					Game::pickupBoard->regenerateBlocks(pickupBlocks::missing);
 
 				ImGui::Separator();
 				ImGui::Checkbox("Continously generation", &Settings::Gameplay::continousGenerate);
@@ -164,6 +205,19 @@ void ImguiInterface::draw(sf::RenderWindow& window) {
 
 			if (ImGui::TreeNode("Score"))
 			{
+				int APM = 20;
+				int SPM = 40;
+
+				/*ImGui::Text("APM:");
+				ImGui::SameLine();
+				ImGui::Text(std::to_string(APM).c_str());
+				Custom::HelpMarker("Actions per minute.");
+				ImGui::SameLine();
+				ImGui::Text("SPM:");
+				ImGui::SameLine();
+				ImGui::Text(std::to_string(SPM).c_str());
+				Custom::HelpMarker("Score per minute.");*/
+
 				ImGui::Text("Current: ");
 				ImGui::SameLine();
 				ImGui::Text(std::to_string(Game::theScore->score).c_str());
@@ -186,6 +240,7 @@ void ImguiInterface::draw(sf::RenderWindow& window) {
 		if (ImGui::BeginTabItem("Aspect"))
 		{
 			//ImGui::Checkbox("Animations", &Settings::Aspect::animations);
+			//let change font
 
 			if (ImGui::TreeNode("Colors"))
 			{
@@ -228,7 +283,7 @@ void ImguiInterface::draw(sf::RenderWindow& window) {
 			ImGui::EndTabItem();
 		}
 		if (ImGui::BeginTabItem("Audio"))
-		{
+		{	//let change/swap audio on actions
 			ImGui::Checkbox("Mute", &Settings::Audio::muted);
 			if (!Settings::Audio::muted)
 				ImGui::SliderInt("Volume", &Settings::Audio::volume, 0, 100);

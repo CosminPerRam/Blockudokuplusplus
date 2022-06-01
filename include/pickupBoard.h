@@ -11,6 +11,8 @@
 
 #include <array>
 
+enum class pickupBlocks { all = 0, missing, existing };
+
 /*
 	Manages picking up, regenerating the blocks and checking if the game is lost.
 	The rest of the classes have nothing to do with its components.
@@ -34,8 +36,7 @@ private:
 	Table& theTable;
 	Score& theScore;
 
-	void regenerateMissingBlocks();
-	void regenerateBlocks();
+	void regenerateBlocks(pickupBlocks type);
 	void placeIndexInDefaultPosition(unsigned i);
 
 	bool anyBlocksLeft();
