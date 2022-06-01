@@ -98,6 +98,7 @@
   <ItemGroup>
     <ClCompile Include="libraries\imgui\imgui-SFML.cpp" />
     <ClCompile Include="libraries\imgui\imgui.cpp" />
+    <ClCompile Include="libraries\imgui\imgui_demo.cpp" />
     <ClCompile Include="libraries\imgui\imgui_draw.cpp" />
     <ClCompile Include="libraries\imgui\imgui_tables.cpp" />
     <ClCompile Include="libraries\imgui\imgui_widgets.cpp" />

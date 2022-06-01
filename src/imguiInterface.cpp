@@ -1,6 +1,8 @@
 
 #include "imguiInterface.h"
 
+#include "imguiInterface.h"
+
 #include "settings.h"
 #include "audio.h"
 #include "game.h"
@@ -10,6 +12,7 @@
 
 char ImguiInterface::fileName[64] = {"settings.cfg"};
 ImGuiWindowFlags ImguiInterface::window_flags = 0;
+ImGuiStyle* ImguiInterface::style = nullptr;
 
 void ImguiInterface::Custom::HelpMarker(const char* desc)
 {
@@ -27,6 +30,9 @@ void ImguiInterface::Custom::HelpMarker(const char* desc)
 
 void ImguiInterface::initialize(sf::RenderWindow& window) {
 	ImGui::SFML::Init(window);
+	style = &ImGui::GetStyle();
+	style->WindowRounding = 4.f;
+	style->WindowTitleAlign.x = 0.5f;
 }
 
 void ImguiInterface::shutdown() {
@@ -45,15 +51,13 @@ void ImguiInterface::update(sf::RenderWindow& window, sf::Time& dt) {
 }
 
 void ImguiInterface::draw(sf::RenderWindow& window) {
-	if (Settings::General::showImgui)
+	if (!Settings::General::showImgui) {
+		ImGui::SFML::Render(window);
 		return;
+	}
 
-	ImGui::Begin("Settings", 0, window_flags);
+	ImGui::Begin("Settings", &Settings::General::showImgui, window_flags);
 
-	if (ImGui::Button("Hide"))
-		Settings::General::showImgui = false;
-	Custom::HelpMarker("Press 'M' to hide/show this menu.");
-	ImGui::SameLine();
 	//if (ImGui::Button("Save"))
 	//	ImGui::OpenPopup("FileSavedPopup");
 	//ImGui::SameLine();
@@ -74,18 +78,17 @@ void ImguiInterface::draw(sf::RenderWindow& window) {
 	}
 
 	//ImGui::InputText("FileName", ImguiInterface::fileName, FILENAME_LENGTH);
-
-	ImGuiTabBarFlags tab_bar_flags = ImGuiTabBarFlags_None;
-	if (ImGui::BeginTabBar("MyTabBar", tab_bar_flags))
+	ImGui::Text("Press 'M' to hide/show this menu.");
+	if (ImGui::BeginTabBar("TabBar"))
 	{
 		if (ImGui::BeginTabItem("Gameplay"))
 		{
-			if (ImGui::TreeNode("Game"))
+			if (ImGui::TreeNode("Table"))
 			{
-				if (ImGui::Button("Restart game"))
+				if (ImGui::Button("Restart"))
 					Game::restart();
 				ImGui::SameLine();
-				if (ImGui::Button("Clear board"))
+				if (ImGui::Button("Clear"))
 					Game::theTable->reset();
 
 				ImGui::Separator();
@@ -95,12 +98,10 @@ void ImguiInterface::draw(sf::RenderWindow& window) {
 						Settings::Gameplay::checkGameInAdvance = false;
 				}
 				Custom::HelpMarker("Let the game play itself.\nStops before game is lost.");
-				if (Settings::Gameplay::autoplay) {
-					ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.50f);
-					ImGui::SliderFloat("Delay seconds", &Settings::Gameplay::autoplayDelay, 0.2f, 2.f);
-				}
+
+				if (Settings::Gameplay::autoplay)
+					ImGui::SliderFloat("Delay", &Settings::Gameplay::autoplayDelay, 0.2f, 4.f, "%.3f seconds");
 				else {
-					ImGui::SameLine();
 					if (ImGui::Button("Bot place set"))
 						Game::theBot.doSet();
 					Custom::HelpMarker("Let the bot place the holding set of blocks.");
@@ -120,7 +121,7 @@ void ImguiInterface::draw(sf::RenderWindow& window) {
 				ImGui::TreePop();
 			}
 
-			if (ImGui::TreeNode("Blocks"))
+			if (ImGui::TreeNode("Pickup board"))
 			{
 				ImGui::Text("Type: ");
 				ImGui::SameLine();
@@ -280,7 +281,12 @@ void ImguiInterface::draw(sf::RenderWindow& window) {
 			if (ImGui::TreeNode("Audio")) {
 				ImGui::Checkbox("Mute", &Settings::Audio::muted);
 				if (!Settings::Audio::muted)
+				{
+					ImGui::SameLine();
+					ImGui::PushItemWidth(98);
 					ImGui::SliderInt("Volume", &Settings::Audio::volume, 0, 100);
+					ImGui::PopItemWidth();
+				}
 
 				ImGui::SliderFloat("Pitch", &Settings::Audio::pitch, 0.1f, 1.9f);
 
@@ -290,8 +296,27 @@ void ImguiInterface::draw(sf::RenderWindow& window) {
 			}
 			if (ImGui::TreeNode("ImGui"))
 			{
-				if(ImGui::Button("No background"))
+				ImGui::PushItemWidth(76);
+				ImGui::Text("Theme:");
+				ImGui::SameLine();
+				ImGui::ShowStyleSelector("##StyleSelector");
+				ImGui::PopItemWidth();
+				ImGui::SameLine();
+				if (ImGui::Button("No background"))
 					window_flags ^= ImGuiWindowFlags_NoBackground;
+
+				ImGui::Separator();
+
+				if (ImGui::Button("Style editor"))
+					ImGui::OpenPopup("StyleEditor");
+				Custom::HelpMarker("Opens ImGui's integrated style editor.");
+
+				if (ImGui::BeginPopup("StyleEditor"))
+				{
+					ImGui::ShowStyleEditor(style);
+
+					ImGui::EndPopup();
+				}
 
 				ImGui::TreePop();
 			}
@@ -300,6 +325,7 @@ void ImguiInterface::draw(sf::RenderWindow& window) {
 		}
 		ImGui::EndTabBar();
 	}
+
 	ImGui::End();
 
 	ImGui::SFML::Render(window);

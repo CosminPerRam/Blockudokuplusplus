@@ -40,6 +40,7 @@ public:
 	Table(Score& theScore);
 
 	void draw(sf::RenderWindow& window);
+
 	void updateColors();
 
 	void applyBlock(Block& theBlock, const sf::Vector2u& tableCellCoords);

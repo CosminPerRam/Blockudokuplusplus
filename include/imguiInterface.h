@@ -11,6 +11,7 @@ private:
 	static char fileName[FILENAME_LENGTH];
 
 	static ImGuiWindowFlags window_flags;
+	static ImGuiStyle* style;
 
 	struct Custom
 	{
