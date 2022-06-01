@@ -45,12 +45,11 @@ void Game::pollEvent(sf::RenderWindow& window, sf::Event &theEvent) {
 void Game::update(sf::RenderWindow& window) {
     sf::Time dt = deltaClock.restart();
 
+    theScore->update(window, dt);
     ImguiInterface::update(window, dt);
 
-    if (!theScore->isGameLost()) {
-        if (Settings::Gameplay::autoplay)
-            theBot.update(window, dt);
-    }
+    if (Settings::Gameplay::autoplay)
+        theBot.update(window, dt);
 }
 
 int Game::start() {

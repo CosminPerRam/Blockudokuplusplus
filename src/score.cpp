@@ -54,7 +54,7 @@ Score::~Score()
 void Score::reset(bool restart) {
 	std::fill(pieceAddedCount.begin(), pieceAddedCount.end(), 0);
 
-	timePlayed = 0;
+	timePlayedSeconds = 0;
 	score = 0, placed = 0, completionSquares = 0, completionLines = 0;
 	combo = -1, bestCombo = 0;
 
@@ -86,9 +86,9 @@ void Score::draw(sf::RenderWindow& window) {
 			"\n   Lines made: " + std::to_string(completionLines) +
 			"\n   Best combo: " + std::to_string(bestCombo) +
 			"\n  Blocks used: " + std::to_string(placed) +
-			"\n         Time: " + std::to_string((unsigned)timePlayed) + " seconds" +
-			"\n          APM: " + std::to_string(timePlayed / placed) +
-			"\n          SPM: " + std::to_string(score > 0 ? timePlayed / score : 0) +
+			"\n         Time: " + std::to_string((unsigned)timePlayedSeconds) + " seconds" +
+			"\n          APM: " + std::to_string(apm) +
+			"\n          SPM: " + std::to_string(spm) +
 			"\nThe most popular block: ";
 
 		theText.setString(endGameStatsString);
@@ -121,6 +121,16 @@ void Score::pollEvent(sf::RenderWindow& window, sf::Event& theEvent) {
 	}
 }
 
+void Score::update(sf::RenderWindow& window, sf::Time& dt) {
+	if (gameLost)
+		return;
+	
+	timePlayedSeconds += dt.asSeconds();
+
+	apm = placed > 0 ? placed / (timePlayedSeconds / 60) : 0;
+	spm = score > 0 ? score / (timePlayedSeconds / 60) : 0;
+}
+
 void Score::updateColors() {
 	TEXT_COLOR = toColor(Settings::Aspect::textColor);
 
@@ -146,7 +156,6 @@ void Score::processMarks(std::unique_ptr<std::vector<completetion>>& marks) {
 
 void Score::setGameLost() {
 	gameLost = true;
-	timePlayed = theClock.getElapsedTime().asSeconds();
 
 	unsigned mostPopularBlockIndex = 0, mostPopularBlockValue = 0;	//the most popular block is the most generated one
 	for (unsigned i = 0; i < pieceAddedCount.size(); i++) {

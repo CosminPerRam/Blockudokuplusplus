@@ -6,7 +6,6 @@
 
 #include <SFML/Graphics/Font.hpp>
 #include <SFML/Graphics/Text.hpp>
-#include <SFML/System/Clock.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
 
 /*
@@ -20,13 +19,12 @@ private:
 
 	sf::Font theFont;
 	sf::Text theText;
-	sf::Clock theClock;
 	sf::RectangleShape restartButton;
 
 	std::vector<unsigned> pieceAddedCount;
 	Block* mostPopularBlock = nullptr;
 
-	float timePlayed = 0;
+	float timePlayedSeconds = 0;
 	bool gameLost = false;
 
 	class Data
@@ -42,6 +40,7 @@ private:
 	};
 
 	unsigned score = 0, placed = 0, completionSquares = 0, completionLines = 0;
+	float apm = 0, spm = 0;
 	int combo = -1, bestCombo = 0;
 
 	void addCompletionSquare();
@@ -56,6 +55,7 @@ public:
 
 	void draw(sf::RenderWindow& window);
 	void pollEvent(sf::RenderWindow& window, sf::Event& theEvent);
+	void update(sf::RenderWindow& window, sf::Time& dt);
 
 	void updateColors();
 

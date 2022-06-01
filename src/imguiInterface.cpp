@@ -205,18 +205,15 @@ void ImguiInterface::draw(sf::RenderWindow& window) {
 
 			if (ImGui::TreeNode("Score"))
 			{
-				int APM = 20;
-				int SPM = 40;
-
-				/*ImGui::Text("APM:");
+				ImGui::Text("APM:");
 				ImGui::SameLine();
-				ImGui::Text(std::to_string(APM).c_str());
+				ImGui::Text(std::to_string(Game::theScore->apm).c_str());
 				Custom::HelpMarker("Actions per minute.");
 				ImGui::SameLine();
 				ImGui::Text("SPM:");
 				ImGui::SameLine();
-				ImGui::Text(std::to_string(SPM).c_str());
-				Custom::HelpMarker("Score per minute.");*/
+				ImGui::Text(std::to_string(Game::theScore->spm).c_str());
+				Custom::HelpMarker("Score per minute.");
 
 				ImGui::Text("Current: ");
 				ImGui::SameLine();
