@@ -83,27 +83,14 @@ void Table::applyBlock(Block& theBlock, const sf::Vector2u& tableCellCoords) {
     theMatrix.applyBlock(theBlock, tableCellCoords);
 
     auto completedMarks = theMatrix.checkCompletetion();
+
+    theScore.processMarks(completedMarks);
     if (completedMarks->empty())
-    {
         Audio::play(Audio::effect::GoodPlacement);
-        theScore.resetCombo();
-    }
-    else {
+    else
         Audio::play(Audio::effect::Completetion);
 
-        theScore.addToCombo(completedMarks->size());
-        if (completedMarks->size() > 1) //give one point for getting more marks at one time
-            theScore.addToCombo(1);
-
-        for (const auto& mark : *completedMarks) {
-            if (mark.type == mark::square)
-                theScore.addCompletionSquare();
-            else
-                theScore.addCompletionLine();
-        }
-
-        theMatrix.executeCompletetions(completedMarks, cell::empty);
-    }
+    theMatrix.executeCompletetions(completedMarks, cell::empty);
 }
 
 sf::Vector2i Table::previewBlock(Block& theHoldingBlock, const sf::Vector2f& mousePosition)

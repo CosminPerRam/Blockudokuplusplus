@@ -2,6 +2,7 @@
 
 #include "block.h"
 #include "settings.h"
+#include "cellMatrix.h"
 
 #include <SFML/Graphics/Font.hpp>
 #include <SFML/Graphics/Text.hpp>
@@ -43,24 +44,27 @@ private:
 	unsigned score = 0, placed = 0, completionSquares = 0, completionLines = 0;
 	int combo = -1, bestCombo = 0;
 
+	void addCompletionSquare();
+	void addCompletionLine();
+
+	void addToCombo(unsigned amount);
+	void resetCombo();
+
 public:
 	Score(unsigned piecesCount);
 	~Score();
 
 	void draw(sf::RenderWindow& window);
 	void pollEvent(sf::RenderWindow& window, sf::Event& theEvent);
+
 	void updateColors();
+
+	void processMarks(std::unique_ptr<std::vector<completetion>>& marks);
 
 	void setGameLost();
 	bool isGameLost();
 
-	void addCompletionSquare();
-	void addCompletionLine();
-
-	void addPiecePlaced(unsigned index);
-
-	void addToCombo(unsigned amount);
-	void resetCombo();
+	void addPiecePlaced(int index);
 
 	void reset(bool restart = false);
 

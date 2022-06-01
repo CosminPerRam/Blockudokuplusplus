@@ -97,7 +97,8 @@ const std::vector<std::vector<bool>> Block::getStructure(unsigned structureIndex
 			
 			structure.emplace_back(row);
 		}
-
+		
+		this->structureIndex = -2;
 		this->structureSize = { Settings::Gameplay::customBlockSizeHeight, Settings::Gameplay::customBlockSizeWidth };
 
 		cell.setSize({ CELL_SPACING, CELL_SPACING });

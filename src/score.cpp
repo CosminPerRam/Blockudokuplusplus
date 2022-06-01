@@ -28,7 +28,7 @@ unsigned Score::Data::getLocalBest()
 
 Score::Score(unsigned piecesCount) 
 {
-	pieceAddedCount.resize(piecesCount, 0);
+	pieceAddedCount.resize(piecesCount + 1, 0); //+1 because the last element represents the use of the custom block
 
 	if(!theFont.loadFromFile("resources/courierNewFont.ttf"))
 		throw "Couldn't load the font";
@@ -127,6 +127,23 @@ void Score::updateColors() {
 	theText.setFillColor(TEXT_COLOR);
 }
 
+void Score::processMarks(std::unique_ptr<std::vector<completetion>>& marks) {
+	if (marks->empty())
+		resetCombo();
+	else {
+		addToCombo(marks->size());
+		if (marks->size() > 1) //give one point for getting more marks at one time
+			addToCombo(1);
+
+		for (const auto& m : *marks) {
+			if (m.type == mark::square)
+				addCompletionSquare();
+			else
+				addCompletionLine();
+		}
+	}
+}
+
 void Score::setGameLost() {
 	gameLost = true;
 	timePlayed = theClock.getElapsedTime().asSeconds();
@@ -140,7 +157,11 @@ void Score::setGameLost() {
 		}
 	}
 
-	mostPopularBlock = new Block(mostPopularBlockIndex);
+	if(mostPopularBlockIndex == pieceAddedCount.size() - 1)
+		mostPopularBlock = new Block(-2);
+	else
+		mostPopularBlock = new Block(mostPopularBlockIndex);
+
 	mostPopularBlock->setScale(0.24f);
 	mostPopularBlock->setPosition({ SCORE_POPULAR_PIECE_POSITION_X - mostPopularBlock->getGlobalBounds().width / 2.f,
 		SCORE_POPULAR_PIECE_POSITION_Y - mostPopularBlock->getGlobalBounds().height / 2.f });
@@ -163,8 +184,11 @@ void Score::addCompletionLine() {
 	completionLines++;
 }
 
-void Score::addPiecePlaced(unsigned index) {
-	pieceAddedCount[index]++;
+void Score::addPiecePlaced(int index) {
+	if (index == -2) //-2 is the custom block
+		pieceAddedCount.back()++;
+	else
+		pieceAddedCount[index]++;
 
 	placed++;
 }
