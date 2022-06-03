@@ -9,13 +9,12 @@
 #include "utilities.h"
 
 #include <SFML/Window/Event.hpp>
-#include <iostream>
 
 char ImguiInterface::fileName[64] = {"settings.cfg"};
 ImGuiWindowFlags ImguiInterface::window_flags = 0;
 ImGuiStyle* ImguiInterface::style = nullptr;
-sf::Time ImguiInterface::lastTime = sf::Time::Zero, ImguiInterface::lastUpdateTime = sf::Time::Zero, ImguiInterface::lastUpdateDelta = sf::Time::Zero;
-bool ImguiInterface::updateFrame = true;
+sf::Time ImguiInterface::lastTime = sf::Time::Zero, ImguiInterface::lastUpdateTime = sf::Time::Zero;
+ImguiInterface::Data ImguiInterface::data;
 
 void ImguiInterface::Custom::HelpMarker(const char* desc)
 {
@@ -29,6 +28,18 @@ void ImguiInterface::Custom::HelpMarker(const char* desc)
 		ImGui::PopTextWrapPos();
 		ImGui::EndTooltip();
 	}
+}
+
+void ImguiInterface::Data::update() {
+	data.historyFps.push_back(static_cast<float>(Game::fetchFps()));
+	if (data.historyFps.size() > 64)
+		data.historyFps.erase(data.historyFps.begin());
+
+	data.averageFps = 0;
+	unsigned historyFpsAmount = data.historyFps.size();
+	for (unsigned i = 0; i < historyFpsAmount; i++)
+		data.averageFps += static_cast<unsigned>(data.historyFps[i]);
+	data.averageFps /= historyFpsAmount;
 }
 
 void ImguiInterface::initialize(sf::RenderWindow& window) {
@@ -50,22 +61,20 @@ void ImguiInterface::pollEvent(sf::RenderWindow& window, sf::Event& theEvent) {
 }
 
 void ImguiInterface::update(sf::RenderWindow& window, sf::Time& dt) {
-	lastUpdateTime += dt - lastTime;
+	sf::Time updateTime = dt - lastTime;
+	ImGui::SFML::Update(window, updateTime);
 
+	lastUpdateTime += updateTime;
 	if (lastUpdateTime.asSeconds() * 1000 > 1000 / IMGUI_REFRESHRATE)
 	{
-		updateFrame = true;
-		std::cout << (dt - lastUpdateDelta).asSeconds() << std::endl;
-		ImGui::SFML::Update(window, dt - lastUpdateDelta);
+		ImguiInterface::Data::update();
 		lastUpdateTime = sf::Time::Zero;
-		lastUpdateDelta = dt;
 	}
 
 	lastTime = dt;
 }
 
 void ImguiInterface::draw(sf::RenderWindow& window) {
-	std::cout << "drawing" << std::endl;
 	if (!Settings::General::showImgui) {
 		ImGui::SFML::Render(window);
 		return;
@@ -264,29 +273,20 @@ void ImguiInterface::draw(sf::RenderWindow& window) {
 			//let change font
 			if (ImGui::TreeNode("Window"))
 			{
-				static std::vector<float> historyFps;
-				unsigned latestFps = Game::fetchFps();
-
-				historyFps.push_back(latestFps);
-				if (historyFps.size() > 64)
-					historyFps.erase(historyFps.begin());
-
-				ImGui::PlotLines("##frpsPlot", &historyFps[0], historyFps.size());
+				ImGui::PlotLines("##frpsPlot", &data.historyFps[0], data.historyFps.size());
 				Custom::HelpMarker("Frames Per Second");
 
 				ImGui::Text("Fps:");
 				ImGui::SameLine();
-				ImGui::Text(std::to_string(latestFps).c_str());
-
-				unsigned averageFps = 0;
-				unsigned historyFpsAmount = historyFps.size();
-				for (unsigned i = 0; i < historyFpsAmount; i++)
-					averageFps += historyFps[i];
-				averageFps /= historyFpsAmount;
-
+				ImGui::Text(std::to_string((unsigned)data.historyFps.back()).c_str());
+				ImGui::SameLine();
 				ImGui::Text("Avg:");
 				ImGui::SameLine();
-				ImGui::Text(std::to_string(averageFps).c_str());
+				ImGui::Text(std::to_string(data.averageFps).c_str());
+				ImGui::SameLine();
+				if (ImGui::Checkbox("Vsync", &Settings::General::vsync))
+					Game::updateVsyncSetting();
+				Custom::HelpMarker("Limits the refresh rate to\nyour monitor's one.");
 
 				ImGui::Text("Frame time:");
 				ImGui::SameLine();
@@ -294,19 +294,16 @@ void ImguiInterface::draw(sf::RenderWindow& window) {
 				ImGui::SameLine();
 				ImGui::Text("ms ");
 
-				if (ImGui::Checkbox("Vsync", &Settings::General::vsync))
-					Game::updateVsyncSetting();
-
-				ImGui::SameLine();
-
 				static const char* aalevelsNames[] = { "None", "x2", "x4", "x8", "x16" };
 				const char* aalevelName = aalevelsNames[Settings::General::aalevel];
 				ImGui::PushItemWidth(64);
 				if (ImGui::BeginCombo("Antialiasing", aalevelName)) {
 					for (unsigned i = 0; i < 5; i++) {
 						const bool selected = (Settings::General::aalevel == i);
-						if (ImGui::Selectable(aalevelsNames[i], selected))
+						if (ImGui::Selectable(aalevelsNames[i], selected)) {
 							Settings::General::aalevel = i;
+							Game::updateAntialiasingSetting();
+						}
 
 						if (selected)
 							ImGui::SetItemDefaultFocus();

@@ -115,7 +115,7 @@ void Audio::updateState() {
 		audioSprite().setTexture(muteTexture());
 	}
 	else {
-		playingSound().setVolume(Settings::Audio::volume);
+		playingSound().setVolume(static_cast<unsigned>(Settings::Audio::volume));
 		audioSprite().setTexture(volumeTexture());
 	}
 }

@@ -17,6 +17,8 @@ sf::RenderWindow* Game::window = nullptr;
 unsigned Game::latestFps = 0;
 float Game::latestFrameTimeMs = 0.f;
 
+bool Game::reinitializeWindow = false;
+
 void Game::restart() {
     theScore->reset(true);
     theTable->reset();
@@ -56,7 +58,7 @@ void Game::update() {
         theBot.update(*window, dt);
 
     latestFrameTimeMs = (dt.asSeconds() - lastTime.asSeconds()) * 1000;
-    latestFps = 1000.f / latestFrameTimeMs;
+    latestFps = unsigned(1000 / latestFrameTimeMs);
 
     lastTime = dt;
 }
@@ -73,6 +75,27 @@ void Game::updateVsyncSetting() {
     window->setVerticalSyncEnabled(Settings::General::vsync);
 }
 
+void Game::updateAntialiasingSetting() {
+    reinitializeWindow = true;
+}
+
+void Game::destroyWindow() {
+    ImguiInterface::shutdown();
+    window->close();
+    delete window;
+}
+
+void Game::initializeWindow() {
+    sf::ContextSettings settings;
+    settings.antialiasingLevel = Settings::General::aalevel == 0 ? 0 : (unsigned)pow(2, Settings::General::aalevel);
+
+    window = new sf::RenderWindow(sf::VideoMode(WINDOW_HEIGHT, WINDOW_WIDTH), "Blockudoku", sf::Style::Close, settings);
+
+    ImguiInterface::initialize(*window);
+
+    Game::updateVsyncSetting();
+}
+
 int Game::start() {
     Audio::initialize();
 
@@ -82,10 +105,7 @@ int Game::start() {
     theTable = new Table(*theScore);
     pickupBoard = new PickupBoard(*theTable, *theScore);
 
-    window = new sf::RenderWindow(sf::VideoMode(WINDOW_HEIGHT, WINDOW_WIDTH), "Blockudoku", sf::Style::Close);
-    Game::updateVsyncSetting();
-
-    ImguiInterface::initialize(*window);
+    Game::initializeWindow();
 
     while (window->isOpen())
     {   //while the window is open, the game processes and renders stuff
@@ -93,7 +113,7 @@ int Game::start() {
         while (window->pollEvent(event))
         {
             if (event.type == sf::Event::Closed)
-                window->close();
+                Game::destroyWindow();
 
             Game::pollEvent(event);
         }
@@ -103,8 +123,18 @@ int Game::start() {
         window->clear(toColor(Settings::Aspect::appBackground));
         Game::draw(); //draws everything
         window->display();
+
+        if (reinitializeWindow) {
+            Game::destroyWindow();
+            Game::initializeWindow();
+            reinitializeWindow = false;
+        }
     }
 
-    ImguiInterface::shutdown();
+    delete theScore;
+    delete theTable;
+    delete pickupBoard;
+    delete imguiInterface;
+
     return 0;
 }

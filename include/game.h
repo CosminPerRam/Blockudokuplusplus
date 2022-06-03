@@ -27,9 +27,13 @@ private:
 	static unsigned latestFps;
 	static float latestFrameTimeMs;
 
+	static bool reinitializeWindow;
+
 	static void draw();
 	static void pollEvent(sf::Event& theEvent);
 	static void update();
+
+	static void close();
 
 protected:
 	static Score *theScore;
@@ -40,7 +44,12 @@ protected:
 
 	static unsigned fetchFps();
 	static float fetchFrametime();
+
 	static void updateVsyncSetting();
+	static void updateAntialiasingSetting();
+
+	static void destroyWindow();
+	static void initializeWindow();
 
 public:
 	static int start();
