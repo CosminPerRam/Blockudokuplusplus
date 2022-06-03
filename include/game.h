@@ -12,6 +12,8 @@
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/System/Clock.hpp>
 
+#include <vector>
+
 /*
 	Like the Audio class, this is a static class as its not possible
 	to have multiple instances of the game running at the same time.
@@ -20,10 +22,14 @@ class Game
 {
 private:
 	static sf::Clock deltaClock;
+	static sf::Time lastTime;
+	static sf::RenderWindow* window;
+	static unsigned latestFps;
+	static float latestFrameTimeMs;
 
-	static void draw(sf::RenderWindow& window);
-	static void pollEvent(sf::RenderWindow& window, sf::Event& theEvent);
-	static void update(sf::RenderWindow& window);
+	static void draw();
+	static void pollEvent(sf::Event& theEvent);
+	static void update();
 
 protected:
 	static Score *theScore;
@@ -31,6 +37,10 @@ protected:
 	static PickupBoard *pickupBoard;
 	static ImguiInterface *imguiInterface;
 	static Bot theBot;
+
+	static unsigned fetchFps();
+	static float fetchFrametime();
+	static void updateVsyncSetting();
 
 public:
 	static int start();

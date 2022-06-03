@@ -19,6 +19,9 @@ namespace Settings
 	namespace General
 	{
 		bool showImgui = false;
+
+		bool vsync = true;
+		int aalevel = 0;
 	}
 
 	namespace Audio

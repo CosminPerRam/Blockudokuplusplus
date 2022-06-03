@@ -12,6 +12,10 @@ ImguiInterface *Game::imguiInterface = nullptr;
 Bot Game::theBot;
 
 sf::Clock Game::deltaClock;
+sf::Time Game::lastTime = Game::deltaClock.getElapsedTime();
+sf::RenderWindow* Game::window = nullptr;
+unsigned Game::latestFps = 0;
+float Game::latestFrameTimeMs = 0.f;
 
 void Game::restart() {
     theScore->reset(true);
@@ -19,37 +23,54 @@ void Game::restart() {
     pickupBoard->reset();
 }
 
-void Game::draw(sf::RenderWindow& window) {
-    theScore->draw(window);
+void Game::draw() {
+    theScore->draw(*window);
 
     if (!theScore->isGameLost()) { //if the game is not lost, draw everything
-        theTable->draw(window);
-        Audio::draw(window);
-        pickupBoard->draw(window);
+        theTable->draw(*window);
+        Audio::draw(*window);
+        pickupBoard->draw(*window);
     }
 
-    ImguiInterface::draw(window);
+    ImguiInterface::draw(*window);
 }
 
-void Game::pollEvent(sf::RenderWindow& window, sf::Event &theEvent) {
-    ImguiInterface::pollEvent(window, theEvent);
+void Game::pollEvent(sf::Event &theEvent) {
+    ImguiInterface::pollEvent(*window, theEvent);
 
-    theScore->pollEvent(window, theEvent);
+    theScore->pollEvent(*window, theEvent);
 
     if (!theScore->isGameLost()) { //if the game is not lost, poll everything
-        Audio::pollEvent(window, theEvent);
-        pickupBoard->pollEvent(window, theEvent);
+        Audio::pollEvent(*window, theEvent);
+        pickupBoard->pollEvent(*window, theEvent);
     }
 }
 
-void Game::update(sf::RenderWindow& window) {
-    sf::Time dt = deltaClock.restart();
+void Game::update() {
+    sf::Time dt = deltaClock.getElapsedTime();
 
-    theScore->update(window, dt);
-    ImguiInterface::update(window, dt);
+    theScore->update(*window, dt);
+    ImguiInterface::update(*window, dt);
 
     if (Settings::Gameplay::autoplay)
-        theBot.update(window, dt);
+        theBot.update(*window, dt);
+
+    latestFrameTimeMs = (dt.asSeconds() - lastTime.asSeconds()) * 1000;
+    latestFps = 1000.f / latestFrameTimeMs;
+
+    lastTime = dt;
+}
+
+unsigned Game::fetchFps() {
+    return latestFps;
+}
+
+float Game::fetchFrametime() {
+    return latestFrameTimeMs;
+}
+
+void Game::updateVsyncSetting() {
+    window->setVerticalSyncEnabled(Settings::General::vsync);
 }
 
 int Game::start() {
@@ -61,27 +82,27 @@ int Game::start() {
     theTable = new Table(*theScore);
     pickupBoard = new PickupBoard(*theTable, *theScore);
 
-    sf::RenderWindow window(sf::VideoMode(WINDOW_HEIGHT, WINDOW_WIDTH), "Blockudoku", sf::Style::Close);
-    window.setVerticalSyncEnabled(true);
+    window = new sf::RenderWindow(sf::VideoMode(WINDOW_HEIGHT, WINDOW_WIDTH), "Blockudoku", sf::Style::Close);
+    Game::updateVsyncSetting();
 
-    ImguiInterface::initialize(window);
+    ImguiInterface::initialize(*window);
 
-    while (window.isOpen())
+    while (window->isOpen())
     {   //while the window is open, the game processes and renders stuff
         sf::Event event;
-        while (window.pollEvent(event))
+        while (window->pollEvent(event))
         {
             if (event.type == sf::Event::Closed)
-                window.close();
+                window->close();
 
-            Game::pollEvent(window, event);
+            Game::pollEvent(event);
         }
 
-        Game::update(window);
+        Game::update();
 
-        window.clear(toColor(Settings::Aspect::appBackground));
-        draw(window); //draws everything
-        window.display();
+        window->clear(toColor(Settings::Aspect::appBackground));
+        Game::draw(); //draws everything
+        window->display();
     }
 
     ImguiInterface::shutdown();

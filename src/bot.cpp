@@ -10,12 +10,10 @@ void Bot::update(sf::RenderWindow& window, sf::Time& dt) {
     if (Game::theScore->isGameLost())
         return;
 
-	elapsedTime += dt;
-
-	if (elapsedTime.asSeconds() > Settings::Gameplay::autoplayDelay) {
+	if (dt.asSeconds() - elapsedTime.asSeconds() > Settings::Gameplay::autoplayDelay) {
 		Bot::doSet();
 
-		elapsedTime = sf::Time();
+        elapsedTime = dt;
 	}
 }
 

@@ -4,6 +4,7 @@
 #include "imgui-SFML.h"
 
 #define FILENAME_LENGTH 64
+#define IMGUI_REFRESHRATE 60
 
 class ImguiInterface
 {
@@ -12,6 +13,9 @@ private:
 
 	static ImGuiWindowFlags window_flags;
 	static ImGuiStyle* style;
+
+	static sf::Time lastTime, lastUpdateTime, lastUpdateDelta;
+	static bool updateFrame;
 
 	struct Custom
 	{

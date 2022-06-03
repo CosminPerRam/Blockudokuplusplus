@@ -125,7 +125,7 @@ void Score::update(sf::RenderWindow& window, sf::Time& dt) {
 	if (gameLost)
 		return;
 	
-	timePlayedSeconds += dt.asSeconds();
+	timePlayedSeconds = dt.asSeconds();
 
 	apm = placed > 0 ? placed / (timePlayedSeconds / 60) : 0;
 	spm = score > 0 ? score / (timePlayedSeconds / 60) : 0;

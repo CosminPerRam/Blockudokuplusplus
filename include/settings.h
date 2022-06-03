@@ -13,6 +13,9 @@ namespace Settings
 	namespace General
 	{
 		extern bool showImgui;
+
+		extern bool vsync;
+		extern int aalevel; //0 - None, 1 - 2x, 2 - 4x, 3 - 8x, 4 - 16x
 	}
 
 	namespace Audio

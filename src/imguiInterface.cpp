@@ -9,10 +9,13 @@
 #include "utilities.h"
 
 #include <SFML/Window/Event.hpp>
+#include <iostream>
 
 char ImguiInterface::fileName[64] = {"settings.cfg"};
 ImGuiWindowFlags ImguiInterface::window_flags = 0;
 ImGuiStyle* ImguiInterface::style = nullptr;
+sf::Time ImguiInterface::lastTime = sf::Time::Zero, ImguiInterface::lastUpdateTime = sf::Time::Zero, ImguiInterface::lastUpdateDelta = sf::Time::Zero;
+bool ImguiInterface::updateFrame = true;
 
 void ImguiInterface::Custom::HelpMarker(const char* desc)
 {
@@ -47,10 +50,22 @@ void ImguiInterface::pollEvent(sf::RenderWindow& window, sf::Event& theEvent) {
 }
 
 void ImguiInterface::update(sf::RenderWindow& window, sf::Time& dt) {
-	ImGui::SFML::Update(window, dt);
+	lastUpdateTime += dt - lastTime;
+
+	if (lastUpdateTime.asSeconds() * 1000 > 1000 / IMGUI_REFRESHRATE)
+	{
+		updateFrame = true;
+		std::cout << (dt - lastUpdateDelta).asSeconds() << std::endl;
+		ImGui::SFML::Update(window, dt - lastUpdateDelta);
+		lastUpdateTime = sf::Time::Zero;
+		lastUpdateDelta = dt;
+	}
+
+	lastTime = dt;
 }
 
 void ImguiInterface::draw(sf::RenderWindow& window) {
+	std::cout << "drawing" << std::endl;
 	if (!Settings::General::showImgui) {
 		ImGui::SFML::Render(window);
 		return;
@@ -102,6 +117,7 @@ void ImguiInterface::draw(sf::RenderWindow& window) {
 				if (Settings::Gameplay::autoplay)
 					ImGui::SliderFloat("Delay", &Settings::Gameplay::autoplayDelay, 0.2f, 4.f, "%.3f seconds");
 				else {
+					ImGui::SameLine();
 					if (ImGui::Button("Bot place set"))
 						Game::theBot.doSet();
 					Custom::HelpMarker("Let the bot place the holding set of blocks.");
@@ -207,6 +223,12 @@ void ImguiInterface::draw(sf::RenderWindow& window) {
 
 			if (ImGui::TreeNode("Score"))
 			{
+				ImGui::Text("Time played:");
+				ImGui::SameLine();
+				ImGui::Text(std::to_string(Game::theScore->timePlayedSeconds).c_str());
+				ImGui::SameLine();
+				ImGui::Text("seconds.");
+
 				ImGui::Text("APM:");
 				ImGui::SameLine();
 				ImGui::Text(std::to_string(Game::theScore->apm).c_str());
@@ -240,7 +262,63 @@ void ImguiInterface::draw(sf::RenderWindow& window) {
 		{
 			//ImGui::Checkbox("Animations", &Settings::Aspect::animations);
 			//let change font
+			if (ImGui::TreeNode("Window"))
+			{
+				static std::vector<float> historyFps;
+				unsigned latestFps = Game::fetchFps();
 
+				historyFps.push_back(latestFps);
+				if (historyFps.size() > 64)
+					historyFps.erase(historyFps.begin());
+
+				ImGui::PlotLines("##frpsPlot", &historyFps[0], historyFps.size());
+				Custom::HelpMarker("Frames Per Second");
+
+				ImGui::Text("Fps:");
+				ImGui::SameLine();
+				ImGui::Text(std::to_string(latestFps).c_str());
+
+				unsigned averageFps = 0;
+				unsigned historyFpsAmount = historyFps.size();
+				for (unsigned i = 0; i < historyFpsAmount; i++)
+					averageFps += historyFps[i];
+				averageFps /= historyFpsAmount;
+
+				ImGui::Text("Avg:");
+				ImGui::SameLine();
+				ImGui::Text(std::to_string(averageFps).c_str());
+
+				ImGui::Text("Frame time:");
+				ImGui::SameLine();
+				ImGui::Text(std::to_string(Game::fetchFrametime()).c_str());
+				ImGui::SameLine();
+				ImGui::Text("ms ");
+
+				if (ImGui::Checkbox("Vsync", &Settings::General::vsync))
+					Game::updateVsyncSetting();
+
+				ImGui::SameLine();
+
+				static const char* aalevelsNames[] = { "None", "x2", "x4", "x8", "x16" };
+				const char* aalevelName = aalevelsNames[Settings::General::aalevel];
+				ImGui::PushItemWidth(64);
+				if (ImGui::BeginCombo("Antialiasing", aalevelName)) {
+					for (unsigned i = 0; i < 5; i++) {
+						const bool selected = (Settings::General::aalevel == i);
+						if (ImGui::Selectable(aalevelsNames[i], selected))
+							Settings::General::aalevel = i;
+
+						if (selected)
+							ImGui::SetItemDefaultFocus();
+					}
+
+					ImGui::EndCombo();
+				}
+				ImGui::PopItemWidth();
+				Custom::HelpMarker("Changing the antialiasing level\nreinitializes the window.");
+
+				ImGui::TreePop();
+			}
 			if (ImGui::TreeNode("Colors"))
 			{
 				if (ImGui::Button("Set default values")) {
@@ -283,12 +361,14 @@ void ImguiInterface::draw(sf::RenderWindow& window) {
 				if (!Settings::Audio::muted)
 				{
 					ImGui::SameLine();
-					ImGui::PushItemWidth(98);
+					ImGui::PushItemWidth(120);
 					ImGui::SliderInt("Volume", &Settings::Audio::volume, 0, 100);
 					ImGui::PopItemWidth();
 				}
 
+				ImGui::PushItemWidth(179);
 				ImGui::SliderFloat("Pitch", &Settings::Audio::pitch, 0.1f, 1.9f);
+				ImGui::PopItemWidth();
 
 				Audio::updateState();
 
@@ -296,13 +376,13 @@ void ImguiInterface::draw(sf::RenderWindow& window) {
 			}
 			if (ImGui::TreeNode("ImGui"))
 			{
-				ImGui::PushItemWidth(76);
+				ImGui::PushItemWidth(77);
 				ImGui::Text("Theme:");
 				ImGui::SameLine();
 				ImGui::ShowStyleSelector("##StyleSelector");
 				ImGui::PopItemWidth();
 				ImGui::SameLine();
-				if (ImGui::Button("No background"))
+				if (ImGui::Button("Toggle background"))
 					window_flags ^= ImGuiWindowFlags_NoBackground;
 
 				ImGui::Separator();
