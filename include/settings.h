@@ -16,6 +16,8 @@ namespace Settings
 
 		extern bool vsync;
 		extern int aalevel; //0 - None, 1 - 2x, 2 - 4x, 3 - 8x, 4 - 16x
+
+		extern void defaultValues();
 	}
 
 	namespace Audio
@@ -23,6 +25,8 @@ namespace Settings
 		extern bool muted;
 		extern int volume;
 		extern float pitch;
+
+		extern void defaultValues();
 	}
 
 	namespace Gameplay
@@ -36,6 +40,8 @@ namespace Settings
 		extern int blockModel;
 		extern unsigned customBlockSizeHeight, customBlockSizeWidth;
 		extern bool customBlockStructure[5][5];
+
+		extern void defaultValues();
 	}
 
 	namespace Aspect

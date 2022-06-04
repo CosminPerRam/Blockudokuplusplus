@@ -33,8 +33,6 @@ private:
 	static void pollEvent(sf::Event& theEvent);
 	static void update();
 
-	static void close();
-
 protected:
 	static Score *theScore;
 	static Table *theTable;

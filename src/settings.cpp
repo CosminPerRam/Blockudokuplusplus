@@ -13,40 +13,70 @@ namespace Settings
 	}
 
 	void defaults() {
+		General::defaultValues();
+		Audio::defaultValues();
+		Gameplay::defaultValues();
 		Aspect::defaultValues();
 	}
 
 	namespace General
 	{
-		bool showImgui = false;
+		bool showImgui;
 
-		bool vsync = true;
-		int aalevel = 0;
+		bool vsync;
+		int aalevel;
+
+		void defaultValues() {
+			showImgui = false;
+
+			vsync = true;
+			aalevel = 0;
+		}
 	}
 
 	namespace Audio
 	{
-		bool muted = false;
-		int volume = 100;
-		float pitch = 1;
+		bool muted;
+		int volume;
+		float pitch;
+
+		void defaultValues() {
+			muted = false;
+			volume = 100;
+			pitch = 1;
+		}
 	}
 
 	namespace Gameplay
 	{
-		bool autoplay = false;
-		float autoplayDelay = 1;
+		bool autoplay;
+		float autoplayDelay;
 
-		bool checkGameInAdvance = false;
+		bool checkGameInAdvance;
 
-		bool continousGenerate = false;
-		int blockModel = -1;
-		unsigned customBlockSizeHeight = 3, customBlockSizeWidth = 3;
-		bool customBlockStructure[5][5] = { 0 };
+		bool continousGenerate;
+		int blockModel;
+		unsigned customBlockSizeHeight, customBlockSizeWidth;
+		bool customBlockStructure[5][5];
+
+		void defaultValues() {
+			autoplay = false; autoplayDelay = 1.f;
+
+			checkGameInAdvance = false;
+
+			continousGenerate = false;
+			blockModel = -1;
+			customBlockSizeHeight = 3, customBlockSizeWidth = 3;
+			for (unsigned i = 0; i < 5; i++) {
+				for (unsigned j = 0; j < 5; j++)
+					customBlockStructure[i][j] = 0;
+			}
+		}
 	}
 
 	namespace Aspect
 	{
-		bool animations = true;
+		bool animations;
 
 		float appBackground[3];
 		float pickupMargins[3];
@@ -63,6 +93,8 @@ namespace Settings
 		float tableMinor[3];
 
 		void defaultValues() {
+			animations = false;
+
 			setFloatColors(appBackground, 1.f, 1.f, 1.f);
 			setFloatColors(pickupMargins, 0.92f, 0.92f, 0.92f);
 			setFloatColors(textColor, 0.f, 0.f, 0.f);
