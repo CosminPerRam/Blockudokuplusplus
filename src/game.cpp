@@ -112,8 +112,10 @@ int Game::start() {
         sf::Event event;
         while (window->pollEvent(event))
         {
-            if (event.type == sf::Event::Closed)
+            if (event.type == sf::Event::Closed) {
                 Game::destroyWindow();
+                return 1;
+            }
 
             Game::pollEvent(event);
         }

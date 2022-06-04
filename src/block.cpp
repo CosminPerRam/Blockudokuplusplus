@@ -99,7 +99,7 @@ const std::vector<std::vector<bool>> Block::getStructure(unsigned structureIndex
 		}
 		
 		this->structureIndex = -2;
-		this->structureSize = { Settings::Gameplay::customBlockSizeHeight, Settings::Gameplay::customBlockSizeWidth };
+		this->structureSize = { Settings::Gameplay::customBlockSizeWidth, Settings::Gameplay::customBlockSizeHeight };
 
 		cell.setSize({ CELL_SPACING, CELL_SPACING });
 		cell.setScale({ this->scale , this->scale });

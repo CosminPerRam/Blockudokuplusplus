@@ -103,17 +103,17 @@ void ImguiInterface::draw(sf::RenderWindow& window) {
 
 	//ImGui::InputText("FileName", ImguiInterface::fileName, FILENAME_LENGTH);
 	ImGui::Text("Press 'M' to hide/show this menu.");
-	if (ImGui::BeginTabBar("TabBar"))
+	if (ImGui::BeginTabBar("TabBar", ImGuiTabBarFlags_Reorderable))
 	{
 		if (ImGui::BeginTabItem("Gameplay"))
 		{
-			if (ImGui::TreeNode("Table"))
+			if (ImGui::TreeNode("Game"))
 			{
 				if (ImGui::Button("Restart"))
 					Game::restart();
 				ImGui::SameLine();
-				if (ImGui::Button("Clear"))
-					Game::theTable->reset();
+				if (ImGui::Button("Lose"))
+					Game::theScore->setGameLost();
 
 				ImGui::Separator();
 
@@ -132,8 +132,15 @@ void ImguiInterface::draw(sf::RenderWindow& window) {
 					Custom::HelpMarker("Let the bot place the holding set of blocks.");
 				}
 
-				ImGui::Separator();
-				if (ImGui::Checkbox("Check game in advance", &Settings::Gameplay::checkGameInAdvance))
+				ImGui::TreePop();
+			}
+
+			if (ImGui::TreeNode("Table"))
+			{
+				if (ImGui::Button("Clear"))
+					Game::theTable->reset();
+				ImGui::SameLine();
+				if (ImGui::Checkbox("Check in advance", &Settings::Gameplay::checkGameInAdvance))
 				{
 					if (Settings::Gameplay::autoplay)
 						Settings::Gameplay::autoplay = false;
@@ -148,7 +155,7 @@ void ImguiInterface::draw(sf::RenderWindow& window) {
 
 			if (ImGui::TreeNode("Pickup board"))
 			{
-				ImGui::Text("Type: ");
+				ImGui::Text("Type:");
 				ImGui::SameLine();
 				if (ImGui::Button("Random")) {
 					Settings::Gameplay::blockModel = -1;
@@ -159,7 +166,7 @@ void ImguiInterface::draw(sf::RenderWindow& window) {
 					ImGui::OpenPopup("ModelGeneratePopup");
 				ImGui::SameLine();
 				if (ImGui::Button("Custom"))
-					ImGui::OpenPopup("CustomGeneratePopup");
+					Settings::Gameplay::blockModel = -2;
 
 				if (ImGui::BeginPopup("ModelGeneratePopup"))
 				{
@@ -173,16 +180,25 @@ void ImguiInterface::draw(sf::RenderWindow& window) {
 					ImGui::EndPopup();
 				}
 
-				if (ImGui::BeginPopup("CustomGeneratePopup"))
-				{
-					Settings::Gameplay::blockModel = -2;
+				ImGui::Text("Selected:");
+				ImGui::SameLine();
+				if (Settings::Gameplay::blockModel == -1)
+					ImGui::Text("Random");
+				else if (Settings::Gameplay::blockModel == -2)
+					ImGui::Text("Custom");
+				else
+					ImGui::Text(structures::grouped[Settings::Gameplay::blockModel]->name);
+
+				if (Settings::Gameplay::blockModel == -2) {
+					ImGui::Separator();
 
 					static unsigned cbs_min = 1, cbs_cbsmax = 5;
 
 					ImGui::PushItemWidth(68);
-					if(ImGui::SliderScalar("Width", ImGuiDataType_U32, &Settings::Gameplay::customBlockSizeWidth, &cbs_min, &cbs_cbsmax, "%u"))
+					if (ImGui::SliderScalar("Width", ImGuiDataType_U32, &Settings::Gameplay::customBlockSizeWidth, &cbs_min, &cbs_cbsmax, "%u"))
 						Game::pickupBoard->regenerateBlocks(pickupBlocks::existing);
-					if(ImGui::SliderScalar("Height", ImGuiDataType_U32, &Settings::Gameplay::customBlockSizeHeight, &cbs_min, &cbs_cbsmax, "%u"))
+					ImGui::SameLine();
+					if (ImGui::SliderScalar("Height", ImGuiDataType_U32, &Settings::Gameplay::customBlockSizeHeight, &cbs_min, &cbs_cbsmax, "%u"))
 						Game::pickupBoard->regenerateBlocks(pickupBlocks::existing);
 					ImGui::PopItemWidth();
 
@@ -201,20 +217,15 @@ void ImguiInterface::draw(sf::RenderWindow& window) {
 					}
 
 					ImGui::Separator();
-
-					ImGui::EndPopup();
 				}
 
-				ImGui::Text("Selected: ");
-				ImGui::SameLine();
-				if (Settings::Gameplay::blockModel == -1)
-					ImGui::Text("Random");
-				else if (Settings::Gameplay::blockModel == -2)
-					ImGui::Text("Custom");
-				else
-					ImGui::Text(structures::grouped[Settings::Gameplay::blockModel]->name);
-
 				ImGui::Separator();
+				if (ImGui::Checkbox("Continous generation", &Settings::Gameplay::continousGenerate)) {
+					if(Settings::Gameplay::continousGenerate)
+						Game::pickupBoard->regenerateBlocks(pickupBlocks::missing);
+				}
+				Custom::HelpMarker("Never lets a slot to be empty!");
+
 				ImGui::Text("Regenerate: ");
 				ImGui::SameLine();
 				if (ImGui::Button("All"))
@@ -223,38 +234,17 @@ void ImguiInterface::draw(sf::RenderWindow& window) {
 				if (ImGui::Button("Missing"))
 					Game::pickupBoard->regenerateBlocks(pickupBlocks::missing);
 
-				ImGui::Separator();
-				ImGui::Checkbox("Continously generation", &Settings::Gameplay::continousGenerate);
-				Custom::HelpMarker("Never lets a slot to be empty\n(if it was occupied beforehand)!");
-
 				ImGui::TreePop();
 			}
 
 			if (ImGui::TreeNode("Score"))
 			{
-				ImGui::Text("Time played:");
-				ImGui::SameLine();
-				ImGui::Text(std::to_string(Game::theScore->timePlayedSeconds).c_str());
-				ImGui::SameLine();
-				ImGui::Text("seconds.");
+				ImGui::Text("Time played: %.3f seconds.", Game::theScore->timePlayedSeconds);
 
-				ImGui::Text("APM:");
-				ImGui::SameLine();
-				ImGui::Text(std::to_string(Game::theScore->apm).c_str());
-				Custom::HelpMarker("Actions per minute.");
-				ImGui::SameLine();
-				ImGui::Text("SPM:");
-				ImGui::SameLine();
-				ImGui::Text(std::to_string(Game::theScore->spm).c_str());
-				Custom::HelpMarker("Score per minute.");
+				ImGui::Text("APM: %.4f   SPM: %.4f", Game::theScore->apm, Game::theScore->spm);
+				Custom::HelpMarker("Actions per minute\nScore per minute");
 
-				ImGui::Text("Current: ");
-				ImGui::SameLine();
-				ImGui::Text(std::to_string(Game::theScore->score).c_str());
-				ImGui::SameLine();
-				ImGui::Text("Highscore: ");
-				ImGui::SameLine();
-				ImGui::Text(std::to_string(Score::Data::getLocalBest()).c_str());
+				ImGui::Text("Current: %u   Highscore: %u", Game::theScore->score, Score::Data::getLocalBest());
 
 				if (ImGui::Button("Reset score"))
 					Game::theScore->reset();
@@ -276,28 +266,17 @@ void ImguiInterface::draw(sf::RenderWindow& window) {
 				ImGui::PlotLines("##frpsPlot", &data.historyFps[0], data.historyFps.size());
 				Custom::HelpMarker("Frames Per Second");
 
-				ImGui::Text("Fps:");
-				ImGui::SameLine();
-				ImGui::Text(std::to_string((unsigned)data.historyFps.back()).c_str());
-				ImGui::SameLine();
-				ImGui::Text("Avg:");
-				ImGui::SameLine();
-				ImGui::Text(std::to_string(data.averageFps).c_str());
+				ImGui::Text("Fps: %u   Avg: %u", (unsigned)data.historyFps.back(), data.averageFps);
 				ImGui::SameLine();
 				if (ImGui::Checkbox("Vsync", &Settings::General::vsync))
 					Game::updateVsyncSetting();
-				Custom::HelpMarker("Limits the refresh rate to\nyour monitor's one.");
+				Custom::HelpMarker("Limits the refresh rate\nto your monitor's one.");
 
-				ImGui::Text("Frame time:");
-				ImGui::SameLine();
-				ImGui::Text(std::to_string(Game::fetchFrametime()).c_str());
-				ImGui::SameLine();
-				ImGui::Text("ms ");
+				ImGui::Text("Frame time: %.3f ms", Game::fetchFrametime());
 
 				static const char* aalevelsNames[] = { "None", "x2", "x4", "x8", "x16" };
-				const char* aalevelName = aalevelsNames[Settings::General::aalevel];
 				ImGui::PushItemWidth(64);
-				if (ImGui::BeginCombo("Antialiasing", aalevelName)) {
+				if (ImGui::BeginCombo("Antialiasing", aalevelsNames[Settings::General::aalevel])) {
 					for (unsigned i = 0; i < 5; i++) {
 						const bool selected = (Settings::General::aalevel == i);
 						if (ImGui::Selectable(aalevelsNames[i], selected)) {
@@ -318,6 +297,8 @@ void ImguiInterface::draw(sf::RenderWindow& window) {
 			}
 			if (ImGui::TreeNode("Colors"))
 			{
+				static ImGuiColorEditFlags colorFlags = ImGuiColorEditFlags_NoInputs;
+
 				if (ImGui::Button("Set default values")) {
 					Settings::Aspect::defaultValues();
 
@@ -326,29 +307,36 @@ void ImguiInterface::draw(sf::RenderWindow& window) {
 					Game::pickupBoard->updateColors();
 				}
 
-				if (ImGui::CollapsingHeader("General")) {
-					ImGui::ColorEdit3("Background", Settings::Aspect::appBackground);
-					ImGui::ColorEdit3("Pickup margins", Settings::Aspect::pickupMargins);
-					ImGui::ColorEdit3("Text", Settings::Aspect::textColor);
+				if (ImGui::TreeNode("General"))
+				{
+					ImGui::ColorEdit3("Background", Settings::Aspect::appBackground, colorFlags);
+					ImGui::ColorEdit3("Pickup margins", Settings::Aspect::pickupMargins, colorFlags);
+					ImGui::ColorEdit3("Text", Settings::Aspect::textColor, colorFlags);
 
 					Game::theScore->updateColors();
 					Game::pickupBoard->updateColors();
+
+					ImGui::TreePop();
 				}
-				if (ImGui::CollapsingHeader("Cells")) {
-					ImGui::ColorEdit3("Solid", Settings::Aspect::cellSolid);
-					ImGui::ColorEdit3("Preview", Settings::Aspect::cellPreview);
-					ImGui::ColorEdit3("Completion", Settings::Aspect::cellCompletion);
-					ImGui::ColorEdit3("Margins", Settings::Aspect::cellMargins);
+				if (ImGui::TreeNode("Cells")) {
+					ImGui::ColorEdit3("Solid", Settings::Aspect::cellSolid, colorFlags);
+					ImGui::ColorEdit3("Preview", Settings::Aspect::cellPreview, colorFlags);
+					ImGui::ColorEdit3("Completion", Settings::Aspect::cellCompletion, colorFlags);
+					ImGui::ColorEdit3("Margins", Settings::Aspect::cellMargins, colorFlags);
 
 					Game::theTable->updateColors();
+
+					ImGui::TreePop();
 				}
-				if (ImGui::CollapsingHeader("Table")) {
-					ImGui::ColorEdit3("Odd", Settings::Aspect::tableOdd);
-					ImGui::ColorEdit3("Even", Settings::Aspect::tableEven);
-					ImGui::ColorEdit3("Minor lines", Settings::Aspect::tableMinor);
-					ImGui::ColorEdit3("Major lines", Settings::Aspect::tableMajor);
+				if (ImGui::TreeNode("Table")) {
+					ImGui::ColorEdit3("Odd", Settings::Aspect::tableOdd, colorFlags);
+					ImGui::ColorEdit3("Even", Settings::Aspect::tableEven, colorFlags);
+					ImGui::ColorEdit3("Minor lines", Settings::Aspect::tableMinor, colorFlags);
+					ImGui::ColorEdit3("Major lines", Settings::Aspect::tableMajor, colorFlags);
 
 					Game::theTable->updateColors();
+
+					ImGui::TreePop();
 				}
 
 				ImGui::TreePop();
