@@ -13,7 +13,21 @@ int Random::getNumberInBetween(unsigned a, unsigned b) {
     return distr(gen);
 }
 
-std::stringstream Files::getFileContents(const std::string& fileName) {
+bool Files::exists(const char* fileName) {
+    return std::ifstream(fileName).good();
+}
+
+void Files::create(const char* fileName) {
+    std::ofstream fout(fileName);
+}
+
+void Files::erase(const char* fileName) {
+
+    std::stringstream sstream;
+    Files::write(sstream, fileName);
+}
+
+std::stringstream Files::read(const char* fileName) {
     std::ifstream fin(fileName);
 
     std::stringstream theStream;
@@ -22,13 +36,14 @@ std::stringstream Files::getFileContents(const std::string& fileName) {
     return theStream;
 }
 
-void Files::writeToFile(const std::string& text, const std::string& fileName, bool overwrite) {
-    std::ofstream fout;
+void Files::write(std::stringstream& sstream, const char* fileName) {
+    std::ofstream fout(fileName);
 
-    if (overwrite)
-        fout.open(fileName);
-    else
-        fout.open(fileName, std::ios_base::app);
+    fout << sstream.rdbuf();
+}
 
-    fout << text;
+void Files::append(std::stringstream& sstream, const char* fileName) {
+    std::ofstream fout(fileName, std::ios_base::app);
+
+    fout << sstream.rdbuf();
 }

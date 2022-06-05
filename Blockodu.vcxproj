@@ -85,6 +85,7 @@
       <LanguageStandard_C>Default</LanguageStandard_C>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <OmitFramePointers>true</OmitFramePointers>
+      <StringPooling>false</StringPooling>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

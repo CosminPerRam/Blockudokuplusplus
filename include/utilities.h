@@ -10,7 +10,11 @@ namespace Random
 
 namespace Files
 {
-	std::stringstream getFileContents(const std::string& fileName);
+	bool exists(const char* fileName);
+	void create(const char* fileName);
+	void erase(const char* fileName);
 
-	void writeToFile(const std::string& text, const std::string& fileName, bool overwrite = true);
+	std::stringstream read(const char* fileName);
+	void write(std::stringstream& sstream, const char* fileName);
+	void append(std::stringstream& sstream, const char* fileName);
 }

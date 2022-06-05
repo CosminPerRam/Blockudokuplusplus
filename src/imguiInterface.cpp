@@ -81,22 +81,30 @@ void ImguiInterface::draw(sf::RenderWindow& window) {
 
 	ImGui::Begin("Settings", &Settings::General::showImgui, window_flags);
 
-	//if (ImGui::Button("Save"))
-	//	ImGui::OpenPopup("FileSavedPopup");
-	//ImGui::SameLine();
-	//if (ImGui::Button("Load"))
-	//	ImGui::OpenPopup("FileLoadedPopup");
+	static char settingsFilename[FILENAME_LENGTH] = DEFAULT_SETTINGS_FILENAME;
+	static bool fileOperationStatus = false;
+
+	if (ImGui::Button("Save")) {
+		fileOperationStatus = Settings::save(fileName);
+		ImGui::OpenPopup("FileSavedPopup");
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Load")) {
+		fileOperationStatus = Settings::load(fileName);
+		ImGui::OpenPopup("FileLoadedPopup");
+	}
+	ImGui::SameLine();
+	ImGui::PushItemWidth(96);
+	ImGui::InputText("Filename", settingsFilename, FILENAME_LENGTH);
+	ImGui::PopItemWidth();
 
 	if (ImGui::BeginPopup("FileSavedPopup")) {
-		bool saved = Settings::save(fileName);
-		ImGui::Text(saved ? "Successfully saved!" : "Couldn't save.");
+		ImGui::Text(fileOperationStatus ? "Successfully saved!" : "Couldn't save.");
 		ImGui::EndPopup();
 	}
 
 	if (ImGui::BeginPopup("FileLoadedPopup")) {
-		bool loaded = Settings::load(fileName);
-
-		ImGui::Text(loaded ? "Successfully loaded!" : "Couldn't load.");
+		ImGui::Text(fileOperationStatus ? "Successfully loaded!" : "Couldn't load.");
 		ImGui::EndPopup();
 	}
 

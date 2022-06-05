@@ -35,10 +35,10 @@ private:
 	static void update();
 
 protected:
-	static std::unique_ptr<Score> theScore;
-	static std::unique_ptr<Table> theTable;
-	static std::unique_ptr<PickupBoard> pickupBoard;
-	static std::unique_ptr<ImguiInterface> imguiInterface;
+	static Score *theScore;
+	static Table *theTable;
+	static PickupBoard *pickupBoard;
+	static ImguiInterface imguiInterface;
 	static Bot theBot;
 
 	static unsigned fetchFps();
@@ -49,6 +49,8 @@ protected:
 
 	static void destroyWindow();
 	static void initializeWindow();
+
+	static void free();
 
 public:
 	static int start();

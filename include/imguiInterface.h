@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "imgui.h"
+#include <SFML/Graphics/RenderWindow.hpp> 
 
 #define FILENAME_LENGTH 64
 #define IMGUI_REFRESHRATE 60

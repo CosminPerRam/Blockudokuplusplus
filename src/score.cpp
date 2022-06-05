@@ -14,12 +14,17 @@ unsigned Score::Data::localBest = 0;
 
 void Score::Data::writeLocalBest(unsigned score) {
 	localBest = score;
-	Files::writeToFile(std::to_string(score), "resources/userData.txt");
+
+	std::stringstream sstream;
+	sstream << score;
+	Files::write(sstream, "resources/userData.txt");
 }
+
 void Score::Data::loadLocalBest() {
-	auto stream = Files::getFileContents("resources/userData.txt");
+	std::stringstream stream = Files::read("resources/userData.txt");
 	stream >> localBest;
 }
+
 unsigned Score::Data::getLocalBest() {
 	return localBest;
 }

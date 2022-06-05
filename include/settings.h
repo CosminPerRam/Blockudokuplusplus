@@ -1,8 +1,12 @@
 
 #pragma once
 
+#include <sstream>
+
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/System/Vector2.hpp>
+
+#define DEFAULT_SETTINGS_FILENAME "settings.ini"
 
 namespace Settings
 {
@@ -18,6 +22,8 @@ namespace Settings
 		extern int aalevel; //0 - None, 1 - 2x, 2 - 4x, 3 - 8x, 4 - 16x
 
 		extern void defaultValues();
+		extern void save(std::stringstream& sstream);
+		extern void load(std::stringstream& sstream);
 	}
 
 	namespace Audio
@@ -27,6 +33,8 @@ namespace Settings
 		extern float pitch;
 
 		extern void defaultValues();
+		extern void save(std::stringstream& sstream);
+		extern void load(std::stringstream& sstream);
 	}
 
 	namespace Gameplay
@@ -42,6 +50,8 @@ namespace Settings
 		extern bool customBlockStructure[5][5];
 
 		extern void defaultValues();
+		extern void save(std::stringstream& sstream);
+		extern void load(std::stringstream& sstream);
 	}
 
 	namespace Aspect
@@ -63,8 +73,12 @@ namespace Settings
 		extern float tableMinor[3];
 
 		extern void defaultValues();
+		extern void save(std::stringstream& sstream);
+		extern void load(std::stringstream& sstream);
 	}
 }
 
-extern sf::Color toColor(float* p);
-extern void setFloatColors(float* p, float r, float g, float b);
+extern sf::Color toColor(float* c);
+extern void setFloatColors(float* c, float r, float g, float b);
+extern void colorToStream(std::stringstream& sstream, float* c);
+extern void streamToColor(std::stringstream& sstream, float* c);

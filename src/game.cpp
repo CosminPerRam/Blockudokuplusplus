@@ -6,10 +6,10 @@
 #include "spacing.h"
 #include "audio.h"
 
-std::unique_ptr<Score> Game::theScore;
-std::unique_ptr<Table> Game::theTable;
-std::unique_ptr<PickupBoard> Game::pickupBoard;
-std::unique_ptr<ImguiInterface> Game::imguiInterface;
+Score *Game::theScore = nullptr;
+Table *Game::theTable = nullptr;
+PickupBoard *Game::pickupBoard = nullptr;
+ImguiInterface Game::imguiInterface;
 Bot Game::theBot;
 
 sf::Clock Game::deltaClock;
@@ -97,14 +97,21 @@ void Game::initializeWindow() {
     Game::updateVsyncSetting();
 }
 
+void Game::free() {
+    delete theScore;
+    delete theTable;
+    delete pickupBoard;
+}
+
 int Game::start() {
     Audio::initialize();
 
-    Settings::defaults();
+    if(!Settings::load(DEFAULT_SETTINGS_FILENAME))
+        Settings::defaults();
 
-    theScore = std::make_unique<Score>(structures::grouped.size());
-    theTable = std::make_unique<Table>();
-    pickupBoard = std::make_unique<PickupBoard>();
+    theScore = new Score(structures::grouped.size());
+    theTable = new Table();
+    pickupBoard = new PickupBoard();
 
     Game::initializeWindow();
 
@@ -115,6 +122,7 @@ int Game::start() {
         {
             if (event.type == sf::Event::Closed) {
                 Game::destroyWindow();
+                Game::free();
                 return 1;
             }
 
@@ -133,6 +141,8 @@ int Game::start() {
             reinitializeWindow = false;
         }
     }
+
+    Game::free();
 
     return 0;
 }
