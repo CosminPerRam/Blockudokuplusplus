@@ -17,6 +17,7 @@ namespace Settings
 	struct General
 	{
 		inline static bool showImgui;
+		inline static unsigned refreshRateImgui;
 
 		inline static bool vsync;
 		inline static int aalevel; //0 - None, 1 - 2x, 2 - 4x, 3 - 8x, 4 - 16x
@@ -25,6 +26,8 @@ namespace Settings
 		static void save(std::stringstream& sstream);
 		static void load(std::stringstream& sstream);
 		static void apply();
+
+		static void applyDataRefreshrate();
 	};
 
 	struct Audio

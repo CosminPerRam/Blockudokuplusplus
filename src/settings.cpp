@@ -48,6 +48,7 @@ namespace Settings
 
 	void General::defaultValues() {
 		showImgui = false;
+		refreshRateImgui = 15;
 
 		vsync = true;
 		aalevel = 0;
@@ -56,11 +57,11 @@ namespace Settings
 	}
 
 	void General::save(std::stringstream& sstream) {
-		sstream << showImgui << " " << vsync << " " << aalevel << std::endl;
+		sstream << showImgui << " " << refreshRateImgui << " " << vsync << " " << aalevel << std::endl;
 	}
 
 	void General::load(std::stringstream& sstream) {
-		sstream >> showImgui >> vsync >> aalevel;
+		sstream >> showImgui >> refreshRateImgui >> vsync >> aalevel;
 
 		General::apply();
 	}
@@ -68,6 +69,14 @@ namespace Settings
 	void General::apply() {
 		Game::updateAntialiasingSetting();
 		Game::updateVsyncSetting();
+		General::applyDataRefreshrate();
+	}
+
+	void General::applyDataRefreshrate() {
+		if (Settings::General::refreshRateImgui < 1)
+			Settings::General::refreshRateImgui = 1;
+		if (Settings::General::refreshRateImgui > 999)
+			Settings::General::refreshRateImgui = 999;
 	}
 
 	void Audio::defaultValues() {

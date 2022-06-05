@@ -8,8 +8,7 @@
 
 #include "settings.h"
 
-#define FILENAME_LENGTH 64
-#define IMGUI_REFRESHRATE 60
+#define FILENAME_LENGTH 32
 
 class ImguiInterface
 {
@@ -30,6 +29,8 @@ private:
 	{
 		std::vector<float> historyFps;
 		unsigned averageFps = 0;
+
+		float latestFrametime = 0.f;
 
 		static void update();
 	} static data;

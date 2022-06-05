@@ -37,6 +37,8 @@ void ImguiInterface::Data::update() {
 	for (unsigned i = 0; i < historyFpsAmount; i++)
 		data.averageFps += static_cast<unsigned>(data.historyFps[i]);
 	data.averageFps /= historyFpsAmount;
+
+	data.latestFrametime = Game::fetchFrametime();
 }
 
 void ImguiInterface::initialize(sf::RenderWindow& window) {
@@ -62,7 +64,7 @@ void ImguiInterface::update(sf::RenderWindow& window, sf::Time& dt) {
 	ImGui::SFML::Update(window, updateTime);
 
 	lastUpdateTime += updateTime;
-	if (lastUpdateTime.asSeconds() * 1000 > 1000 / IMGUI_REFRESHRATE)
+	if (lastUpdateTime.asSeconds() > 1.f / Settings::General::refreshRateImgui)
 	{
 		ImguiInterface::Data::update();
 		lastUpdateTime = sf::Time::Zero;
@@ -236,6 +238,14 @@ void ImguiInterface::draw(sf::RenderWindow& window) {
 			//ImGui::Checkbox("Animations", &Settings::Aspect::animations);
 			if (ImGui::TreeNode("Window"))
 			{
+				static unsigned rr_step = 1, rr_stepFast = 4;
+
+				ImGui::PushItemWidth(96);
+				if (ImGui::InputScalar("Data refreshrate", ImGuiDataType_U32, &Settings::General::refreshRateImgui, &rr_step, &rr_stepFast))
+					Settings::General::applyDataRefreshrate();
+				ImGui::PopItemWidth();
+				Custom::HelpMarker("How many times per seconds should\nthe data here be updated.\nIf the fps is higher, the data\nupdates at the specified rate\notherwise, at the fps speed.");
+
 				ImGui::PlotLines("##fpsPlot", &data.historyFps[0], data.historyFps.size());
 				Custom::HelpMarker("Frames Per Second");
 
@@ -245,7 +255,7 @@ void ImguiInterface::draw(sf::RenderWindow& window) {
 					Game::updateVsyncSetting();
 				Custom::HelpMarker("Limits the refresh rate\nto your monitor's one.");
 
-				ImGui::Text("Frame time: %.3f ms", Game::fetchFrametime());
+				ImGui::Text("Frame time: %.3f ms", data.latestFrametime);
 
 				static const char* aalevelsNames[] = { "None", "x2", "x4", "x8", "x16" };
 				ImGui::PushItemWidth(60);
