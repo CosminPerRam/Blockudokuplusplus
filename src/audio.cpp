@@ -9,8 +9,6 @@
 #include "spacing.h"
 #include "settings.h"
 
-bool Audio::initialized = false;
-
 sf::SoundBuffer& Audio::goodPlacement() {
 	static sf::SoundBuffer goodPlacement;
 	return goodPlacement;
@@ -68,14 +66,9 @@ void Audio::initialize() {
 	audioSprite().setPosition({ AUDIO_POSITION_X, AUDIO_POSITION_Y });
 	audioSprite().setTexture(volumeTexture());
 	audioSprite().setScale(0.48f, 0.48f);
-	
-	initialized = true;
 }
 
 void Audio::play(effect theEffect) {
-	if (!initialized)
-		return;
-
 	switch (theEffect) {
 	case effect::BadPlacement:
 		playingSound().setBuffer(badPlacement());

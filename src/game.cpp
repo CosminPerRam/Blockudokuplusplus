@@ -9,16 +9,10 @@
 Score *Game::theScore = nullptr;
 Table *Game::theTable = nullptr;
 PickupBoard *Game::pickupBoard = nullptr;
-ImguiInterface Game::imguiInterface;
-Bot Game::theBot;
 
 sf::Clock Game::deltaClock;
 sf::Time Game::lastTime = Game::deltaClock.getElapsedTime();
 sf::RenderWindow* Game::window = nullptr;
-unsigned Game::latestFps = 0;
-float Game::latestFrameTimeMs = 0.f;
-
-bool Game::reinitializeWindow = false;
 
 void Game::restart() {
     theScore->reset(true);
@@ -106,14 +100,14 @@ void Game::free() {
 int Game::start() {
     Audio::initialize();
 
-    if(!Settings::load(DEFAULT_SETTINGS_FILENAME))
-        Settings::defaults();
-
     theScore = new Score(structures::grouped.size());
     theTable = new Table();
     pickupBoard = new PickupBoard();
 
     Game::initializeWindow();
+
+    if (!Settings::load(SETTINGS_FILENAME_DEFAULT))
+        Settings::defaults();
 
     while (window->isOpen())
     {   //while the window is open, the game processes and renders stuff

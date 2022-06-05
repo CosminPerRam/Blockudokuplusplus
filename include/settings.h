@@ -6,79 +6,84 @@
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/System/Vector2.hpp>
 
-#define DEFAULT_SETTINGS_FILENAME "settings.ini"
+#define SETTINGS_FILENAME_DEFAULT "settings.ini"
 
 namespace Settings
 {
-	extern bool save(const char* fileName);
-	extern bool load(const char* fileName);
-	extern void defaults();
+	bool save(const char* fileName);
+	bool load(const char* fileName);
+	void defaults();
 
-	namespace General
+	struct General
 	{
-		extern bool showImgui;
+		inline static bool showImgui;
 
-		extern bool vsync;
-		extern int aalevel; //0 - None, 1 - 2x, 2 - 4x, 3 - 8x, 4 - 16x
+		inline static bool vsync;
+		inline static int aalevel; //0 - None, 1 - 2x, 2 - 4x, 3 - 8x, 4 - 16x
 
-		extern void defaultValues();
-		extern void save(std::stringstream& sstream);
-		extern void load(std::stringstream& sstream);
-	}
+		static void defaultValues();
+		static void save(std::stringstream& sstream);
+		static void load(std::stringstream& sstream);
+		static void apply();
+	};
 
-	namespace Audio
+	struct Audio
 	{
-		extern bool muted;
-		extern int volume;
-		extern float pitch;
+		inline static bool muted;
+		inline static int volume;
+		inline static float pitch;
 
-		extern void defaultValues();
-		extern void save(std::stringstream& sstream);
-		extern void load(std::stringstream& sstream);
-	}
+		static void defaultValues();
+		static void save(std::stringstream& sstream);
+		static void load(std::stringstream& sstream);
+	};
 
-	namespace Gameplay
+	struct Gameplay
 	{
-		extern bool autoplay;
-		extern float autoplayDelay;
+		inline static bool autoplay;
+		inline static float autoplayDelay;
 
-		extern bool checkGameInAdvance;
+		inline static bool checkGameInAdvance;
 
-		extern bool continousGenerate;
-		extern int blockModel;
-		extern unsigned customBlockSizeHeight, customBlockSizeWidth;
-		extern bool customBlockStructure[5][5];
+		inline static bool continousGenerate;
+		inline static int blockModel;
+		inline static unsigned customBlockSizeHeight, customBlockSizeWidth;
+		inline static bool customBlockStructure[5][5];
 
-		extern void defaultValues();
-		extern void save(std::stringstream& sstream);
-		extern void load(std::stringstream& sstream);
-	}
+		static void defaultValues();
+		static void save(std::stringstream& sstream);
+		static void load(std::stringstream& sstream);
+		static void apply();
 
-	namespace Aspect
+		static void applyAutoplay();
+	};
+
+	struct Aspect
 	{
-		extern bool animations;
+		inline static bool animations;
 
-		extern float appBackground[3];
-		extern float pickupMargins[3];
-		extern float textColor[3];
+		inline static float appBackground[3];
+		inline static float pickupMargins[3];
+		inline static float textColor[3];
 
-		extern float cellSolid[3];
-		extern float cellPreview[3];
-		extern float cellCompletion[3];
-		extern float cellMargins[3];
+		inline static float cellSolid[3];
+		inline static float cellPreview[3];
+		inline static float cellCompletion[3];
+		inline static float cellMargins[3];
 
-		extern float tableOdd[3];
-		extern float tableEven[3];
-		extern float tableMajor[3];
-		extern float tableMinor[3];
+		inline static float tableOdd[3];
+		inline static float tableEven[3];
+		inline static float tableMajor[3];
+		inline static float tableMinor[3];
 
-		extern void defaultValues();
-		extern void save(std::stringstream& sstream);
-		extern void load(std::stringstream& sstream);
-	}
+		static void defaultValues();
+		static void save(std::stringstream& sstream);
+		static void load(std::stringstream& sstream);
+		static void apply();
+	};
 }
 
-extern sf::Color toColor(float* c);
-extern void setFloatColors(float* c, float r, float g, float b);
-extern void colorToStream(std::stringstream& sstream, float* c);
-extern void streamToColor(std::stringstream& sstream, float* c);
+sf::Color toColor(float* c);
+void setFloatColors(float* c, float r, float g, float b);
+void colorToStream(std::stringstream& sstream, float* c);
+void streamToColor(std::stringstream& sstream, float* c);

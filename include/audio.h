@@ -14,8 +14,6 @@
 class Audio
 {
 private:
-	static bool initialized;
-
 	static sf::SoundBuffer& goodPlacement();
 	static sf::SoundBuffer& badPlacement();
 	static sf::SoundBuffer& completetion();

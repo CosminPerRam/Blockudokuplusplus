@@ -9,8 +9,6 @@
 #include "game.h"
 #include "utilities.h"
 
-char ImguiInterface::fileName[64] = {"settings.cfg"};
-ImGuiWindowFlags ImguiInterface::window_flags = 0;
 ImGuiStyle* ImguiInterface::style = nullptr;
 sf::Time ImguiInterface::lastTime = sf::Time::Zero, ImguiInterface::lastUpdateTime = sf::Time::Zero;
 ImguiInterface::Data ImguiInterface::data;
@@ -81,35 +79,10 @@ void ImguiInterface::draw(sf::RenderWindow& window) {
 
 	ImGui::Begin("Settings", &Settings::General::showImgui, window_flags);
 
-	static char settingsFilename[FILENAME_LENGTH] = DEFAULT_SETTINGS_FILENAME;
-	static bool fileOperationStatus = false;
-
-	if (ImGui::Button("Save")) {
-		fileOperationStatus = Settings::save(fileName);
-		ImGui::OpenPopup("FileSavedPopup");
-	}
-	ImGui::SameLine();
-	if (ImGui::Button("Load")) {
-		fileOperationStatus = Settings::load(fileName);
-		ImGui::OpenPopup("FileLoadedPopup");
-	}
-	ImGui::SameLine();
-	ImGui::PushItemWidth(96);
-	ImGui::InputText("Filename", settingsFilename, FILENAME_LENGTH);
-	ImGui::PopItemWidth();
-
-	if (ImGui::BeginPopup("FileSavedPopup")) {
-		ImGui::Text(fileOperationStatus ? "Successfully saved!" : "Couldn't save.");
-		ImGui::EndPopup();
-	}
-
-	if (ImGui::BeginPopup("FileLoadedPopup")) {
-		ImGui::Text(fileOperationStatus ? "Successfully loaded!" : "Couldn't load.");
-		ImGui::EndPopup();
-	}
-
-	//ImGui::InputText("FileName", ImguiInterface::fileName, FILENAME_LENGTH);
 	ImGui::Text("Press 'M' to hide/show this menu.");
+
+	ImGui::Separator();
+
 	if (ImGui::BeginTabBar("TabBar", ImGuiTabBarFlags_Reorderable))
 	{
 		if (ImGui::BeginTabItem("Gameplay"))
@@ -148,13 +121,7 @@ void ImguiInterface::draw(sf::RenderWindow& window) {
 					Game::theTable->reset();
 				ImGui::SameLine();
 				if (ImGui::Checkbox("Check in advance", &Settings::Gameplay::checkGameInAdvance))
-				{
-					if (Settings::Gameplay::autoplay)
-						Settings::Gameplay::autoplay = false;
-
-					if (Game::pickupBoard->isBoardLost())
-						Game::theScore->setGameLost();
-				}
+					Settings::Gameplay::applyAutoplay();
 				Custom::HelpMarker("Checks every possible move to\nverify if the game is lost.");
 
 				ImGui::TreePop();
@@ -264,13 +231,12 @@ void ImguiInterface::draw(sf::RenderWindow& window) {
 
 			ImGui::EndTabItem();
 		}
-		if (ImGui::BeginTabItem("Aspect/Audio"))
+		if (ImGui::BeginTabItem("Aspect"))
 		{
 			//ImGui::Checkbox("Animations", &Settings::Aspect::animations);
-			//let change font
 			if (ImGui::TreeNode("Window"))
 			{
-				ImGui::PlotLines("##frpsPlot", &data.historyFps[0], data.historyFps.size());
+				ImGui::PlotLines("##fpsPlot", &data.historyFps[0], data.historyFps.size());
 				Custom::HelpMarker("Frames Per Second");
 
 				ImGui::Text("Fps: %u   Avg: %u", (unsigned)data.historyFps.back(), data.averageFps);
@@ -282,7 +248,7 @@ void ImguiInterface::draw(sf::RenderWindow& window) {
 				ImGui::Text("Frame time: %.3f ms", Game::fetchFrametime());
 
 				static const char* aalevelsNames[] = { "None", "x2", "x4", "x8", "x16" };
-				ImGui::PushItemWidth(64);
+				ImGui::PushItemWidth(60);
 				if (ImGui::BeginCombo("Antialiasing", aalevelsNames[Settings::General::aalevel])) {
 					for (unsigned i = 0; i < 5; i++) {
 						const bool selected = (Settings::General::aalevel == i);
@@ -298,7 +264,6 @@ void ImguiInterface::draw(sf::RenderWindow& window) {
 					ImGui::EndCombo();
 				}
 				ImGui::PopItemWidth();
-				Custom::HelpMarker("Changing the antialiasing level\nreinitializes the window.");
 
 				ImGui::TreePop();
 			}
@@ -306,13 +271,8 @@ void ImguiInterface::draw(sf::RenderWindow& window) {
 			{
 				static ImGuiColorEditFlags colorFlags = ImGuiColorEditFlags_NoInputs;
 
-				if (ImGui::Button("Set default values")) {
+				if (ImGui::Button("Set default values"))
 					Settings::Aspect::defaultValues();
-
-					Game::theTable->updateColors();
-					Game::theScore->updateColors();
-					Game::pickupBoard->updateColors();
-				}
 
 				if (ImGui::TreeNode("General"))
 				{
@@ -348,24 +308,6 @@ void ImguiInterface::draw(sf::RenderWindow& window) {
 
 				ImGui::TreePop();
 			}
-			if (ImGui::TreeNode("Audio")) {
-				ImGui::Checkbox("Mute", &Settings::Audio::muted);
-				if (!Settings::Audio::muted)
-				{
-					ImGui::SameLine();
-					ImGui::PushItemWidth(120);
-					ImGui::SliderInt("Volume", &Settings::Audio::volume, 0, 100);
-					ImGui::PopItemWidth();
-				}
-
-				ImGui::PushItemWidth(179);
-				ImGui::SliderFloat("Pitch", &Settings::Audio::pitch, 0.1f, 1.9f);
-				ImGui::PopItemWidth();
-
-				Audio::updateState();
-
-				ImGui::TreePop();
-			}
 			if (ImGui::TreeNode("ImGui"))
 			{
 				ImGui::PushItemWidth(77);
@@ -395,6 +337,61 @@ void ImguiInterface::draw(sf::RenderWindow& window) {
 
 			ImGui::EndTabItem();
 		}
+		if (ImGui::BeginTabItem("Miscellaneous"))
+		{
+			if (ImGui::TreeNode("Audio")) {
+				ImGui::Checkbox("Mute", &Settings::Audio::muted);
+				if (!Settings::Audio::muted)
+				{
+					ImGui::SameLine();
+					ImGui::PushItemWidth(120);
+					ImGui::SliderInt("Volume", &Settings::Audio::volume, 0, 100);
+					ImGui::PopItemWidth();
+				}
+
+				ImGui::PushItemWidth(179);
+				ImGui::SliderFloat("Pitch", &Settings::Audio::pitch, 0.1f, 1.9f);
+				ImGui::PopItemWidth();
+
+				Audio::updateState();
+
+				ImGui::TreePop();
+			}
+			if (ImGui::TreeNode("Settings")) {
+				static char settingsFilename[FILENAME_LENGTH] = SETTINGS_FILENAME_DEFAULT;
+				static bool fileOperationStatus = false;
+
+				ImGui::InputText("Filename", settingsFilename, FILENAME_LENGTH);
+				
+				if (ImGui::Button("Save")) {
+					fileOperationStatus = Settings::save(fileName);
+					ImGui::OpenPopup("FileSavedPopup");
+				}
+				ImGui::SameLine();
+				if (ImGui::Button("Load")) {
+					fileOperationStatus = Settings::load(fileName);
+					ImGui::OpenPopup("FileLoadedPopup");
+				}
+				ImGui::SameLine();
+				if (ImGui::Button("Set default settings"))
+					Settings::defaults();
+
+				if (ImGui::BeginPopup("FileSavedPopup")) {
+					ImGui::Text(fileOperationStatus ? "Successfully saved!" : "Couldn't save.");
+					ImGui::EndPopup();
+				}
+
+				if (ImGui::BeginPopup("FileLoadedPopup")) {
+					ImGui::Text(fileOperationStatus ? "Successfully loaded!" : "Couldn't load.");
+					ImGui::EndPopup();
+				}
+
+				ImGui::TreePop();
+			}
+
+			ImGui::EndTabItem();
+		}
+
 		ImGui::EndTabBar();
 	}
 

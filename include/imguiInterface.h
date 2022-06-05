@@ -6,19 +6,20 @@
 #include "imgui.h"
 #include <SFML/Graphics/RenderWindow.hpp> 
 
+#include "settings.h"
+
 #define FILENAME_LENGTH 64
 #define IMGUI_REFRESHRATE 60
 
 class ImguiInterface
 {
 private:
-	static char fileName[FILENAME_LENGTH];
+	inline static char fileName[FILENAME_LENGTH] = { SETTINGS_FILENAME_DEFAULT };
 
-	static ImGuiWindowFlags window_flags;
+	inline static ImGuiWindowFlags window_flags = 0;
 	static ImGuiStyle* style;
 
 	static sf::Time lastTime, lastUpdateTime;
-	static bool updateFrame;
 
 	struct Custom
 	{

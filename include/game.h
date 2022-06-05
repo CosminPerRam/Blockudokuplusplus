@@ -25,10 +25,10 @@ private:
 	static sf::Clock deltaClock;
 	static sf::Time lastTime;
 	static sf::RenderWindow* window;
-	static unsigned latestFps;
-	static float latestFrameTimeMs;
+	inline static unsigned latestFps = 0;
+	inline static float latestFrameTimeMs = 0.f;
 
-	static bool reinitializeWindow;
+	inline static bool reinitializeWindow = false;
 
 	static void draw();
 	static void pollEvent(sf::Event& theEvent);
@@ -38,8 +38,8 @@ protected:
 	static Score *theScore;
 	static Table *theTable;
 	static PickupBoard *pickupBoard;
-	static ImguiInterface imguiInterface;
-	static Bot theBot;
+	inline static ImguiInterface imguiInterface;
+	inline static Bot theBot;
 
 	static unsigned fetchFps();
 	static float fetchFrametime();
@@ -61,4 +61,8 @@ public:
 	friend class Bot;
 	friend class Table;
 	friend class PickupBoard;
+
+	friend struct Settings::General; 
+	friend struct Settings::Gameplay;
+	friend struct Settings::Aspect;
 };

@@ -25,4 +25,4 @@ add_executable(blockudokuplusplus
     libraries/imgui/imgui-SFML.cpp)
 target_include_directories(blockudokuplusplus PRIVATE include libraries/imgui)
 target_link_libraries(blockudokuplusplus PRIVATE sfml-audio sfml-graphics sfml-window ${OPENGL_LIBRARIES})
-target_compile_features(blockudokuplusplus PRIVATE cxx_std_14)
+target_compile_features(blockudokuplusplus PRIVATE cxx_std_17)

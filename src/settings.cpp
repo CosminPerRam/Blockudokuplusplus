@@ -1,6 +1,9 @@
 
+#pragma once
+
 #include "settings.h"
 #include "utilities.h"
+#include "game.h"
 
 namespace Settings
 {
@@ -12,10 +15,10 @@ namespace Settings
 
 		std::stringstream sstream;
 
-		General::save(sstream);
+		Aspect::save(sstream);
 		Audio::save(sstream);
 		Gameplay::save(sstream);
-		Aspect::save(sstream);
+		General::save(sstream);
 
 		Files::append(sstream, fileName);
 
@@ -28,10 +31,10 @@ namespace Settings
 
 		std::stringstream sstream = Files::read(fileName);
 
-		General::load(sstream);
+		Aspect::load(sstream);
 		Audio::load(sstream);
 		Gameplay::load(sstream);
-		Aspect::load(sstream);
+		General::load(sstream);
 
 		return true;
 	}
@@ -43,162 +46,151 @@ namespace Settings
 		Aspect::defaultValues();
 	}
 
-	namespace General
-	{
-		bool showImgui;
+	void General::defaultValues() {
+		showImgui = false;
 
-		bool vsync;
-		int aalevel;
+		vsync = true;
+		aalevel = 0;
 
-		void defaultValues() {
-			showImgui = false;
-
-			vsync = true;
-			aalevel = 0;
-		}
-
-		void save(std::stringstream& sstream) {
-			sstream << showImgui << " " << vsync << " " << aalevel << std::endl;
-		}
-
-		void load(std::stringstream& sstream) {
-			sstream >> showImgui >> vsync >> aalevel;
-		}
+		General::apply();
 	}
 
-	namespace Audio
-	{
-		bool muted;
-		int volume;
-		float pitch;
-
-		void defaultValues() {
-			muted = false;
-			volume = 100;
-			pitch = 1;
-		}
-
-		void save(std::stringstream& sstream) {
-			sstream << muted << " " << volume << " " << pitch << std::endl;
-		}
-
-		void load(std::stringstream& sstream) {
-			sstream >> muted >> volume >> pitch;
-		}
+	void General::save(std::stringstream& sstream) {
+		sstream << showImgui << " " << vsync << " " << aalevel << std::endl;
 	}
 
-	namespace Gameplay
-	{
-		bool autoplay;
-		float autoplayDelay;
+	void General::load(std::stringstream& sstream) {
+		sstream >> showImgui >> vsync >> aalevel;
 
-		bool checkGameInAdvance;
-
-		bool continousGenerate;
-		int blockModel;
-		unsigned customBlockSizeHeight, customBlockSizeWidth;
-		bool customBlockStructure[5][5];
-
-		void defaultValues() {
-			autoplay = false; autoplayDelay = 1.f;
-
-			checkGameInAdvance = false;
-
-			continousGenerate = false;
-			blockModel = -1;
-			customBlockSizeHeight = 3, customBlockSizeWidth = 3;
-			for (unsigned i = 0; i < 5; i++) {
-				for (unsigned j = 0; j < 5; j++)
-					customBlockStructure[i][j] = 0;
-			}
-		}
-
-		void save(std::stringstream& sstream) {
-			sstream << checkGameInAdvance << " " << continousGenerate << " " << blockModel << " ";
-			sstream << customBlockSizeHeight << " " << customBlockSizeWidth << " ";
-			for (unsigned i = 0; i < 5; i++) {
-				for (unsigned j = 0; j < 5; j++)
-					sstream << customBlockStructure[i][j] << " ";
-			}
-			sstream << std::endl;
-		}
-
-		void load(std::stringstream& sstream) {
-			sstream >> checkGameInAdvance >> continousGenerate >> blockModel;
-			sstream >> customBlockSizeHeight >> customBlockSizeWidth;
-			for (unsigned i = 0; i < 5; i++) {
-				for (unsigned j = 0; j < 5; j++)
-					sstream >> customBlockStructure[i][j];
-			}
-		}
+		General::apply();
 	}
 
-	namespace Aspect
-	{
-		bool animations;
+	void General::apply() {
+		Game::updateAntialiasingSetting();
+		Game::updateVsyncSetting();
+	}
 
-		float appBackground[3];
-		float pickupMargins[3];
-		float textColor[3];
+	void Audio::defaultValues() {
+		muted = false;
+		volume = 100;
+		pitch = 1;
+	}
 
-		float cellSolid[3];
-		float cellPreview[3];
-		float cellCompletion[3];
-		float cellMargins[3];
+	void Audio::save(std::stringstream& sstream) {
+		sstream << muted << " " << volume << " " << pitch << std::endl;
+	}
 
-		float tableOdd[3];
-		float tableEven[3];
-		float tableMajor[3];
-		float tableMinor[3];
+	void Audio::load(std::stringstream& sstream) {
+		sstream >> muted >> volume >> pitch;
+	}
 
-		void defaultValues() {
-			animations = false;
+	void Gameplay::defaultValues() {
+		autoplay = false; autoplayDelay = 1.f;
 
-			setFloatColors(appBackground, 1.f, 1.f, 1.f);
-			setFloatColors(pickupMargins, 0.92f, 0.92f, 0.92f);
-			setFloatColors(textColor, 0.f, 0.f, 0.f);
+		checkGameInAdvance = false;
 
-			setFloatColors(cellSolid, 0.21f, 0.72f, 1.f);
-			setFloatColors(cellPreview, 0.69f, 0.89f, 1.f);
-			setFloatColors(cellCompletion, 0.31f, 0.62f, 0.80f);
-			setFloatColors(cellMargins, 0.f, 0.f, 0.f);
-
-			setFloatColors(tableOdd, 0.92f, 0.92f, 0.92f);
-			setFloatColors(tableEven, 1.f, 1.f, 1.f);
-			setFloatColors(tableMajor, 0.f, 0.f, 0.f);
-			setFloatColors(tableMinor, 0.69f, 0.89f, 1.f);
+		continousGenerate = false;
+		blockModel = -1;
+		customBlockSizeHeight = 3, customBlockSizeWidth = 3;
+		for (unsigned i = 0; i < 5; i++) {
+			for (unsigned j = 0; j < 5; j++)
+				customBlockStructure[i][j] = 0;
 		}
 
-		void save(std::stringstream& sstream) {
-			sstream << animations << " ";
-			colorToStream(sstream, appBackground);
-			colorToStream(sstream, pickupMargins);
-			colorToStream(sstream, textColor);
-			colorToStream(sstream, cellSolid);
-			colorToStream(sstream, cellPreview);
-			colorToStream(sstream, cellCompletion);
-			colorToStream(sstream, cellMargins);
-			colorToStream(sstream, tableOdd);
-			colorToStream(sstream, tableEven);
-			colorToStream(sstream, tableMajor);
-			colorToStream(sstream, tableMinor);
-			sstream << std::endl;
+		Gameplay::apply();
+	}
+
+	void Gameplay::save(std::stringstream& sstream) {
+		sstream << checkGameInAdvance << " " << continousGenerate << " " << blockModel << " ";
+		sstream << customBlockSizeHeight << " " << customBlockSizeWidth << " ";
+		for (unsigned i = 0; i < 5; i++) {
+			for (unsigned j = 0; j < 5; j++)
+				sstream << customBlockStructure[i][j] << " ";
+		}
+		sstream << std::endl;
+	}
+
+	void Gameplay::load(std::stringstream& sstream) {
+		sstream >> checkGameInAdvance >> continousGenerate >> blockModel;
+		sstream >> customBlockSizeHeight >> customBlockSizeWidth;
+		for (unsigned i = 0; i < 5; i++) {
+			for (unsigned j = 0; j < 5; j++)
+				sstream >> customBlockStructure[i][j];
 		}
 
-		void load(std::stringstream& sstream) {
-			sstream >> animations;
-			streamToColor(sstream, appBackground);
-			streamToColor(sstream, pickupMargins);
-			streamToColor(sstream, textColor);
-			streamToColor(sstream, cellSolid);
-			streamToColor(sstream, cellPreview);
-			streamToColor(sstream, cellCompletion);
-			streamToColor(sstream, cellMargins);
-			streamToColor(sstream, tableOdd);
-			streamToColor(sstream, tableEven);
-			streamToColor(sstream, tableMajor);
-			streamToColor(sstream, tableMinor);
-		}
+		Gameplay::apply();
+	}
+
+	void Gameplay::apply() {
+		Gameplay::applyAutoplay();
+		Game::pickupBoard->regenerateBlocks(pickupBlocks::existing);
+	}
+
+	void Gameplay::applyAutoplay() {
+		if (Settings::Gameplay::autoplay)
+			Settings::Gameplay::autoplay = false;
+
+		if (Game::pickupBoard->isBoardLost())
+			Game::theScore->setGameLost();
+	}
+
+	void Aspect::defaultValues() {
+		animations = false;
+
+		setFloatColors(appBackground, 1.f, 1.f, 1.f);
+		setFloatColors(pickupMargins, 0.92f, 0.92f, 0.92f);
+		setFloatColors(textColor, 0.f, 0.f, 0.f);
+
+		setFloatColors(cellSolid, 0.21f, 0.72f, 1.f);
+		setFloatColors(cellPreview, 0.69f, 0.89f, 1.f);
+		setFloatColors(cellCompletion, 0.31f, 0.62f, 0.80f);
+		setFloatColors(cellMargins, 0.f, 0.f, 0.f);
+
+		setFloatColors(tableOdd, 0.92f, 0.92f, 0.92f);
+		setFloatColors(tableEven, 1.f, 1.f, 1.f);
+		setFloatColors(tableMajor, 0.f, 0.f, 0.f);
+		setFloatColors(tableMinor, 0.69f, 0.89f, 1.f);
+
+		Aspect::apply();
+	}
+
+	void Aspect::save(std::stringstream& sstream) {
+		sstream << animations << " ";
+		colorToStream(sstream, appBackground);
+		colorToStream(sstream, pickupMargins);
+		colorToStream(sstream, textColor);
+		colorToStream(sstream, cellSolid);
+		colorToStream(sstream, cellPreview);
+		colorToStream(sstream, cellCompletion);
+		colorToStream(sstream, cellMargins);
+		colorToStream(sstream, tableOdd);
+		colorToStream(sstream, tableEven);
+		colorToStream(sstream, tableMajor);
+		colorToStream(sstream, tableMinor);
+		sstream << std::endl;
+	}
+
+	void Aspect::load(std::stringstream& sstream) {
+		sstream >> animations;
+		streamToColor(sstream, appBackground);
+		streamToColor(sstream, pickupMargins);
+		streamToColor(sstream, textColor);
+		streamToColor(sstream, cellSolid);
+		streamToColor(sstream, cellPreview);
+		streamToColor(sstream, cellCompletion);
+		streamToColor(sstream, cellMargins);
+		streamToColor(sstream, tableOdd);
+		streamToColor(sstream, tableEven);
+		streamToColor(sstream, tableMajor);
+		streamToColor(sstream, tableMinor);
+
+		Aspect::apply();
+	}
+
+	void Aspect::apply() {
+		Game::theTable->updateColors();
+		Game::theScore->updateColors();
+		Game::pickupBoard->updateColors();
 	}
 }
 

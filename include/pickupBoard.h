@@ -59,4 +59,6 @@ public:
 
 	friend class ImguiInterface;
 	friend class Bot;
+
+	friend struct Settings::Gameplay;
 };
