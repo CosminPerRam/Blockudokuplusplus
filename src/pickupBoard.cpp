@@ -1,19 +1,19 @@
 
 #include "pickupBoard.h"
-#include "settings.h"
-#include "audio.h"
-#include "cellMatrix.h"
 
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/Mouse.hpp>
 
-PickupBoard::PickupBoard(Table& theTable, Score& theScore) : theTable(theTable), theScore(theScore)
-{
+#include "settings.h"
+#include "audio.h"
+#include "cellMatrix.h"
+#include "game.h"
+
+PickupBoard::PickupBoard() {
     PickupBoard::regenerateBlocks(pickupBlocks::all);
 }
 
-PickupBoard::~PickupBoard()
-{
+PickupBoard::~PickupBoard() {
     for (unsigned i = 0; i < 3; i++)
         delete pickupableBlocks[i];
 }
@@ -101,7 +101,7 @@ bool PickupBoard::canAnyBlocksBePlaced() {
         if (pickupableBlocks[i] == nullptr)
             continue;
 
-        if (theTable.canBlockBePlaced(*pickupableBlocks[i])) {
+        if (Game::theTable->canBlockBePlaced(*pickupableBlocks[i])) {
             canAnyBePlaced = true;
             pickupableBlocks[i]->setOpacity(255);
         }
@@ -112,12 +112,11 @@ bool PickupBoard::canAnyBlocksBePlaced() {
     return canAnyBePlaced;
 }
 
-bool PickupBoard::recursiveCanAnyBlocksBePlaced(int firstIndex, int secondIndex)
-{
+bool PickupBoard::recursiveCanAnyBlocksBePlaced(int firstIndex, int secondIndex) {
     static cellMatrix virtualMatrix;
 
     if (firstIndex == -1)
-        virtualMatrix = theTable.getMatrix();
+        virtualMatrix = Game::theTable->getMatrix();
 
     unsigned amountSkipped = 0;
     for (unsigned i = 0; i < 3; i++) {
@@ -159,8 +158,7 @@ bool PickupBoard::recursiveCanAnyBlocksBePlaced(int firstIndex, int secondIndex)
     return false;
 }
 
-void PickupBoard::updateBlocksState()
-{
+void PickupBoard::updateBlocksState() {
     if (Settings::Gameplay::continousGenerate)
         regenerateBlocks(pickupBlocks::missing);
     else {
@@ -169,11 +167,10 @@ void PickupBoard::updateBlocksState()
     }
 
     if (isBoardLost())
-        theScore.setGameLost();
+        Game::theScore->setGameLost();
 }
 
-void PickupBoard::draw(sf::RenderWindow& window)
-{
+void PickupBoard::draw(sf::RenderWindow& window) {
     window.draw(borders);
 
     for (unsigned i = 0; i < 3; i++) {
@@ -182,8 +179,7 @@ void PickupBoard::draw(sf::RenderWindow& window)
     }
 }
 
-void PickupBoard::pollEvent(sf::RenderWindow& window, sf::Event& theEvent)
-{
+void PickupBoard::pollEvent(sf::RenderWindow& window, sf::Event& theEvent) {
     if (Settings::Gameplay::autoplay)
         return;
 
@@ -192,7 +188,7 @@ void PickupBoard::pollEvent(sf::RenderWindow& window, sf::Event& theEvent)
 
     if (pickedUpIndex != -1) {
         pickupableBlocks[pickedUpIndex]->setPosition(mousePositionWithOffset);
-        pickedUpPreviewCoords = theTable.previewBlock(*pickupableBlocks[pickedUpIndex], mousePosition);
+        pickedUpPreviewCoords = Game::theTable->previewBlock(*pickupableBlocks[pickedUpIndex], mousePosition);
     }
     else {
         if (theEvent.type == sf::Event::MouseButtonPressed && theEvent.mouseButton.button == sf::Mouse::Left) {
@@ -216,9 +212,9 @@ void PickupBoard::pollEvent(sf::RenderWindow& window, sf::Event& theEvent)
             pickupableBlocks[pickedUpIndex]->setFloating(false);
 
             if (pickedUpPreviewCoords.x != -1 || pickedUpPreviewCoords.y != -1) {
-                theTable.applyBlock(*pickupableBlocks[pickedUpIndex], {static_cast<unsigned>(pickedUpPreviewCoords.x), static_cast<unsigned>(pickedUpPreviewCoords.y)});
+                Game::theTable->applyBlock(*pickupableBlocks[pickedUpIndex], {static_cast<unsigned>(pickedUpPreviewCoords.x), static_cast<unsigned>(pickedUpPreviewCoords.y)});
 
-                theScore.addPiecePlaced(pickupableBlocks[pickedUpIndex]->getStructureIndex());
+                Game::theScore->addPiecePlaced(pickupableBlocks[pickedUpIndex]->getStructureIndex());
 
                 delete pickupableBlocks[pickedUpIndex];
                 pickupableBlocks[pickedUpIndex] = nullptr;

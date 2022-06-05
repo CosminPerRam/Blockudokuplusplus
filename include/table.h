@@ -1,14 +1,15 @@
+
 #pragma once
+
+#include <memory>
+#include <array>
+
+#include <SFML/Graphics/VertexArray.hpp>
 
 #include "block.h"
 #include "score.h"
 #include "spacing.h"
 #include "cellMatrix.h"
-
-#include <SFML/Graphics/VertexArray.hpp>
-
-#include <memory>
-#include <array>
 
 /*
 	The cells table, it does not memorize where which block
@@ -30,14 +31,12 @@ private:
 
 	cellMatrix theMatrix;
 
-	Score& theScore;
-
 	sf::Vector2i mousePositionToCellPosition(const sf::Vector2f& mousePosition);
 
 	void calculateVertexes();
 
 public:
-	Table(Score& theScore);
+	Table();
 
 	void draw(sf::RenderWindow& window);
 

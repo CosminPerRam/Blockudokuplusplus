@@ -79,10 +79,7 @@ namespace structures
 }
 
 Block::Block(int structureIndex)
-	: structure(this->getStructure(structureIndex))
-{
-
-}
+	: structure(this->getStructure(structureIndex)) { }
 
 const std::vector<std::vector<bool>> Block::getStructure(unsigned structureIndex) {
 	if(structureIndex == -1)

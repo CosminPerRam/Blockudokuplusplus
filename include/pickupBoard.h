@@ -1,15 +1,16 @@
+
 #pragma once
 
-#include "block.h"
-#include "spacing.h"
-#include "table.h"
-#include "score.h"
+#include <array>
 
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Graphics/VertexArray.hpp>
 #include <SFML/Graphics/Rect.hpp>
 
-#include <array>
+#include "block.h"
+#include "spacing.h"
+#include "table.h"
+#include "score.h"
 
 enum class pickupBlocks { all = 0, missing, existing };
 
@@ -33,9 +34,6 @@ private:
 	const sf::Vector2f startPosition = { PICKUP_POSITION_X, PICKUP_POSITION_Y };
 	const int BoardLength = CELL_SPACING * 9, BoardHeight = CELL_SPACING * 3;
 
-	Table& theTable;
-	Score& theScore;
-
 	void regenerateBlocks(pickupBlocks type);
 	void placeIndexInDefaultPosition(unsigned i);
 
@@ -48,7 +46,7 @@ private:
 	void calculateVertexes();
 
 public:
-	PickupBoard(Table& theTable, Score& theScore);
+	PickupBoard();
 	~PickupBoard();
 
 	void draw(sf::RenderWindow& window);

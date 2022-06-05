@@ -1,14 +1,15 @@
 
 #include "table.h"
-#include "spacing.h"
-#include "audio.h"
-#include "settings.h"
 
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/Rect.hpp>
 
-Table::Table(Score& theScore) : theScore(theScore)
-{
+#include "spacing.h"
+#include "audio.h"
+#include "settings.h"
+#include "game.h"
+
+Table::Table() {
     Table::updateColors();
     Table::calculateVertexes();
 }
@@ -60,8 +61,7 @@ void Table::calculateVertexes() {
     }
 }
 
-sf::Vector2i Table::mousePositionToCellPosition(const sf::Vector2f& mousePosition)
-{
+sf::Vector2i Table::mousePositionToCellPosition(const sf::Vector2f& mousePosition) {
     sf::Vector2f startPosition = { TABLE_POSITION_X, TABLE_POSITION_Y };
 
     for (int l = 0; l < 9; l++) {
@@ -84,7 +84,7 @@ void Table::applyBlock(Block& theBlock, const sf::Vector2u& tableCellCoords) {
 
     auto completedMarks = theMatrix.checkCompletetion();
 
-    theScore.processMarks(completedMarks);
+    Game::theScore->processMarks(completedMarks);
     if (completedMarks->empty())
         Audio::play(Audio::effect::GoodPlacement);
     else
@@ -93,8 +93,7 @@ void Table::applyBlock(Block& theBlock, const sf::Vector2u& tableCellCoords) {
     theMatrix.executeCompletetions(completedMarks, cell::empty);
 }
 
-sf::Vector2i Table::previewBlock(Block& theHoldingBlock, const sf::Vector2f& mousePosition)
-{
+sf::Vector2i Table::previewBlock(Block& theHoldingBlock, const sf::Vector2f& mousePosition) {
     auto cellCoords = mousePositionToCellPosition(mousePosition);
     auto previewApplyCoords = theMatrix.previewApplyCoords;
 
@@ -107,13 +106,11 @@ sf::Vector2i Table::previewBlock(Block& theHoldingBlock, const sf::Vector2f& mou
     return theMatrix.previewBlock(theHoldingBlock, cellCoords);
 }
 
-bool Table::canBlockBePlaced(Block& theBlock)
-{
+bool Table::canBlockBePlaced(Block& theBlock) {
     return theMatrix.canBlockBePlaced(theBlock);
 }
 
-void Table::draw(sf::RenderWindow& window)
-{
+void Table::draw(sf::RenderWindow& window) {
     sf::RectangleShape cellShape;
     cellShape.setSize({ CELL_SPACING - 2, CELL_SPACING - 2 });
 

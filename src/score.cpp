@@ -1,33 +1,30 @@
 
 #include "score.h"
+
+#include <SFML/Window/Event.hpp>
+#include <SFML/Window/Mouse.hpp>
+
 #include "spacing.h"
 #include "settings.h"
 #include "utilities.h"
 #include "game.h"
 
-#include <SFML/Window/Event.hpp>
-#include <SFML/Window/Mouse.hpp>
-
 const char* Score::Data::filePath = "resources/userData.txt";
 unsigned Score::Data::localBest = 0;
 
-void Score::Data::writeLocalBest(unsigned score)
-{
+void Score::Data::writeLocalBest(unsigned score) {
 	localBest = score;
 	Files::writeToFile(std::to_string(score), "resources/userData.txt");
 }
-void Score::Data::loadLocalBest()
-{
+void Score::Data::loadLocalBest() {
 	auto stream = Files::getFileContents("resources/userData.txt");
 	stream >> localBest;
 }
-unsigned Score::Data::getLocalBest()
-{
+unsigned Score::Data::getLocalBest() {
 	return localBest;
 }
 
-Score::Score(unsigned piecesCount) 
-{
+Score::Score(unsigned piecesCount) {
 	pieceAddedCount.resize(piecesCount + 1, 0); //+1 because the last element represents the use of the custom block
 
 	if(!theFont.loadFromFile("resources/courierNewFont.ttf"))
@@ -46,8 +43,7 @@ Score::Score(unsigned piecesCount)
 	restartButton.setPosition({ RESTART_POSITION_X - RESTART_SIZE_WIDTH / 2.f, RESTART_POSITION_Y - RESTART_SIZE_HEIGHT / 4.f });
 }
 
-Score::~Score()
-{
+Score::~Score() {
 	delete mostPopularBlock;
 }
 

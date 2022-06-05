@@ -1,12 +1,13 @@
 
 #include "audio.h"
-#include "spacing.h"
-#include "settings.h"
 
 #include <SFML/Audio/SoundBuffer.hpp>
 #include <SFML/Audio/Sound.hpp>
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Window/Event.hpp>
+
+#include "spacing.h"
+#include "settings.h"
 
 bool Audio::initialized = false;
 

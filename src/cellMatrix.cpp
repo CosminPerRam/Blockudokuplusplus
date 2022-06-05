@@ -53,8 +53,7 @@ unsigned cellMatrix::getEmptyCellsAmount() const {
     return amount;
 }
 
-sf::Vector2i cellMatrix::previewBlock(Block& theHoldingBlock, const sf::Vector2i& matrixPosition)
-{
+sf::Vector2i cellMatrix::previewBlock(Block& theHoldingBlock, const sf::Vector2i& matrixPosition) {
     const auto& blockStructure = theHoldingBlock.getStructure();
     sf::Vector2i cellCoords = matrixPosition;
 
@@ -85,8 +84,7 @@ sf::Vector2i cellMatrix::previewBlock(Block& theHoldingBlock, const sf::Vector2i
     return cellCoords;
 }
 
-bool cellMatrix::canBlockBePlaced(Block& theBlock)
-{
+bool cellMatrix::canBlockBePlaced(Block& theBlock) {
     auto blockStructure = theBlock.getStructure();
     auto blockStructureSize = theBlock.getStructureSize();
 
@@ -109,8 +107,7 @@ bool cellMatrix::canBlockBePlaced(Block& theBlock)
     return false;
 }
 
-std::vector<sf::Vector2u> cellMatrix::getBlockPlacingPositions(Block& theBlock)
-{
+std::vector<sf::Vector2u> cellMatrix::getBlockPlacingPositions(Block& theBlock) {
     std::vector<sf::Vector2u> positions;
 
     auto blockStructure = theBlock.getStructure();

@@ -1,14 +1,13 @@
 
 #include "imguiInterface.h"
 
-#include "imguiInterface.h"
+#include "imgui-SFML.h"
+#include <SFML/Window/Event.hpp>
 
 #include "settings.h"
 #include "audio.h"
 #include "game.h"
 #include "utilities.h"
-
-#include <SFML/Window/Event.hpp>
 
 char ImguiInterface::fileName[64] = {"settings.cfg"};
 ImGuiWindowFlags ImguiInterface::window_flags = 0;

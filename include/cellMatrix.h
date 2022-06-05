@@ -1,11 +1,12 @@
+
 #pragma once
-
-#include "block.h"
-
-#include <SFML/System/Vector2.hpp>
 
 #include <array>
 #include <memory>
+
+#include <SFML/System/Vector2.hpp>
+
+#include "block.h"
 
 enum cell { empty = 0, occupied, preview, occupiedPreview };
 enum class mark { square, vline, hline };

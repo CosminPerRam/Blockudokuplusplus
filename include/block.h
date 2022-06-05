@@ -1,10 +1,10 @@
 
 #pragma once
 
+#include <vector>
+
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
-
-#include <vector>
 
 struct structure
 {

@@ -1,10 +1,10 @@
 
+#include <array>
+
 #include "bot.h"
 #include "settings.h"
 #include "cellMatrix.h"
 #include "game.h"
-
-#include <array>
 
 void Bot::update(sf::RenderWindow& window, sf::Time& dt) {
     if (Game::theScore->isGameLost())

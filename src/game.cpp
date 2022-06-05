@@ -1,14 +1,15 @@
 
 #include "game.h"
-#include "spacing.h"
-#include "audio.h"
 
 #include <SFML/Graphics/RenderWindow.hpp>
 
-Score *Game::theScore = nullptr;
-Table *Game::theTable = nullptr;
-PickupBoard *Game::pickupBoard = nullptr;
-ImguiInterface *Game::imguiInterface = nullptr;
+#include "spacing.h"
+#include "audio.h"
+
+std::unique_ptr<Score> Game::theScore;
+std::unique_ptr<Table> Game::theTable;
+std::unique_ptr<PickupBoard> Game::pickupBoard;
+std::unique_ptr<ImguiInterface> Game::imguiInterface;
 Bot Game::theBot;
 
 sf::Clock Game::deltaClock;
@@ -101,9 +102,9 @@ int Game::start() {
 
     Settings::defaults();
 
-    theScore = new Score(structures::grouped.size());
-    theTable = new Table(*theScore);
-    pickupBoard = new PickupBoard(*theTable, *theScore);
+    theScore = std::make_unique<Score>(structures::grouped.size());
+    theTable = std::make_unique<Table>();
+    pickupBoard = std::make_unique<PickupBoard>();
 
     Game::initializeWindow();
 
@@ -132,11 +133,6 @@ int Game::start() {
             reinitializeWindow = false;
         }
     }
-
-    delete theScore;
-    delete theTable;
-    delete pickupBoard;
-    delete imguiInterface;
 
     return 0;
 }

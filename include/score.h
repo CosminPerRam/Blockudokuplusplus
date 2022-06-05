@@ -1,12 +1,13 @@
-#pragma once
 
-#include "block.h"
-#include "settings.h"
-#include "cellMatrix.h"
+#pragma once
 
 #include <SFML/Graphics/Font.hpp>
 #include <SFML/Graphics/Text.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
+
+#include "block.h"
+#include "settings.h"
+#include "cellMatrix.h"
 
 /*
 	The score has 2 faces, one while the game

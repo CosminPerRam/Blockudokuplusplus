@@ -1,9 +1,9 @@
+
 #pragma once
 
-#include "imgui.h"
-#include "imgui-SFML.h"
-
 #include <vector>
+
+#include "imgui.h"
 
 #define FILENAME_LENGTH 64
 #define IMGUI_REFRESHRATE 60
