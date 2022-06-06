@@ -15,6 +15,9 @@
 #include "imguiInterface.h"
 #include "bot.h"
 
+#define VERSION 5
+#define VERSION_NAME "1.0.4"
+
 /*
 	Like the Audio class, this is a static class as its not possible
 	to have multiple instances of the game running at the same time.

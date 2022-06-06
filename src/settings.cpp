@@ -7,13 +7,14 @@
 
 namespace Settings
 {
-	bool save(const char* fileName) {
+	unsigned save(const char* fileName) {
 		if (!Files::exists(fileName))
 			Files::create(fileName);
 		else
 			Files::erase(fileName);
 
 		std::stringstream sstream;
+		sstream << VERSION << " ";
 
 		Aspect::save(sstream);
 		Audio::save(sstream);
@@ -22,21 +23,27 @@ namespace Settings
 
 		Files::append(sstream, fileName);
 
-		return true;
+		return 1;
 	}
 
-	bool load(const char* fileName) {
+	unsigned load(const char* fileName) {
 		if (!Files::exists(fileName))
-			return false;
+			return 0;
 
 		std::stringstream sstream = Files::read(fileName);
+		
+		unsigned settingsFileVersion = 0;
+		sstream >> settingsFileVersion;
+
+		if (settingsFileVersion != VERSION)
+			return 2; //meaning that the settings is for another game version
 
 		Aspect::load(sstream);
 		Audio::load(sstream);
 		Gameplay::load(sstream);
 		General::load(sstream);
 
-		return true;
+		return 1;
 	}
 
 	void defaults() {

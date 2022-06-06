@@ -103,7 +103,7 @@ void ImguiInterface::draw(sf::RenderWindow& window) {
 					if (Settings::Gameplay::checkGameInAdvance)
 						Settings::Gameplay::checkGameInAdvance = false;
 				}
-				Custom::HelpMarker("Let the game play itself.\nStops before game is lost.");
+				Custom::HelpMarker("Let the game play itself.");
 
 				if (Settings::Gameplay::autoplay)
 					ImGui::SliderFloat("Delay", &Settings::Gameplay::autoplayDelay, 0.2f, 4.f, "%.3f seconds");
@@ -240,7 +240,7 @@ void ImguiInterface::draw(sf::RenderWindow& window) {
 			{
 				static unsigned rr_step = 1, rr_stepFast = 4;
 
-				ImGui::PushItemWidth(96);
+				ImGui::PushItemWidth(74);
 				if (ImGui::InputScalar("Data refreshrate", ImGuiDataType_U32, &Settings::General::refreshRateImgui, &rr_step, &rr_stepFast))
 					Settings::General::applyDataRefreshrate();
 				ImGui::PopItemWidth();
@@ -258,7 +258,7 @@ void ImguiInterface::draw(sf::RenderWindow& window) {
 				ImGui::Text("Frame time: %.3f ms", data.latestFrametime);
 
 				static const char* aalevelsNames[] = { "None", "x2", "x4", "x8", "x16" };
-				ImGui::PushItemWidth(60);
+				ImGui::PushItemWidth(58);
 				if (ImGui::BeginCombo("Antialiasing", aalevelsNames[Settings::General::aalevel])) {
 					for (unsigned i = 0; i < 5; i++) {
 						const bool selected = (Settings::General::aalevel == i);
@@ -274,6 +274,7 @@ void ImguiInterface::draw(sf::RenderWindow& window) {
 					ImGui::EndCombo();
 				}
 				ImGui::PopItemWidth();
+				Custom::HelpMarker("Anti-aliasing is the smoothing of\njagged edges by averaging the colors\nof the pixels at a boundary.");
 
 				ImGui::TreePop();
 			}
@@ -369,7 +370,7 @@ void ImguiInterface::draw(sf::RenderWindow& window) {
 			}
 			if (ImGui::TreeNode("Settings")) {
 				static char settingsFilename[FILENAME_LENGTH] = SETTINGS_FILENAME_DEFAULT;
-				static bool fileOperationStatus = false;
+				static unsigned fileOperationStatus = 0;
 
 				ImGui::InputText("Filename", settingsFilename, FILENAME_LENGTH);
 				
@@ -392,12 +393,21 @@ void ImguiInterface::draw(sf::RenderWindow& window) {
 				}
 
 				if (ImGui::BeginPopup("FileLoadedPopup")) {
-					ImGui::Text(fileOperationStatus ? "Successfully loaded!" : "Couldn't load.");
+					if (fileOperationStatus == 0)
+						ImGui::Text("Couldn't load.");
+					else if (fileOperationStatus == 2)
+						ImGui::Text("Couldn't load, the file is\nmade for another version.");
+					else //if(fileOperationStatus == 1) //(OK)
+						ImGui::Text("Successfully loaded!");
+
 					ImGui::EndPopup();
 				}
 
 				ImGui::TreePop();
 			}
+
+			ImGui::Separator();
+			ImGui::Text("Blockudoku: Version %s Build %u", VERSION_NAME, VERSION);
 
 			ImGui::EndTabItem();
 		}

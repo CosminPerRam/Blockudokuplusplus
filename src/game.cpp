@@ -106,7 +106,7 @@ int Game::start() {
 
     Game::initializeWindow();
 
-    if (!Settings::load(SETTINGS_FILENAME_DEFAULT))
+    if (Settings::load(SETTINGS_FILENAME_DEFAULT) != 1)
         Settings::defaults();
 
     while (window->isOpen())

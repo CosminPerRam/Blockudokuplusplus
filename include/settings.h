@@ -10,8 +10,8 @@
 
 namespace Settings
 {
-	bool save(const char* fileName);
-	bool load(const char* fileName);
+	unsigned save(const char* fileName);
+	unsigned load(const char* fileName);
 	void defaults();
 
 	struct General
