@@ -106,7 +106,7 @@ bool PickupBoard::canAnyBlocksBePlaced() {
             pickupableBlocks[i]->setOpacity(255);
         }
         else
-            pickupableBlocks[i]->setOpacity(128);
+            pickupableBlocks[i]->setOpacity(127);
     }
 
     return canAnyBePlaced;
@@ -192,8 +192,11 @@ void PickupBoard::pollEvent(sf::RenderWindow& window, sf::Event& theEvent) {
     }
     else {
         if (theEvent.type == sf::Event::MouseButtonPressed && theEvent.mouseButton.button == sf::Mouse::Left) {
-            for (unsigned i = 0; i < 3 && pickedUpIndex == -1; i++) { //check for every 3 blocks from the pickup area
-                if (pickupableBlocks[i] != nullptr) { //if they are picked up, if a block is nullptr, it means it was used
+            if (pickedUpIndex == -1) {
+                for (unsigned i = 0; i < 3; i++) { //check for every 3 blocks from the pickup area
+                    if (pickupableBlocks[i] == nullptr) //if they are picked up, if a block is nullptr, it means it was used
+                        continue;
+
                     if (pickupableBlocks[i]->getGlobalBounds().contains({ mousePosition.x, mousePosition.y }))
                     {
                         pickedUpIndex = i;

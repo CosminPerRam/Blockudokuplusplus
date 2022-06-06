@@ -8,7 +8,7 @@
 
 #include "block.h"
 
-enum cell { empty = 0, occupied, preview, occupiedPreview };
+enum class cell { empty = 0, occupied, preview, occupiedPreview };
 enum class mark { square, vline, hline };
 
 struct completetion { //a simple class to remember if a completition is a square, line or vertical line

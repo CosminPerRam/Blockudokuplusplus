@@ -64,7 +64,7 @@ sf::Vector2i cellMatrix::previewBlock(Block& theHoldingBlock, const sf::Vector2i
 
     for (unsigned x = 0; x < blockStructureSize.x; x++) {
         for (unsigned y = 0; y < blockStructureSize.y; y++) {
-            if (cellTable[cellCoords.x + x][cellCoords.y + y] == cell::occupied && blockStructure[x][y] == cell::occupied)
+            if (cellTable[cellCoords.x + x][cellCoords.y + y] == cell::occupied && blockStructure[x][y] == 1)
                 return { -1, -1 };
         }
     }
@@ -73,7 +73,7 @@ sf::Vector2i cellMatrix::previewBlock(Block& theHoldingBlock, const sf::Vector2i
 
     for (unsigned x = 0; x < blockStructureSize.x; x++) {
         for (unsigned y = 0; y < blockStructureSize.y; y++) {
-            if (blockStructure[x][y] == cell::occupied && cellTable[cellCoords.x + x][cellCoords.y + y] != cell::occupied)
+            if (cellTable[cellCoords.x + x][cellCoords.y + y] != cell::occupied && blockStructure[x][y] == 1)
                 cellTable[cellCoords.x + x][cellCoords.y + y] = cell::preview;
         }
     }
@@ -85,8 +85,8 @@ sf::Vector2i cellMatrix::previewBlock(Block& theHoldingBlock, const sf::Vector2i
 }
 
 bool cellMatrix::canBlockBePlaced(Block& theBlock) {
-    auto blockStructure = theBlock.getStructure();
-    auto blockStructureSize = theBlock.getStructureSize();
+    auto& blockStructure = theBlock.getStructure();
+    auto& blockStructureSize = theBlock.getStructureSize();
 
     for (unsigned pX = 0; pX < (9 - blockStructureSize.x) + 1; pX++) {
         for (unsigned pY = 0; pY < (9 - blockStructureSize.y) + 1; pY++) {
@@ -94,7 +94,7 @@ bool cellMatrix::canBlockBePlaced(Block& theBlock) {
 
             for (unsigned bX = 0; bX < blockStructureSize.x; bX++) {
                 for (unsigned bY = 0; bY < blockStructureSize.y; bY++) {
-                    if (cellTable[pX + bX][pY + bY] == cell::occupied && blockStructure[bX][bY] == cell::occupied)
+                    if (cellTable[pX + bX][pY + bY] == cell::occupied && blockStructure[bX][bY] == 1)
                         canBePlaced = false;
                 }
             }
@@ -110,8 +110,8 @@ bool cellMatrix::canBlockBePlaced(Block& theBlock) {
 std::vector<sf::Vector2u> cellMatrix::getBlockPlacingPositions(Block& theBlock) {
     std::vector<sf::Vector2u> positions;
 
-    auto blockStructure = theBlock.getStructure();
-    auto blockStructureSize = theBlock.getStructureSize();
+    auto& blockStructure = theBlock.getStructure();
+    auto& blockStructureSize = theBlock.getStructureSize();
 
     for (unsigned pX = 0; pX < (9 - blockStructureSize.x) + 1; pX++) {
         for (unsigned pY = 0; pY < (9 - blockStructureSize.y) + 1; pY++) {
@@ -119,7 +119,7 @@ std::vector<sf::Vector2u> cellMatrix::getBlockPlacingPositions(Block& theBlock) 
 
             for (unsigned bX = 0; bX < blockStructureSize.x; bX++) {
                 for (unsigned bY = 0; bY < blockStructureSize.y; bY++) {
-                    if (cellTable[pX + bX][pY + bY] == cell::occupied && blockStructure[bX][bY] == cell::occupied)
+                    if (cellTable[pX + bX][pY + bY] == cell::occupied && blockStructure[bX][bY] == 1)
                         canBePlaced = false;
                 }
             }
@@ -220,10 +220,10 @@ void cellMatrix::executeCompletetions(std::unique_ptr<std::vector<completetion>>
 }
 
 void cellMatrix::applyBlock(Block& theBlock, const sf::Vector2u& tableCellCoords, cell cellType) {
-    auto structure = theBlock.getStructure();
+    auto& structure = theBlock.getStructure();
     for (unsigned x = 0; x < theBlock.getStructureSize().x; x++) {
         for (unsigned y = 0; y < theBlock.getStructureSize().y; y++) {
-            if (structure[x][y] == cell::occupied)
+            if (structure[x][y] == 1)
                 cellTable[tableCellCoords.x + x][tableCellCoords.y + y] = cell::occupied;
         }
     }
