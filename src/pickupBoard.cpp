@@ -24,7 +24,7 @@ PickupBoard::~PickupBoard() {
 
 bool PickupBoard::isBoardLost() {
     if (Settings::Gameplay::checkGameInAdvance)
-        return !recursiveCanAnyBlocksBePlaced();
+        return !recursiveCanAllBlocksBePlaced();
 
     return !canAnyBlocksBePlaced();
 }
@@ -116,7 +116,7 @@ bool PickupBoard::canAnyBlocksBePlaced() {
     return canAnyBePlaced;
 }
 
-bool PickupBoard::recursiveCanAnyBlocksBePlaced(int firstIndex, int secondIndex) {
+bool PickupBoard::recursiveCanAllBlocksBePlaced(int firstIndex, int secondIndex) {
     static cellMatrix virtualMatrix;
 
     if (firstIndex == -1)
@@ -143,13 +143,13 @@ bool PickupBoard::recursiveCanAnyBlocksBePlaced(int firstIndex, int secondIndex)
                 virtualMatrix.executeCompletetions(positionCompletetions, cell::empty);
 
                 if (firstIndex == -1) {
-                    if (recursiveCanAnyBlocksBePlaced(i))
+                    if (recursiveCanAllBlocksBePlaced(i))
                         return true;
                 }
                 else {
                     if (secondIndex == -1)
-                        return recursiveCanAnyBlocksBePlaced(firstIndex, i);
-                    else //this is the third block we process and there ARE possible positions, so, its good
+                        return recursiveCanAllBlocksBePlaced(firstIndex, i);
+                    else //this is the third block we process and there ARE possible positions, so its good to go
                         return true;
                 }
 
@@ -203,8 +203,6 @@ void PickupBoard::pollEvent(sf::RenderWindow& window, sf::Event& theEvent) {
             if (pickedUpPreviewCoords.x != -1 || pickedUpPreviewCoords.y != -1) {
                 Game::theTable->applyBlock(*pickupableBlocks[pickedUpIndex], { static_cast<unsigned>(pickedUpPreviewCoords.x), static_cast<unsigned>(pickedUpPreviewCoords.y) });
 
-                Game::theScore->addPiecePlaced(pickupableBlocks[pickedUpIndex]->getStructureIndex());
-
                 delete pickupableBlocks[pickedUpIndex];
                 pickupableBlocks[pickedUpIndex] = nullptr;
 
@@ -240,8 +238,12 @@ void PickupBoard::pollEvent(sf::RenderWindow& window, sf::Event& theEvent) {
             }
 
             //if no pickupable blocks were picked up, process paintMode
-            if (pickedUpIndex == -1 && Settings::Gameplay::paintMode && (paintModePreviewCoords.x != -1 && paintModePreviewCoords.y != -1))
+            if (pickedUpIndex == -1 && Settings::Gameplay::paintMode && (paintModePreviewCoords.x != -1 && paintModePreviewCoords.y != -1)) {
                 Game::theTable->applyBlock(paintModeBlock, { static_cast<unsigned>(paintModePreviewCoords.x), static_cast<unsigned>(paintModePreviewCoords.y) });
+                
+                if (isBoardLost())
+                    Game::theScore->setGameLost();
+            }
         }
     }
 }

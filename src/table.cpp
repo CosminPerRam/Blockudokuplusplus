@@ -80,6 +80,8 @@ void Table::applyBlock(Block& theBlock, const sf::Vector2u& tableCellCoords) {
     //wont do any verifications for the tableCellCords or the block compatibility
     //because this function is SUPPOSED to be used ONLY with the RIGHT stuff.
 
+    Game::theScore->addPiecePlaced(theBlock.getStructureIndex());
+
     theMatrix.applyBlock(theBlock, tableCellCoords);
 
     auto completedMarks = theMatrix.checkCompletetion();
@@ -98,7 +100,7 @@ sf::Vector2i Table::previewBlock(Block& theHoldingBlock, const sf::Vector2f& mou
     auto previewApplyCoords = theMatrix.previewApplyCoords;
 
     if (previewApplyCoords.x != -1 && previewApplyCoords.y != -1 && previewApplyCoords != cellCoords)
-        theMatrix.clearPreviews();
+        theMatrix.processPreviews();
 
     if (cellCoords.x == -1 || cellCoords.y == -1)
         return { -1, -1 }; //check mouse is in a cell

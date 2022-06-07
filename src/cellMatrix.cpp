@@ -22,7 +22,7 @@ const std::array<std::array<cell, 9>, 9>& cellMatrix::getCells() {
     return cellTable;
 }
 
-void cellMatrix::clearPreviews() {
+void cellMatrix::processPreviews() {
     for (unsigned i = 0; i < 9; i++) {
         for (unsigned j = 0; j < 9; j++) {
             if (cellTable[i][j] == cell::occupiedPreview)

@@ -44,7 +44,7 @@ private:
 
 	bool anyBlocksLeft();
 	bool canAnyBlocksBePlaced();
-	bool recursiveCanAnyBlocksBePlaced(int firstIndex = -1, int secondIndex = -1);
+	bool recursiveCanAllBlocksBePlaced(int firstIndex = -1, int secondIndex = -1);
 
 	void updateBlocksState();
 

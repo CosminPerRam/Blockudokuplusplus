@@ -27,7 +27,7 @@ public:
 	const std::array<std::array<cell, 9>, 9>& getCells();
 
 	sf::Vector2i previewApplyCoords = { -1, -1 };
-	void clearPreviews();
+	void processPreviews();
 
 	sf::Vector2i previewBlock(Block& theHoldingBlock, const sf::Vector2i& matrixPosition);
 
