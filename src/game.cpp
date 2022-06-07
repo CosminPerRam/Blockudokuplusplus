@@ -52,6 +52,8 @@ void Game::update() {
     if (Settings::Gameplay::autoplay)
         theBot.update(*window, dt);
 
+    pickupBoard->update(*window, dt);
+
     latestFrameTimeMs = (dt.asSeconds() - lastTime.asSeconds()) * 1000;
     latestFps = unsigned(1000 / latestFrameTimeMs);
 

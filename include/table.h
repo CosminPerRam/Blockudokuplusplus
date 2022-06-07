@@ -39,7 +39,6 @@ public:
 	Table();
 
 	void draw(sf::RenderWindow& window);
-	void pollEvent(sf::RenderWindow& window, sf::Event& theEvent);
 
 	void updateColors();
 

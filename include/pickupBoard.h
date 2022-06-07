@@ -6,6 +6,7 @@
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Graphics/VertexArray.hpp>
 #include <SFML/Graphics/Rect.hpp>
+#include <SFML/Graphics/CircleShape.hpp>
 
 #include "block.h"
 #include "spacing.h"
@@ -22,6 +23,7 @@ class PickupBoard
 {
 private:
 	sf::Color MARGINS;
+	sf::CircleShape mouseCircle;
 
 	sf::VertexArray borders = sf::VertexArray(sf::Lines, 2 * 2 + 4 * 2);
 
@@ -30,6 +32,9 @@ private:
 	int pickedUpIndex = -1;
 	sf::Vector2f pickedUpPosition;
 	sf::Vector2i pickedUpPreviewCoords;
+	sf::Vector2i paintModePreviewCoords;
+
+	static Block paintModeBlock; //quite the hacky move to avoid refactoring a lot of code just to preview the mouse position...
 
 	const sf::Vector2f startPosition = { PICKUP_POSITION_X, PICKUP_POSITION_Y };
 	const int BoardLength = CELL_SPACING * 9, BoardHeight = CELL_SPACING * 3;
@@ -51,6 +56,8 @@ public:
 
 	void draw(sf::RenderWindow& window);
 	void pollEvent(sf::RenderWindow& window, sf::Event& theEvent);
+	void update(sf::RenderWindow& window, sf::Time& dt);
+
 	void updateColors();
 
 	bool isBoardLost();

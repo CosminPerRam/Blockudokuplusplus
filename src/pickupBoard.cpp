@@ -9,8 +9,12 @@
 #include "cellMatrix.h"
 #include "game.h"
 
+Block PickupBoard::paintModeBlock = Block(0);
+
 PickupBoard::PickupBoard() {
     PickupBoard::regenerateBlocks(pickupBlocks::all);
+
+    mouseCircle.setRadius(5);
 }
 
 PickupBoard::~PickupBoard() {
@@ -177,6 +181,9 @@ void PickupBoard::draw(sf::RenderWindow& window) {
         if (pickupableBlocks[i] != nullptr)
             pickupableBlocks[i]->draw(window);
     }
+
+    if (Settings::Gameplay::paintMode && pickedUpIndex == -1)
+        window.draw(mouseCircle);
 }
 
 void PickupBoard::pollEvent(sf::RenderWindow& window, sf::Event& theEvent) {
@@ -189,33 +196,12 @@ void PickupBoard::pollEvent(sf::RenderWindow& window, sf::Event& theEvent) {
     if (pickedUpIndex != -1) {
         pickupableBlocks[pickedUpIndex]->setPosition(mousePositionWithOffset);
         pickedUpPreviewCoords = Game::theTable->previewBlock(*pickupableBlocks[pickedUpIndex], mousePosition);
-    }
-    else {
-        if (theEvent.type == sf::Event::MouseButtonPressed && theEvent.mouseButton.button == sf::Mouse::Left) {
-            if (pickedUpIndex == -1) {
-                for (unsigned i = 0; i < 3; i++) { //check for every 3 blocks from the pickup area
-                    if (pickupableBlocks[i] == nullptr) //if they are picked up, if a block is nullptr, it means it was used
-                        continue;
 
-                    if (pickupableBlocks[i]->getGlobalBounds().contains({ mousePosition.x, mousePosition.y }))
-                    {
-                        pickedUpIndex = i;
-
-                        pickupableBlocks[i]->setFloating(true);
-                        pickupableBlocks[i]->setScale(PICKUP_SCALE);
-                    }
-                }
-            }
-        }
-    }
-    
-    if (theEvent.type == sf::Event::MouseButtonReleased && theEvent.mouseButton.button == sf::Mouse::Left) {
-        if (pickedUpIndex != -1)
-        {
+        if (theEvent.type == sf::Event::MouseButtonReleased && theEvent.mouseButton.button == sf::Mouse::Left) {
             pickupableBlocks[pickedUpIndex]->setFloating(false);
 
             if (pickedUpPreviewCoords.x != -1 || pickedUpPreviewCoords.y != -1) {
-                Game::theTable->applyBlock(*pickupableBlocks[pickedUpIndex], {static_cast<unsigned>(pickedUpPreviewCoords.x), static_cast<unsigned>(pickedUpPreviewCoords.y)});
+                Game::theTable->applyBlock(*pickupableBlocks[pickedUpIndex], { static_cast<unsigned>(pickedUpPreviewCoords.x), static_cast<unsigned>(pickedUpPreviewCoords.y) });
 
                 Game::theScore->addPiecePlaced(pickupableBlocks[pickedUpIndex]->getStructureIndex());
 
@@ -235,10 +221,41 @@ void PickupBoard::pollEvent(sf::RenderWindow& window, sf::Event& theEvent) {
             pickedUpIndex = -1;
         }
     }
+    else {
+        if (Settings::Gameplay::paintMode)
+            paintModePreviewCoords = Game::theTable->previewBlock(paintModeBlock, mousePosition);
+
+        if (theEvent.type == sf::Event::MouseButtonPressed && theEvent.mouseButton.button == sf::Mouse::Left) {
+            for (unsigned i = 0; i < 3; i++) { //check for every 3 blocks from the pickup area
+                if (pickupableBlocks[i] == nullptr) //if they are picked up, if a block is nullptr, it means it was used
+                    continue;
+
+                if (pickupableBlocks[i]->getGlobalBounds().contains({ mousePosition.x, mousePosition.y }))
+                {
+                    pickedUpIndex = i;
+
+                    pickupableBlocks[i]->setFloating(true);
+                    pickupableBlocks[i]->setScale(PICKUP_SCALE);
+                }
+            }
+
+            //if no pickupable blocks were picked up, process paintMode
+            if (pickedUpIndex == -1 && Settings::Gameplay::paintMode && (paintModePreviewCoords.x != -1 && paintModePreviewCoords.y != -1))
+                Game::theTable->applyBlock(paintModeBlock, { static_cast<unsigned>(paintModePreviewCoords.x), static_cast<unsigned>(paintModePreviewCoords.y) });
+        }
+    }
+}
+
+void PickupBoard::update(sf::RenderWindow& window, sf::Time& dt) {
+    if (pickedUpIndex == -1 && Settings::Gameplay::paintMode) {
+        sf::Vector2f mousePosition = window.mapPixelToCoords(sf::Mouse::getPosition(window));
+        mouseCircle.setPosition(mousePosition.x - mouseCircle.getLocalBounds().width / 2, mousePosition.y - mouseCircle.getLocalBounds().height / 2);
+    }
 }
 
 void PickupBoard::updateColors() {
-    MARGINS = toColor(Settings::Aspect::pickupMargins);
+    mouseCircle.setFillColor(toColor(Settings::Aspect::cellCompletion));
 
+    MARGINS = toColor(Settings::Aspect::pickupMargins);
     PickupBoard::calculateVertexes();
 }
