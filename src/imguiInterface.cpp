@@ -290,32 +290,33 @@ void ImguiInterface::draw(sf::RenderWindow& window) {
 
 				if (ImGui::TreeNode("General"))
 				{
-					ImGui::ColorEdit3("Background", Settings::Aspect::appBackground, colorFlags);
-					ImGui::ColorEdit3("Pickup margins", Settings::Aspect::pickupMargins, colorFlags);
-					ImGui::ColorEdit3("Text", Settings::Aspect::textColor, colorFlags);
-
-					Game::theScore->updateColors();
-					Game::pickupBoard->updateColors();
+					if (ImGui::ColorEdit3("Background", Settings::Aspect::appBackground, colorFlags) ||
+						ImGui::ColorEdit3("Pickup margins", Settings::Aspect::pickupMargins, colorFlags) ||
+						ImGui::ColorEdit3("Text", Settings::Aspect::textColor, colorFlags)) {
+						Game::theScore->updateColors();
+						Game::pickupBoard->updateColors();
+					}
 
 					ImGui::TreePop();
 				}
 				if (ImGui::TreeNode("Cells")) {
-					ImGui::ColorEdit3("Solid", Settings::Aspect::cellSolid, colorFlags);
-					ImGui::ColorEdit3("Preview", Settings::Aspect::cellPreview, colorFlags);
-					ImGui::ColorEdit3("Completion", Settings::Aspect::cellCompletion, colorFlags);
-					ImGui::ColorEdit3("Margins", Settings::Aspect::cellMargins, colorFlags);
-
-					Game::theTable->updateColors();
+					if (ImGui::ColorEdit3("Solid", Settings::Aspect::cellSolid, colorFlags) ||
+						ImGui::ColorEdit3("Preview", Settings::Aspect::cellPreview, colorFlags) ||
+						ImGui::ColorEdit3("Completion", Settings::Aspect::cellCompletion, colorFlags) ||
+						ImGui::ColorEdit3("Margins", Settings::Aspect::cellMargins, colorFlags)) {
+						Game::theTable->updateColors();
+						Game::pickupBoard->updateColors();
+					}
 
 					ImGui::TreePop();
 				}
 				if (ImGui::TreeNode("Table")) {
-					ImGui::ColorEdit3("Odd", Settings::Aspect::tableOdd, colorFlags);
-					ImGui::ColorEdit3("Even", Settings::Aspect::tableEven, colorFlags);
-					ImGui::ColorEdit3("Minor lines", Settings::Aspect::tableMinor, colorFlags);
-					ImGui::ColorEdit3("Major lines", Settings::Aspect::tableMajor, colorFlags);
-
-					Game::theTable->updateColors();
+					if (ImGui::ColorEdit3("Odd", Settings::Aspect::tableOdd, colorFlags) ||
+						ImGui::ColorEdit3("Even", Settings::Aspect::tableEven, colorFlags) ||
+						ImGui::ColorEdit3("Minor lines", Settings::Aspect::tableMinor, colorFlags) ||
+						ImGui::ColorEdit3("Major lines", Settings::Aspect::tableMajor, colorFlags)) {
+						Game::theTable->updateColors();
+					}
 
 					ImGui::TreePop();
 				}
