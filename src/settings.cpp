@@ -104,6 +104,7 @@ namespace Settings
 		autoplay = false; autoplayDelay = 1.f;
 
 		checkGameInAdvance = false;
+		paintMode = false;
 
 		continousGenerate = false;
 		blockModel = -1;

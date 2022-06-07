@@ -46,7 +46,7 @@ namespace Settings
 		inline static bool autoplay;
 		inline static float autoplayDelay;
 
-		inline static bool checkGameInAdvance;
+		inline static bool checkGameInAdvance, paintMode;
 
 		inline static bool continousGenerate;
 		inline static int blockModel;

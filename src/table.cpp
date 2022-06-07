@@ -146,6 +146,18 @@ void Table::draw(sf::RenderWindow& window) {
     window.draw(majorGrid); //DRAW GRID END
 }
 
+void Table::pollEvent(sf::RenderWindow& window, sf::Event& theEvent) {
+    if (Game::theScore->isGameLost())
+        return;
+
+    if (theEvent.type == sf::Event::MouseButtonPressed && theEvent.mouseButton.button == sf::Mouse::Left) {
+        sf::Vector2f mousePosition = window.mapPixelToCoords(sf::Mouse::getPosition(window));
+
+        if (restartButton.getGlobalBounds().contains({ mousePosition.x, mousePosition.y }))
+            Game::restart();
+    }
+}
+
 void Table::updateColors() {
     MINOR_COLOR = toColor(Settings::Aspect::tableMinor);
     MAJOR_COLOR = toColor(Settings::Aspect::tableMajor);

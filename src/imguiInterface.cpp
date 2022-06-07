@@ -122,6 +122,9 @@ void ImguiInterface::draw(sf::RenderWindow& window) {
 				if (ImGui::Button("Clear"))
 					Game::theTable->reset();
 				ImGui::SameLine();
+				ImGui::Checkbox("Paint mode", &Settings::Gameplay::paintMode);
+				Custom::HelpMarker("Left click to place a solid cell\nand right click to erase it.");
+
 				if (ImGui::Checkbox("Check in advance", &Settings::Gameplay::checkGameInAdvance))
 					Settings::Gameplay::applyAutoplay();
 				Custom::HelpMarker("Checks every possible move to\nverify if the game is lost.");
