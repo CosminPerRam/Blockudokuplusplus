@@ -2,7 +2,6 @@
 #include "imguiInterface.h"
 
 #include <numeric>
-#include <execution>
 
 #include "imgui-SFML.h"
 #include <SFML/Window/Event.hpp>
@@ -35,7 +34,7 @@ void ImguiInterface::Data::update() {
 	if (data.historyFps.size() > HISTORYFPS_COUNT)
 		data.historyFps.erase(data.historyFps.begin());
 
-	data.averageFps = static_cast<unsigned>(std::reduce(std::execution::par, data.historyFps.begin(), data.historyFps.end()) / data.historyFps.size());
+	data.averageFps = static_cast<unsigned>(std::reduce(data.historyFps.begin(), data.historyFps.end()) / data.historyFps.size());
 
 	data.latestFrametime = Game::fetchFrametime();
 }
@@ -165,7 +164,7 @@ void ImguiInterface::draw(sf::RenderWindow& window) {
 				else if (Settings::Gameplay::blockModel == -2)
 					ImGui::Text("Custom");
 				else
-					ImGui::Text(structures::grouped[Settings::Gameplay::blockModel]->name);
+					ImGui::TextUnformatted( structures::grouped[Settings::Gameplay::blockModel]->name);
 
 				if (Settings::Gameplay::blockModel == -2) {
 					ImGui::Separator();

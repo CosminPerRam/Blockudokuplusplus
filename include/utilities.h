@@ -15,6 +15,11 @@ namespace Random
 	int getNumberInBetween(unsigned a, unsigned b);
 }
 
+namespace Math
+{
+	unsigned pow(unsigned base, unsigned power);
+}
+
 namespace Files
 {
 	bool exists(const char* fileName);

@@ -13,6 +13,13 @@ int Random::getNumberInBetween(unsigned a, unsigned b) {
     return distr(gen);
 }
 
+unsigned Math::pow(unsigned base, unsigned power) {
+    if (power == 0)
+        return 1;
+
+    return base * pow(base, power - 1);
+}
+
 bool Files::exists(const char* fileName) {
     return std::ifstream(fileName).good();
 }

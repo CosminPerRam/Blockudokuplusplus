@@ -5,6 +5,7 @@
 
 #include "spacing.h"
 #include "audio.h"
+#include "utilities.h"
 
 Score *Game::theScore = nullptr;
 Table *Game::theTable = nullptr;
@@ -84,7 +85,7 @@ void Game::destroyWindow() {
 
 void Game::initializeWindow() {
     sf::ContextSettings settings;
-    settings.antialiasingLevel = Settings::General::aalevel == 0 ? 0 : (unsigned)pow(2, Settings::General::aalevel);
+    settings.antialiasingLevel = Settings::General::aalevel == 0 ? 0 : Math::pow(2u, Settings::General::aalevel);
 
     window = new sf::RenderWindow(sf::VideoMode(WINDOW_HEIGHT, WINDOW_WIDTH), "Blockudoku", sf::Style::Close, settings);
 

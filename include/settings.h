@@ -20,7 +20,7 @@ namespace Settings
 		inline static unsigned refreshRateImgui;
 
 		inline static bool vsync;
-		inline static int aalevel; //0 - None, 1 - 2x, 2 - 4x, 3 - 8x, 4 - 16x
+		inline static unsigned aalevel; //0 - None, 1 - 2x, 2 - 4x, 3 - 8x, 4 - 16x
 
 		static void defaultValues();
 		static void save(std::stringstream& sstream);

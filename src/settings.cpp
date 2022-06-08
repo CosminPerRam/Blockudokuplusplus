@@ -1,6 +1,4 @@
 
-#pragma once
-
 #include "settings.h"
 #include "utilities.h"
 #include "game.h"
