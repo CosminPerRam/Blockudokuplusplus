@@ -32,7 +32,7 @@ void ImguiInterface::Custom::HelpMarker(const char* desc)
 
 void ImguiInterface::Data::update() {
 	data.historyFps.push_back(static_cast<float>(Game::fetchFps()));
-	if (data.historyFps.size() > 64)
+	if (data.historyFps.size() > HISTORYFPS_COUNT)
 		data.historyFps.erase(data.historyFps.begin());
 
 	data.averageFps = std::reduce(std::execution::par, data.historyFps.begin(), data.historyFps.end()) / data.historyFps.size();
@@ -99,8 +99,8 @@ void ImguiInterface::draw(sf::RenderWindow& window) {
 				ImGui::Separator();
 
 				if (ImGui::Checkbox("Autoplay", &Settings::Gameplay::autoplay)) {
-					if (Settings::Gameplay::checkGameInAdvance)
-						Settings::Gameplay::checkGameInAdvance = false;
+					Settings::Gameplay::checkGameInAdvance = false;
+					Settings::Gameplay::paintMode = false;
 				}
 				Custom::HelpMarker("Let the game play itself.");
 

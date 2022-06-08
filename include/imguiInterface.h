@@ -9,6 +9,7 @@
 #include "settings.h"
 
 #define FILENAME_LENGTH 32
+#define HISTORYFPS_COUNT 60
 
 class ImguiInterface
 {
@@ -27,7 +28,7 @@ private:
 
 	struct Data
 	{
-		std::vector<float> historyFps;
+		std::vector<float> historyFps = std::vector<float>(HISTORYFPS_COUNT, 0);
 		unsigned averageFps = 0;
 
 		float latestFrametime = 0.f;
