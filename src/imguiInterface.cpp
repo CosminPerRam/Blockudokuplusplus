@@ -35,7 +35,7 @@ void ImguiInterface::Data::update() {
 	if (data.historyFps.size() > HISTORYFPS_COUNT)
 		data.historyFps.erase(data.historyFps.begin());
 
-	data.averageFps = std::reduce(std::execution::par, data.historyFps.begin(), data.historyFps.end()) / data.historyFps.size();
+	data.averageFps = static_cast<unsigned>(std::reduce(std::execution::par, data.historyFps.begin(), data.historyFps.end()) / data.historyFps.size());
 
 	data.latestFrametime = Game::fetchFrametime();
 }
@@ -240,6 +240,14 @@ void ImguiInterface::draw(sf::RenderWindow& window) {
 			//ImGui::Checkbox("Animations", &Settings::Aspect::animations);
 			if (ImGui::TreeNode("Window"))
 			{
+				if (SUPPORTS_CONSOLE_HIDING) {
+					if (ImGui::Checkbox("Show console", &Settings::Aspect::showConsole))
+						Platform::setConsoleVisibility(Settings::Aspect::showConsole);
+					Custom::HelpMarker("This may not work correctly...");
+
+					ImGui::Separator();
+				}
+
 				static unsigned rr_step = 1, rr_stepFast = 4;
 
 				ImGui::PushItemWidth(74);

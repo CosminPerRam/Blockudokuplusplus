@@ -64,6 +64,7 @@ namespace Settings
 	struct Aspect
 	{
 		inline static bool animations;
+		inline static bool showConsole;
 
 		inline static float appBackground[3];
 		inline static float pickupMargins[3];

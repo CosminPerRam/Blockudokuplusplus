@@ -153,6 +153,7 @@ namespace Settings
 
 	void Aspect::defaultValues() {
 		animations = false;
+		showConsole = false;
 
 		setFloatColors(appBackground, 1.f, 1.f, 1.f);
 		setFloatColors(pickupMargins, 0.92f, 0.92f, 0.92f);
@@ -172,7 +173,7 @@ namespace Settings
 	}
 
 	void Aspect::save(std::stringstream& sstream) {
-		sstream << animations << " ";
+		sstream << showConsole << " " << animations << " ";
 		colorToStream(sstream, appBackground);
 		colorToStream(sstream, pickupMargins);
 		colorToStream(sstream, textColor);
@@ -188,7 +189,7 @@ namespace Settings
 	}
 
 	void Aspect::load(std::stringstream& sstream) {
-		sstream >> animations;
+		sstream >> showConsole >> animations;
 		streamToColor(sstream, appBackground);
 		streamToColor(sstream, pickupMargins);
 		streamToColor(sstream, textColor);
@@ -208,6 +209,8 @@ namespace Settings
 		Game::theTable->updateColors();
 		Game::theScore->updateColors();
 		Game::pickupBoard->updateColors();
+
+		Platform::setConsoleVisibility(Settings::Aspect::showConsole);
 	}
 }
 

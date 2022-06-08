@@ -47,3 +47,9 @@ void Files::append(std::stringstream& sstream, const char* fileName) {
 
     fout << sstream.rdbuf();
 }
+
+void Platform::setConsoleVisibility(bool state) {
+#ifdef _WIN32
+    ShowWindow(GetConsoleWindow(), state);
+#endif
+}
