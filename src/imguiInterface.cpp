@@ -1,6 +1,9 @@
 
 #include "imguiInterface.h"
 
+#include <numeric>
+#include <execution>
+
 #include "imgui-SFML.h"
 #include <SFML/Window/Event.hpp>
 
@@ -32,11 +35,7 @@ void ImguiInterface::Data::update() {
 	if (data.historyFps.size() > 64)
 		data.historyFps.erase(data.historyFps.begin());
 
-	data.averageFps = 0;
-	unsigned historyFpsAmount = data.historyFps.size();
-	for (unsigned i = 0; i < historyFpsAmount; i++)
-		data.averageFps += static_cast<unsigned>(data.historyFps[i]);
-	data.averageFps /= historyFpsAmount;
+	data.averageFps = std::reduce(std::execution::par, data.historyFps.begin(), data.historyFps.end()) / data.historyFps.size();
 
 	data.latestFrametime = Game::fetchFrametime();
 }
