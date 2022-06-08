@@ -34,6 +34,7 @@ public:
 	std::unique_ptr<std::vector<completetion>> checkCompletetion();
 	void executeCompletetions(std::unique_ptr<std::vector<completetion>>& completetions, cell withCell);
 
+	cell getCellState(const sf::Vector2u& tableCellCoords);
 	void applyBlock(Block& theBlock, const sf::Vector2u& tableCellCoords, cell cellType = cell::occupied);
 	bool canBlockBePlaced(Block& theBlock);
 

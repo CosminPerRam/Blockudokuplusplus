@@ -76,23 +76,31 @@ sf::Vector2i Table::mousePositionToCellPosition(const sf::Vector2f& mousePositio
     return { -1, -1 };
 }
 
-void Table::applyBlock(Block& theBlock, const sf::Vector2u& tableCellCoords) {
+cell Table::getCellState(const sf::Vector2u& tableCellCoords) {
+    return theMatrix.getCellState(tableCellCoords);
+}
+
+void Table::applyBlock(Block& theBlock, const sf::Vector2u& tableCellCoords, cell cellType) {
     //wont do any verifications for the tableCellCords or the block compatibility
     //because this function is SUPPOSED to be used ONLY with the RIGHT stuff.
 
+    theMatrix.applyBlock(theBlock, tableCellCoords, cellType);
+
     Game::theScore->addPiecePlaced(theBlock.getStructureIndex());
 
-    theMatrix.applyBlock(theBlock, tableCellCoords);
-
-    auto completedMarks = theMatrix.checkCompletetion();
-
-    Game::theScore->processMarks(completedMarks);
-    if (completedMarks->empty())
+    if (cellType != cell::occupied)
         Audio::play(Audio::effect::GoodPlacement);
-    else
-        Audio::play(Audio::effect::Completetion);
+    else {
+        auto completedMarks = theMatrix.checkCompletetion();
 
-    theMatrix.executeCompletetions(completedMarks, cell::empty);
+        Game::theScore->processMarks(completedMarks);
+        if (completedMarks->empty())
+            Audio::play(Audio::effect::GoodPlacement);
+        else
+            Audio::play(Audio::effect::Completetion);
+
+        theMatrix.executeCompletetions(completedMarks, cell::empty);
+    }
 }
 
 sf::Vector2i Table::previewBlock(Block& theHoldingBlock, const sf::Vector2f& mousePosition) {

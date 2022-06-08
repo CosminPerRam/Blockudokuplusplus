@@ -53,6 +53,10 @@ unsigned cellMatrix::getEmptyCellsAmount() const {
     return amount;
 }
 
+cell cellMatrix::getCellState(const sf::Vector2u& tableCellCoords) {
+    return cellTable[tableCellCoords.x][tableCellCoords.y];
+}
+
 sf::Vector2i cellMatrix::previewBlock(Block& theHoldingBlock, const sf::Vector2i& matrixPosition) {
     const auto& blockStructure = theHoldingBlock.getStructure();
     sf::Vector2i cellCoords = matrixPosition;
@@ -224,7 +228,7 @@ void cellMatrix::applyBlock(Block& theBlock, const sf::Vector2u& tableCellCoords
     for (unsigned x = 0; x < theBlock.getStructureSize().x; x++) {
         for (unsigned y = 0; y < theBlock.getStructureSize().y; y++) {
             if (structure[x][y] == 1)
-                cellTable[tableCellCoords.x + x][tableCellCoords.y + y] = cell::occupied;
+                cellTable[tableCellCoords.x + x][tableCellCoords.y + y] = cellType;
         }
     }
 }

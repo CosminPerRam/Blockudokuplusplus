@@ -31,8 +31,6 @@ private:
 
 	cellMatrix theMatrix;
 
-	sf::Vector2i mousePositionToCellPosition(const sf::Vector2f& mousePosition);
-
 	void calculateVertexes();
 
 public:
@@ -42,10 +40,11 @@ public:
 
 	void updateColors();
 
-	void applyBlock(Block& theBlock, const sf::Vector2u& tableCellCoords);
+	cell getCellState(const sf::Vector2u& tableCellCoords);
+	void applyBlock(Block& theBlock, const sf::Vector2u& tableCellCoords, cell cellType = cell::occupied);
 	bool canBlockBePlaced(Block& theBlock);
-
 	sf::Vector2i previewBlock(Block& theHoldingBlock, const sf::Vector2f& mousePosition);
+	sf::Vector2i mousePositionToCellPosition(const sf::Vector2f& mousePosition);
 
 	const cellMatrix& getMatrix();
 	void reset();
