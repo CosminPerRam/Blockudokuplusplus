@@ -112,11 +112,13 @@ namespace Settings
 				customBlockStructure[i][j] = 0;
 		}
 
+		holdToMove = true;
+
 		Gameplay::apply();
 	}
 
 	void Gameplay::save(std::stringstream& sstream) {
-		sstream << checkGameInAdvance << " " << continousGenerate << " " << blockModel << " ";
+		sstream << holdToMove << " " << checkGameInAdvance << " " << continousGenerate << " " << blockModel << " ";
 		sstream << customBlockSizeHeight << " " << customBlockSizeWidth << " ";
 		for (unsigned i = 0; i < 5; i++) {
 			for (unsigned j = 0; j < 5; j++)
@@ -126,7 +128,7 @@ namespace Settings
 	}
 
 	void Gameplay::load(std::stringstream& sstream) {
-		sstream >> checkGameInAdvance >> continousGenerate >> blockModel;
+		sstream >> holdToMove >> checkGameInAdvance >> continousGenerate >> blockModel;
 		sstream >> customBlockSizeHeight >> customBlockSizeWidth;
 		for (unsigned i = 0; i < 5; i++) {
 			for (unsigned j = 0; j < 5; j++)

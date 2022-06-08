@@ -132,6 +132,9 @@ void ImguiInterface::draw(sf::RenderWindow& window) {
 
 			if (ImGui::TreeNode("Pickup board"))
 			{
+				ImGui::Checkbox("Hold to move block.", &Settings::Gameplay::holdToMove);
+				ImGui::Separator();
+
 				ImGui::Text("Type:");
 				ImGui::SameLine();
 				if (ImGui::Button("Random")) {

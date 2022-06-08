@@ -53,6 +53,8 @@ namespace Settings
 		inline static unsigned customBlockSizeHeight, customBlockSizeWidth;
 		inline static bool customBlockStructure[5][5];
 
+		inline static bool holdToMove;
+
 		static void defaultValues();
 		static void save(std::stringstream& sstream);
 		static void load(std::stringstream& sstream);

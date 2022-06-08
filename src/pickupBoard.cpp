@@ -197,7 +197,7 @@ void PickupBoard::pollEvent(sf::RenderWindow& window, sf::Event& theEvent) {
         pickupableBlocks[pickedUpIndex]->setPosition(mousePositionWithOffset);
         pickedUpPreviewCoords = Game::theTable->previewBlock(*pickupableBlocks[pickedUpIndex], mousePosition);
 
-        if (theEvent.type == sf::Event::MouseButtonReleased && theEvent.mouseButton.button == sf::Mouse::Left) {
+        if (theEvent.type == (Settings::Gameplay::holdToMove ? sf::Event::MouseButtonReleased : sf::Event::MouseButtonPressed)) {
             pickupableBlocks[pickedUpIndex]->setFloating(false);
 
             if (pickedUpPreviewCoords.x != -1 || pickedUpPreviewCoords.y != -1) {
@@ -217,10 +217,20 @@ void PickupBoard::pollEvent(sf::RenderWindow& window, sf::Event& theEvent) {
             }
 
             pickedUpIndex = -1;
+
+            return;
         }
     }
     else {
-        if (theEvent.type == sf::Event::MouseButtonPressed && theEvent.mouseButton.button == sf::Mouse::Left) {
+        if(Settings::Gameplay::paintMode)
+            paintModePreviewCoords = Game::theTable->previewBlock(paintModeBlock, mousePosition);
+    }
+
+    if (theEvent.type != sf::Event::MouseButtonPressed)
+        return;
+
+    if (theEvent.mouseButton.button == sf::Mouse::Left) {
+        if (pickedUpIndex == -1) {
             for (unsigned i = 0; i < 3; i++) { //check for every 3 blocks from the pickup area
                 if (pickupableBlocks[i] == nullptr) //if they are picked up, if a block is nullptr, it means it was used
                     continue;
@@ -233,29 +243,24 @@ void PickupBoard::pollEvent(sf::RenderWindow& window, sf::Event& theEvent) {
                     pickupableBlocks[i]->setScale(PICKUP_SCALE);
                 }
             }
-        }
 
-        //if no pickupable blocks were picked up, process paintMode
-        if (Settings::Gameplay::paintMode && pickedUpIndex == -1) {
-            if (theEvent.type == sf::Event::MouseButtonPressed) {
-                if (theEvent.mouseButton.button == sf::Mouse::Left) {
-                    paintModePreviewCoords = Game::theTable->previewBlock(paintModeBlock, mousePosition);
-                    if (paintModePreviewCoords.x != -1 && paintModePreviewCoords.y != -1) {
-                        Game::theTable->applyBlock(paintModeBlock, { static_cast<unsigned>(paintModePreviewCoords.x), static_cast<unsigned>(paintModePreviewCoords.y) });
+            //if no pickupable blocks were picked up, process paintMode
+            if (Settings::Gameplay::paintMode) {
+                if (paintModePreviewCoords.x != -1 && paintModePreviewCoords.y != -1) {
+                    Game::theTable->applyBlock(paintModeBlock, { static_cast<unsigned>(paintModePreviewCoords.x), static_cast<unsigned>(paintModePreviewCoords.y) });
 
-                        if (isBoardLost())
-                            Game::theScore->setGameLost();
-                    }
-                }
-                else if (theEvent.mouseButton.button == sf::Mouse::Right) {
-                    paintModePreviewCoords = Game::theTable->mousePositionToCellPosition(mousePosition);
-                    if (paintModePreviewCoords.x != -1 && paintModePreviewCoords.y != -1) {
-                        sf::Vector2u unsignedPreviewCoords = { static_cast<unsigned>(paintModePreviewCoords.x), static_cast<unsigned>(paintModePreviewCoords.y) };
-                        if(Game::theTable->getCellState(unsignedPreviewCoords) == cell::occupied)
-                            Game::theTable->applyBlock(paintModeBlock, unsignedPreviewCoords, cell::empty);
-                    } 
+                    if (isBoardLost())
+                        Game::theScore->setGameLost();
                 }
             }
+        }
+    }
+    else if (theEvent.mouseButton.button == sf::Mouse::Right && pickedUpIndex == -1) {
+        paintModePreviewCoords = Game::theTable->mousePositionToCellPosition(mousePosition);
+        if (paintModePreviewCoords.x != -1 && paintModePreviewCoords.y != -1) {
+            sf::Vector2u unsignedPreviewCoords = { static_cast<unsigned>(paintModePreviewCoords.x), static_cast<unsigned>(paintModePreviewCoords.y) };
+            if (Game::theTable->getCellState(unsignedPreviewCoords) == cell::occupied)
+                Game::theTable->applyBlock(paintModeBlock, unsignedPreviewCoords, cell::empty);
         }
     }
 }
