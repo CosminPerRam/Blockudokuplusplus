@@ -180,21 +180,20 @@ void ImguiInterface::draw(sf::RenderWindow& window) {
 						Game::pickupBoard->regenerateBlocks(pickupBlocks::existing);
 					ImGui::PopItemWidth();
 
-					ImGui::Separator();
-
-					for (unsigned i = 0; i < Settings::Gameplay::customBlockSizeHeight; i++) {
-						for (unsigned j = 0; j < Settings::Gameplay::customBlockSizeWidth; j++) {
-							if (j > 0)
-								ImGui::SameLine();
-
-							ImGui::PushID(i * 5 + j);
-							if (ImGui::Selectable(" ", &Settings::Gameplay::customBlockStructure[i][j], ImGuiSelectableFlags_DontClosePopups, { 16, 16 }))
-								Game::pickupBoard->regenerateBlocks(pickupBlocks::existing);
-							ImGui::PopID();
+					if (ImGui::BeginTable("##CustomTable", Settings::Gameplay::customBlockSizeWidth, ImGuiTableFlags_Borders)) {
+						for (unsigned r = 0; r < Settings::Gameplay::customBlockSizeHeight; r++) {
+							ImGui::TableNextRow();
+							for (unsigned c = 0; c < Settings::Gameplay::customBlockSizeWidth; c++) {
+								ImGui::TableNextColumn();
+								
+								char buf[5] = "##aa"; buf[2] += r; buf[3] += c;
+								if (ImGui::Selectable(buf, &Settings::Gameplay::customBlockStructure[r][c]))
+									Game::pickupBoard->regenerateBlocks(pickupBlocks::existing);
+							}
 						}
-					}
 
-					ImGui::Separator();
+						ImGui::EndTable();
+					}
 				}
 
 				ImGui::Separator();
